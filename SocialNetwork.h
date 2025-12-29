@@ -18,6 +18,7 @@ struct FriendInfo {
 	int index;
 
 	FriendInfo(string n, int c, int i) : name(n), weight(c), index(i) {}
+
 };
 
 class SocialNetwork
