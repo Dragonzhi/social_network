@@ -21,7 +21,7 @@ public:
 	// A side
 	void addPerson(string name);
 	void deletePerson(string name);
-	void addEdge(string name1, string name2);
+	void addEdge(string name1, string name2, int weight);
 	void deleteEdge(string name1, string name2);
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
