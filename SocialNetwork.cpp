@@ -1,4 +1,5 @@
 #include "SocialNetwork.h"
+#include <queue>
 
 SocialNetwork::SocialNetwork()
 {
@@ -71,11 +72,81 @@ void SocialNetwork::sortFriends(string name, bool ascending) {
 }
 //路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
+	int start = findIndex(startName);
+	int end = findIndex(endName);
+
+	if (start == -1 || end == -1) {
+		cout << "至少一个联系人不存在！" << endl;
+		return -1;
+	}
+
+	if (start == end) {
+		cout << "这是同一个人！" << endl;
+		return 0;
+	}
+
+	// 查询是否是直接好友
+	for (auto& e : adjList[start]) {
+		if (e.getTo() == end) {
+			cout << "他们是直接好友，亲密度为：" << e.getWeight() << endl;
+			return e.getWeight();
+		}
+	}
+
+	int personCount = vertList.size();
+	vector<int> distToTree(personCount, -1);
+	vector<int> parent(personCount, -1);
+	vector<bool> inMST(personCount, false);
+	// 最大堆， 存储{权值， 节点ID｝
+	priority_queue<pair<int, int>> pq;
+
+	distToTree[start] = 0;
+	pq.push({ 0, start });
 	
+	while (!pq.empty()) {
+		int u = pq.top().second;
+		pq.pop();
+
+		if (inMST[u]) continue;
+		else inMST[u] = true;
+
+		if (u == end) break;		//  路径已经可达
+
+		for (auto& e : adjList[u]) {
+			int v = e.getTo();
+			int w = e.getWeight();
+
+			if (!inMST[v] && w > distToTree[v]) {
+				distToTree[v] = w;
+				parent[v] = v;
+				pq.push({ distToTree[v], v });
+			}
+		}
+	}
+
+	if (!inMST[end]) {
+		return -1;		//两点无法连通
+	}
+	
+	int miniIntimacy = INT_MAX;
+	int curr = end;
+
+	while (curr != start) {
+		int currentEdgeWeight = distToTree[curr];
+		if (currentEdgeWeight < miniIntimacy) {
+			miniIntimacy = currentEdgeWeight;
+		}
+		curr = parent[curr];
+	}
+	return miniIntimacy;
 }
 	
 void SocialNetwork::displayTop10() {
-
+	int personCount = vertList.size();
+	if (personCount <= 0) {
+		cout << "社交网络为空！" << endl;
+		return;
+	}
 }
 int SocialNetwork::findIndex(string name) {
 	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
