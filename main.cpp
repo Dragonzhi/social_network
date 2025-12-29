@@ -1,9 +1,9 @@
-
 #include<iostream>
+#include "Person.h"
 
 using namespace std;
 
 int main() {
-	cout << "简易社交关系网的设计与实现" << endl;
+	cout << "111" << endl;
 	return 0;
 }
