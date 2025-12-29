@@ -38,3 +38,10 @@ private:
 	map<string, int> nameToIndex;
 };
 
+SocialNetwork::SocialNetwork()
+{
+}
+
+SocialNetwork::~SocialNetwork()
+{
+}
