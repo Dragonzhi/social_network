@@ -147,6 +147,53 @@ void SocialNetwork::displayTop10() {
 		cout << "社交网络为空！" << endl;
 		return;
 	}
+
+	// {ID， 好友人数}
+	vector<pair<int, int>> friendCounts;
+	for (int i = 0; i < personCount; i++) {
+		friendCounts.push_back({ i, adjList[i].size() });
+	}
+
+	sort(friendCounts.begin(), friendCounts.end(), 
+		[](const pair<int, int>& a, const pair<int, int>& b){
+		return a.second > b.second;
+		});
+
+	int displayCount = min(10, personCount);
+	cout << "\n========== 社交大牛Top" << displayCount << " ==========" << endl;
+	cout << "排名\t姓名\t\t好友数\t\t直接好友" << endl;
+	cout << "---------------------------------------------" << endl;
+
+	for (int i = 0; i < displayCount; i++) {
+		int idx = friendCounts[i].first;
+		cout << i + 1 << "\t" << vertList[idx].getName();
+
+		// 调整格式
+		if (vertList[idx].getName().length() < 8) {
+			cout << "\t\t";
+		}
+		else {
+			cout << "\t";
+		}
+
+		cout << friendCounts[i].second << "\t\t";
+
+		// 显示前3个好友
+		int count = 0;
+		for (auto& edge : adjList[idx]) {
+			if (count >= 3) break;
+			cout << vertList[edge.getTo()].getName();
+			if (count < 2 && count < adjList[idx].size() - 1) {
+				cout << ", ";
+			}
+			count++;
+		}
+		if (adjList[idx].size() > 3) {
+			cout << "...";
+		}
+		cout << endl;
+	}
+	cout << "==========================================" << endl;
 }
 int SocialNetwork::findIndex(string name) {
 	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
