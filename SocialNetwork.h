@@ -29,7 +29,7 @@ public:
 
 	// B side
 	void sortFriends(string name, bool ascending);
-	int getBottleneckPat(string startName, string endName);		//路径亲密度下界最大值
+	int getBottleneckPath(string startName, string endName);		//路径亲密度下界最大值
 	void displayTop10();
 	int findIndex(string name);
 private:
@@ -38,10 +38,3 @@ private:
 	map<string, int> nameToIndex;
 };
 
-SocialNetwork::SocialNetwork()
-{
-}
-
-SocialNetwork::~SocialNetwork()
-{
-}
