@@ -121,9 +121,11 @@
   <ItemGroup>
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Person.h" />
+    <ClInclude Include="SocialNetwork.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SocialNetwork.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
