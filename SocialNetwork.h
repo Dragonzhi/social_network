@@ -11,6 +11,14 @@
 #include "Edge.h"
 #include "Person.h"
 
+// 用于排序比较
+struct FriendInfo {
+	string name;
+	int weight;
+	int index;
+
+	FriendInfo(string n, int c, int i) : name(n), weight(c), index(i) {}
+};
 
 class SocialNetwork
 {
