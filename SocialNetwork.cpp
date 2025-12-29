@@ -37,7 +37,7 @@ void SocialNetwork::sortFriends(string name, bool ascending) {
 }
 //路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
-	
+	return 0;
 }
 	
 void SocialNetwork::displayTop10() {

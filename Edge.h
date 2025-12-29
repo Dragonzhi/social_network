@@ -2,8 +2,8 @@
 class Edge
 {
 public:
-	Edge();
-	~Edge();
+	Edge()=default;
+	~Edge()=default;
 
 	void setTo(int to) {
 		this->to = to;
@@ -23,13 +23,3 @@ private:
 	int to;
 	int weight;
 };
-
-Edge::Edge()
-{
-	to = -1;
-	weight = 0;
-}
-
-Edge::~Edge()
-{
-}

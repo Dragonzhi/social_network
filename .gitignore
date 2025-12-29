@@ -5,3 +5,6 @@
 /SocialNetwork/x64/Debug
 /x64/Debug
 /.vs
+/Debug
+/SocialNetwork/Debug
+*.json

@@ -7,8 +7,8 @@ using namespace std;
 class Person
 {
 public:
-	Person();
-	~Person();
+	Person()=default;
+	~Person()=default;
 
 	void setName(string name) {
 		this->name = name;
@@ -21,12 +21,3 @@ public:
 private:
 	 string name;
 };
-
-Person::Person()
-{
-	name = "";
-}
-
-Person::~Person()
-{
-}
