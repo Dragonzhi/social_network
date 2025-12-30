@@ -393,7 +393,7 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
 	// 最大堆， 存储{权值， 节点ID｝
 	priority_queue<pair<int, int>> pq;
 
-	distToTree[start] = 0;
+	distToTree[start] = INT_MAX;
 	pq.push({ 0, start });
 	
 	while (!pq.empty()) {
@@ -409,9 +409,9 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
 			int v = e.getTo();
 			int w = e.getWeight();
 
-			if (!inMST[v] && w > distToTree[v]) {
+			if (!inMST[v] && min(distToTree[u], w)) {
 				distToTree[v] = w;
-				parent[v] = v;
+				parent[v] = u;
 				pq.push({ distToTree[v], v });
 			}
 		}
