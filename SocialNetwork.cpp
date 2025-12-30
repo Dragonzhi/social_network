@@ -1,7 +1,8 @@
 #include "SocialNetwork.h"
 #include <queue>
-#include "json.hpp"
-
+#include <fstream>
+#include "json.hpp" 
+using json = nlohmann::json;
 SocialNetwork::SocialNetwork()
 {
     // 构造函数，初始化数据结构
@@ -151,10 +152,151 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
 }
 
 void SocialNetwork::saveToFile(string filename) {
+    if (filename.empty()) {
+        cout << "文件名不能为空！\n";
+        return;
+    }
 
+    // 创建 JSON 对象
+    json data;
+
+    // 1. 保存人员信息
+    json persons = json::array();
+    for (const auto& person : vertList) {
+        persons.push_back({
+            {"name", person.getName()}
+            });
+    }
+    data["persons"] = persons;
+
+    // 2. 保存关系信息
+    json edges = json::array();
+    for (int i = 0; i < vertList.size(); i++) {
+        for (const auto& edge : adjList[i]) {
+            int to = edge.getTo();
+            // 为了避免重复保存双向关系，只保存 i < to 的关系
+            if (i < to) {
+                json edge_json;
+                edge_json["from"] = vertList[i].getName();
+                edge_json["to"] = vertList[to].getName();
+                edge_json["weight"] = edge.getWeight();
+                edges.push_back(edge_json);
+            }
+        }
+    }
+    data["edges"] = edges;
+
+    // 3. 保存额外信息
+    data["metadata"]["person_count"] = vertList.size();
+    data["metadata"]["edge_count"] = edges.size();
+    data["metadata"]["save_time"] = "示例时间"; // 可以替换为实际时间
+
+    // 4. 写入文件
+    try {
+        std::ofstream file(filename);
+        if (!file.is_open()) {
+            cout << "无法打开文件 " << filename << " 进行写入！\n";
+            return;
+        }
+
+        file << data.dump(4);  // 缩进4个空格，使JSON更易读
+        file.close();
+
+        cout << "数据已成功保存到文件: " << filename << endl;
+        cout << "保存了 " << vertList.size() << " 个联系人和 "
+            << edges.size() << " 条关系\n";
+    }
+    catch (const std::exception& e) {
+        cout << "保存文件时发生错误: " << e.what() << endl;
+    }
 }
-void SocialNetwork::loadFromFile(string filename) {
 
+void SocialNetwork::loadFromFile(string filename) {
+    if (filename.empty()) {
+        cout << "文件名不能为空！\n";
+        return;
+    }
+
+    // 清空现有数据
+    vertList.clear();
+    adjList.clear();
+    nameToIndex.clear();
+
+    try {
+        // 1. 读取文件
+        std::ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "无法打开文件 " << filename << " 进行读取！\n";
+            return;
+        }
+
+        // 2. 解析 JSON
+        json data = json::parse(file);
+        file.close();
+
+        // 3. 加载人员信息
+        if (!data.contains("persons") || !data["persons"].is_array()) {
+            cout << "文件格式错误：缺少人员信息！\n";
+            return;
+        }
+
+        for (const auto& person_json : data["persons"]) {
+            if (person_json.contains("name")) {
+                string name = person_json["name"];
+                // 使用现有的 addPerson 函数来添加，确保一致性
+                this->addPerson(name);
+            }
+        }
+
+        // 4. 加载关系信息
+        if (data.contains("edges") && data["edges"].is_array()) {
+            for (const auto& edge_json : data["edges"]) {
+                if (edge_json.contains("from") &&
+                    edge_json.contains("to") &&
+                    edge_json.contains("weight")) {
+
+                    string from = edge_json["from"];
+                    string to = edge_json["to"];
+                    int weight = edge_json["weight"];
+
+                    // 使用现有的 addEdge 函数来添加关系
+                    this->addEdge(from, to, weight);
+                }
+            }
+        }
+
+        // 5. 显示加载信息
+        if (data.contains("metadata")) {
+            cout << "从文件 " << filename << " 加载数据成功！\n";
+            if (data["metadata"].contains("person_count")) {
+                cout << "原有人数: " << data["metadata"]["person_count"] << endl;
+            }
+            if (data["metadata"].contains("edge_count")) {
+                cout << "原有关系数: " << data["metadata"]["edge_count"] << endl;
+            }
+        }
+        else {
+            cout << "从文件 " << filename << " 加载数据成功！\n";
+        }
+
+        cout << "当前系统: " << vertList.size() << " 个联系人，";
+
+        // 计算总关系数
+        int total_edges = 0;
+        for (const auto& friends : adjList) {
+            total_edges += friends.size();
+        }
+        // 由于是无向图，每条关系在邻接表中存储了两次
+        cout << total_edges / 2 << " 条关系\n";
+
+    }
+    catch (const json::parse_error& e) {
+        cout << "JSON 解析错误: " << e.what() << endl;
+        cout << "文件格式不正确！\n";
+    }
+    catch (const std::exception& e) {
+        cout << "加载文件时发生错误: " << e.what() << endl;
+    }
 }
 
 // 显示所有联系人关系
