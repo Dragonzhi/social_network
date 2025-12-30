@@ -2,6 +2,7 @@
 #include <queue>
 #include <fstream>
 #include "json.hpp" 
+
 using json = nlohmann::json;
 SocialNetwork::SocialNetwork()
 {
@@ -15,6 +16,10 @@ SocialNetwork::~SocialNetwork()
 
 // 添加联系人
 void SocialNetwork::addPerson(string name) {
+    if (name == "") {
+        cout << "联系人名字不能为空！\n";
+        return;
+    }
     if (findIndex(name) != -1) {
         cout << "联系人 " << name << " 已存在！\n";
         return;
@@ -223,32 +228,55 @@ void SocialNetwork::loadFromFile(string filename) {
     nameToIndex.clear();
 
     try {
-        // 1. 读取文件
-        std::ifstream file(filename);
+        // 1. 以二进制模式读取
+        std::ifstream file(filename, std::ios::binary);
         if (!file.is_open()) {
-            cout << "无法打开文件 " << filename << " 进行读取！\n";
+            cout << "无法打开文件 " << filename << "！\n";
             return;
         }
 
-        // 2. 解析 JSON
-        json data = json::parse(file);
+        // 2. 读取文件到字符串
+        string content((std::istreambuf_iterator<char>(file)),
+            std::istreambuf_iterator<char>());
         file.close();
 
-        // 3. 加载人员信息
-        if (!data.contains("persons") || !data["persons"].is_array()) {
-            cout << "文件格式错误：缺少人员信息！\n";
-            return;
+        // 3. 去除 BOM 头
+        if (content.size() >= 3 &&
+            content[0] == '\xEF' &&
+            content[1] == '\xBB' &&
+            content[2] == '\xBF') {
+            content = content.substr(3);
         }
 
-        for (const auto& person_json : data["persons"]) {
-            if (person_json.contains("name")) {
-                string name = person_json["name"];
-                // 使用现有的 addPerson 函数来添加，确保一致性
-                this->addPerson(name);
+        // 4. 清理可能的非法字符
+        for (size_t i = 0; i < content.size(); i++) {
+            unsigned char c = content[i];
+            // 检查是否为非法 UTF-8 字节
+            if (c == 0xC0 || c == 0xC1 || (c >= 0xF5 && c <= 0xFF)) {
+                // 替换为空格或删除
+                content[i] = ' ';
             }
         }
 
-        // 4. 加载关系信息
+        // 5. 解析 JSON
+        json data = json::parse(content);
+
+        // 6. 加载数据（简化版）
+        // 先添加所有人
+        if (data.contains("persons") && data["persons"].is_array()) {
+            for (const auto& person_json : data["persons"]) {
+                if (person_json.contains("name")) {
+                    string name = person_json["name"];
+                    Person p;
+                    p.setName(name);
+                    vertList.push_back(p);
+                    adjList.push_back(list<Edge>());
+                    nameToIndex[name] = vertList.size() - 1;
+                }
+            }
+        }
+
+        // 再添加所有关系
         if (data.contains("edges") && data["edges"].is_array()) {
             for (const auto& edge_json : data["edges"]) {
                 if (edge_json.contains("from") &&
@@ -259,46 +287,49 @@ void SocialNetwork::loadFromFile(string filename) {
                     string to = edge_json["to"];
                     int weight = edge_json["weight"];
 
-                    // 使用现有的 addEdge 函数来添加关系
-                    this->addEdge(from, to, weight);
+                    int index1 = findIndex(from);
+                    int index2 = findIndex(to);
+
+                    if (index1 != -1 && index2 != -1 && index1 != index2) {
+                        // 检查关系是否已存在
+                        bool exists = false;
+                        for (const auto& edge : adjList[index1]) {
+                            if (edge.getTo() == index2) {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists) {
+                            Edge edge1, edge2;
+                            edge1.setTo(index2);
+                            edge1.setWeight(weight);
+                            edge2.setTo(index1);
+                            edge2.setWeight(weight);
+
+                            adjList[index1].push_back(edge1);
+                            adjList[index2].push_back(edge2);
+                        }
+                    }
                 }
             }
         }
 
-        // 5. 显示加载信息
-        if (data.contains("metadata")) {
-            cout << "从文件 " << filename << " 加载数据成功！\n";
-            if (data["metadata"].contains("person_count")) {
-                cout << "原有人数: " << data["metadata"]["person_count"] << endl;
-            }
-            if (data["metadata"].contains("edge_count")) {
-                cout << "原有关系数: " << data["metadata"]["edge_count"] << endl;
-            }
-        }
-        else {
-            cout << "从文件 " << filename << " 加载数据成功！\n";
-        }
+        cout << "从文件 " << filename << " 加载成功！\n";
+        cout << "加载了 " << vertList.size() << " 个联系人和 ";
 
-        cout << "当前系统: " << vertList.size() << " 个联系人，";
-
-        // 计算总关系数
         int total_edges = 0;
         for (const auto& friends : adjList) {
             total_edges += friends.size();
         }
-        // 由于是无向图，每条关系在邻接表中存储了两次
         cout << total_edges / 2 << " 条关系\n";
 
     }
-    catch (const json::parse_error& e) {
-        cout << "JSON 解析错误: " << e.what() << endl;
-        cout << "文件格式不正确！\n";
-    }
     catch (const std::exception& e) {
-        cout << "加载文件时发生错误: " << e.what() << endl;
+        cout << "错误: " << e.what() << endl;
+        cout << "请确保文件是有效的 UTF-8 编码 JSON 文件！\n";
     }
 }
-
 // 显示所有联系人关系
 void SocialNetwork::displayAll() {
     if (vertList.empty()) {
