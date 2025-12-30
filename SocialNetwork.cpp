@@ -1,4 +1,4 @@
-#include "SocialNetwork.h"
+ï»¿#include "SocialNetwork.h"
 #include <queue>
 #include <fstream>
 #include "json.hpp" 
@@ -6,43 +6,43 @@
 using json = nlohmann::json;
 SocialNetwork::SocialNetwork()
 {
-    // ¹¹Ôìº¯Êı£¬³õÊ¼»¯Êı¾İ½á¹¹
+    // æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–æ•°æ®ç»“æ„
 }
 
 SocialNetwork::~SocialNetwork()
 {
-    // Îö¹¹º¯Êı£¬ÇåÀí×ÊÔ´
+    // ææ„å‡½æ•°ï¼Œæ¸…ç†èµ„æº
 }
 
-// Ìí¼ÓÁªÏµÈË
+// æ·»åŠ è”ç³»äºº
 void SocialNetwork::addPerson(string name) {
     if (name == "") {
-        cout << "ÁªÏµÈËÃû×Ö²»ÄÜÎª¿Õ£¡\n";
+        cout << "è”ç³»äººåå­—ä¸èƒ½ä¸ºç©ºï¼\n";
         return;
     }
     if (findIndex(name) != -1) {
-        cout << "ÁªÏµÈË " << name << " ÒÑ´æÔÚ£¡\n";
+        cout << "è”ç³»äºº " << name << " å·²å­˜åœ¨ï¼\n";
         return;
     }
 
     Person p;
     p.setName(name);
     vertList.push_back(p);
-    adjList.push_back(list<Edge>()); // Ìí¼Ó¿ÕµÄÁÚ½Ó±í
+    adjList.push_back(list<Edge>()); // æ·»åŠ ç©ºçš„é‚»æ¥è¡¨
     nameToIndex[name] = vertList.size() - 1;
 
-    cout << "ÁªÏµÈË " << name << " Ìí¼Ó³É¹¦£¡\n";
+    cout << "è”ç³»äºº " << name << " æ·»åŠ æˆåŠŸï¼\n";
 }
 
-// É¾³ıÁªÏµÈË
+// åˆ é™¤è”ç³»äºº
 void SocialNetwork::deletePerson(string name) {
     int index = findIndex(name);
     if (index == -1) {
-        cout << "ÁªÏµÈË " << name << " ²»´æÔÚ£¡\n";
+        cout << "è”ç³»äºº " << name << " ä¸å­˜åœ¨ï¼\n";
         return;
     }
 
-    // 1. É¾³ı¸ÃÈËµÄËùÓĞ¹ØÏµ£¨´ÓÆäËûÈËµÄÁÚ½Ó±íÖĞÉ¾³ı£©
+    // 1. åˆ é™¤è¯¥äººçš„æ‰€æœ‰å…³ç³»ï¼ˆä»å…¶ä»–äººçš„é‚»æ¥è¡¨ä¸­åˆ é™¤ï¼‰
     for (int i = 0; i < adjList.size(); i++) {
         if (i == index) continue;
 
@@ -57,13 +57,13 @@ void SocialNetwork::deletePerson(string name) {
         }
     }
 
-    // 2. É¾³ı¸ÃÈËµÄÁÚ½Ó±í
+    // 2. åˆ é™¤è¯¥äººçš„é‚»æ¥è¡¨
     adjList.erase(adjList.begin() + index);
 
-    // 3. É¾³ı¸ÃÈË
+    // 3. åˆ é™¤è¯¥äºº
     vertList.erase(vertList.begin() + index);
 
-    // 4. ¸üĞÂnameToIndexÓ³Éä
+    // 4. æ›´æ–°nameToIndexæ˜ å°„
     nameToIndex.erase(name);
     for (auto& pair : nameToIndex) {
         if (pair.second > index) {
@@ -71,35 +71,35 @@ void SocialNetwork::deletePerson(string name) {
         }
     }
 
-    cout << "ÁªÏµÈË " << name << " É¾³ı³É¹¦£¡\n";
+    cout << "è”ç³»äºº " << name << " åˆ é™¤æˆåŠŸï¼\n";
 }
 
-// Ìí¼Ó¹ØÏµ
+// æ·»åŠ å…³ç³»
 void SocialNetwork::addEdge(string name1, string name2, int weight) {
     int index1 = findIndex(name1);
     int index2 = findIndex(name2);
 
     if (index1 == -1 || index2 == -1) {
-        cout << "ÊäÈëµÄÈËÔ±²»´æÔÚ£¡\n";
+        cout << "è¾“å…¥çš„äººå‘˜ä¸å­˜åœ¨ï¼\n";
         return;
     }
 
     if (index1 == index2) {
-        cout << "²»ÄÜÓë×Ô¼º½¨Á¢¹ØÏµ£¡\n";
+        cout << "ä¸èƒ½ä¸è‡ªå·±å»ºç«‹å…³ç³»ï¼\n";
         return;
     }
 
-    // ¼ì²é¹ØÏµÊÇ·ñÒÑ´æÔÚ
+    // æ£€æŸ¥å…³ç³»æ˜¯å¦å·²å­˜åœ¨
     auto& friends1 = adjList[index1];
     for (auto& edge : friends1) {
         if (edge.getTo() == index2) {
-            cout << name1 << " ºÍ " << name2 << " µÄ¹ØÏµÒÑ´æÔÚ£¬Ç×ÃÜ¶ÈÎª: "
+            cout << name1 << " å’Œ " << name2 << " çš„å…³ç³»å·²å­˜åœ¨ï¼Œäº²å¯†åº¦ä¸º: "
                 << edge.getWeight() << "\n";
             return;
         }
     }
 
-    // Ìí¼ÓË«Ïò¹ØÏµ£¨ÎŞÏòÍ¼£©
+    // æ·»åŠ åŒå‘å…³ç³»ï¼ˆæ— å‘å›¾ï¼‰
     Edge edge1, edge2;
     edge1.setTo(index2);
     edge1.setWeight(weight);
@@ -109,22 +109,22 @@ void SocialNetwork::addEdge(string name1, string name2, int weight) {
     adjList[index1].push_back(edge1);
     adjList[index2].push_back(edge2);
 
-    cout << "ÒÑ½¨Á¢ " << name1 << " ºÍ " << name2 << " µÄ¹ØÏµ£¬Ç×ÃÜ¶È: " << weight << "\n";
+    cout << "å·²å»ºç«‹ " << name1 << " å’Œ " << name2 << " çš„å…³ç³»ï¼Œäº²å¯†åº¦: " << weight << "\n";
 }
 
-// É¾³ı¹ØÏµ
+// åˆ é™¤å…³ç³»
 void SocialNetwork::deleteEdge(string name1, string name2) {
     int index1 = findIndex(name1);
     int index2 = findIndex(name2);
 
     if (index1 == -1 || index2 == -1) {
-        cout << "ÊäÈëµÄÈËÔ±²»´æÔÚ£¡\n";
+        cout << "è¾“å…¥çš„äººå‘˜ä¸å­˜åœ¨ï¼\n";
         return;
     }
 
     bool found = false;
 
-    // É¾³ıname1µÄÁÚ½Ó±íÖĞµÄ¹ØÏµ
+    // åˆ é™¤name1çš„é‚»æ¥è¡¨ä¸­çš„å…³ç³»
     auto& friends1 = adjList[index1];
     for (auto it = friends1.begin(); it != friends1.end();) {
         if (it->getTo() == index2) {
@@ -136,7 +136,7 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
         }
     }
 
-    // É¾³ıname2µÄÁÚ½Ó±íÖĞµÄ¹ØÏµ
+    // åˆ é™¤name2çš„é‚»æ¥è¡¨ä¸­çš„å…³ç³»
     auto& friends2 = adjList[index2];
     for (auto it = friends2.begin(); it != friends2.end();) {
         if (it->getTo() == index1) {
@@ -149,10 +149,10 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
     }
 
     if (found) {
-        cout << "ÒÑÉ¾³ı " << name1 << " ºÍ " << name2 << " µÄ¹ØÏµ\n";
+        cout << "å·²åˆ é™¤ " << name1 << " å’Œ " << name2 << " çš„å…³ç³»\n";
     }
     else {
-        cout << name1 << " ºÍ " << name2 << " Ö®¼äÃ»ÓĞ¹ØÏµ\n";
+        cout << name1 << " å’Œ " << name2 << " ä¹‹é—´æ²¡æœ‰å…³ç³»\n";
     }
 }
 
@@ -161,14 +161,14 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
 
 void SocialNetwork::saveToFile(string filename) {
     if (filename.empty()) {
-        cout << "ÎÄ¼şÃû²»ÄÜÎª¿Õ£¡\n";
+        cout << "æ–‡ä»¶åä¸èƒ½ä¸ºç©ºï¼\n";
         return;
     }
 
-    // ´´½¨ JSON ¶ÔÏó
+    // åˆ›å»º JSON å¯¹è±¡
     json data;
 
-    // 1. ±£´æÈËÔ±ĞÅÏ¢
+    // 1. ä¿å­˜äººå‘˜ä¿¡æ¯
     json persons = json::array();
     for (const auto& person : vertList) {
         persons.push_back({
@@ -177,18 +177,18 @@ void SocialNetwork::saveToFile(string filename) {
     }
     data["persons"] = persons;
 
-    // 2. ±£´æ¹ØÏµĞÅÏ¢
+    // 2. ä¿å­˜å…³ç³»ä¿¡æ¯
     json edges = json::array();
-    // Ê¹ÓÃÒ»¸ö¼¯ºÏÀ´±ÜÃâÖØ¸´±£´æË«Ïò¹ØÏµ
+    // ä½¿ç”¨ä¸€ä¸ªé›†åˆæ¥é¿å…é‡å¤ä¿å­˜åŒå‘å…³ç³»
     set<pair<int, int>> saved_edges;
 
     for (int i = 0; i < vertList.size(); i++) {
         for (const auto& edge : adjList[i]) {
             int to = edge.getTo();
-            // ´´½¨ÓĞĞò¶Ô£¬È·±£½ÏĞ¡µÄË÷ÒıÔÚÇ°
+            // åˆ›å»ºæœ‰åºå¯¹ï¼Œç¡®ä¿è¾ƒå°çš„ç´¢å¼•åœ¨å‰
             pair<int, int> edge_pair = (i < to) ? make_pair(i, to) : make_pair(to, i);
 
-            // ¼ì²éÊÇ·ñÒÑ¾­±£´æ¹ıÕâÌõ±ß
+            // æ£€æŸ¥æ˜¯å¦å·²ç»ä¿å­˜è¿‡è¿™æ¡è¾¹
             if (saved_edges.find(edge_pair) == saved_edges.end()) {
                 json edge_json;
                 edge_json["from"] = vertList[i].getName();
@@ -201,11 +201,11 @@ void SocialNetwork::saveToFile(string filename) {
     }
     data["edges"] = edges;
 
-    // 3. ±£´æÔªÊı¾İ
+    // 3. ä¿å­˜å…ƒæ•°æ®
     data["metadata"]["person_count"] = vertList.size();
     data["metadata"]["edge_count"] = edges.size();
 
-    // Ìí¼ÓÊ±¼ä´Á
+    // æ·»åŠ æ—¶é—´æˆ³
     time_t now = time(0);
     tm* local_time = localtime(&now);
     char time_str[100];
@@ -214,62 +214,62 @@ void SocialNetwork::saveToFile(string filename) {
 
     data["metadata"]["version"] = "1.0";
 
-    // 4. Ğ´ÈëÎÄ¼ş
+    // 4. å†™å…¥æ–‡ä»¶
     try {
         std::ofstream file(filename);
         if (!file.is_open()) {
-            cout << "ÎŞ·¨´ò¿ªÎÄ¼ş " << filename << " ½øĞĞĞ´Èë£¡\n";
+            cout << "æ— æ³•æ‰“å¼€æ–‡ä»¶ " << filename << " è¿›è¡Œå†™å…¥ï¼\n";
             return;
         }
 
-        file << data.dump(4);  // Ëõ½ø4¸ö¿Õ¸ñ£¬Ê¹JSON¸üÒ×¶Á
+        file << data.dump(4);  // ç¼©è¿›4ä¸ªç©ºæ ¼ï¼Œä½¿JSONæ›´æ˜“è¯»
         file.close();
 
-        cout << "Êı¾İÒÑ³É¹¦±£´æµ½ÎÄ¼ş: " << filename << endl;
-        cout << "±£´æÁË " << vertList.size() << " ¸öÁªÏµÈËºÍ "
-            << edges.size() << " Ìõ¹ØÏµ\n";
-        cout << "±£´æÊ±¼ä: " << time_str << endl;
+        cout << "æ•°æ®å·²æˆåŠŸä¿å­˜åˆ°æ–‡ä»¶: " << filename << endl;
+        cout << "ä¿å­˜äº† " << vertList.size() << " ä¸ªè”ç³»äººå’Œ "
+            << edges.size() << " æ¡å…³ç³»\n";
+        cout << "ä¿å­˜æ—¶é—´: " << time_str << endl;
     }
     catch (const std::exception& e) {
-        cout << "±£´æÎÄ¼şÊ±·¢Éú´íÎó: " << e.what() << endl;
+        cout << "ä¿å­˜æ–‡ä»¶æ—¶å‘ç”Ÿé”™è¯¯: " << e.what() << endl;
     }
 }
 
 void SocialNetwork::loadFromFile(string filename) {
     if (filename.empty()) {
-        cout << "ÎÄ¼şÃû²»ÄÜÎª¿Õ£¡\n";
+        cout << "æ–‡ä»¶åä¸èƒ½ä¸ºç©ºï¼\n";
         return;
     }
 
-    // Çå¿ÕÏÖÓĞÊı¾İ
+    // æ¸…ç©ºç°æœ‰æ•°æ®
     vertList.clear();
     adjList.clear();
     nameToIndex.clear();
 
     try {
-        // 1. ´ò¿ªÎÄ¼ş²¢¼ì²é
+        // 1. æ‰“å¼€æ–‡ä»¶å¹¶æ£€æŸ¥
         std::ifstream file(filename);
         if (!file.is_open()) {
-            cout << "ÎŞ·¨´ò¿ªÎÄ¼ş " << filename << "£¡\n";
+            cout << "æ— æ³•æ‰“å¼€æ–‡ä»¶ " << filename << "ï¼\n";
             return;
         }
 
-        // 2. ¼ì²éÎÄ¼şÊÇ·ñÎª¿Õ
+        // 2. æ£€æŸ¥æ–‡ä»¶æ˜¯å¦ä¸ºç©º
         file.seekg(0, std::ios::end);
         size_t size = file.tellg();
         if (size == 0) {
-            cout << "ÎÄ¼şÎª¿Õ£¡\n";
+            cout << "æ–‡ä»¶ä¸ºç©ºï¼\n";
             file.close();
             return;
         }
         file.seekg(0, std::ios::beg);
 
-        // 3. ¶ÁÈ¡Õû¸öÎÄ¼şÄÚÈİ
+        // 3. è¯»å–æ•´ä¸ªæ–‡ä»¶å†…å®¹
         string content((std::istreambuf_iterator<char>(file)),
             std::istreambuf_iterator<char>());
         file.close();
 
-        // 4. È¥³ı UTF-8 BOM Í·£¨Èç¹û´æÔÚ£©
+        // 4. å»é™¤ UTF-8 BOM å¤´ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
         if (content.size() >= 3 &&
             static_cast<unsigned char>(content[0]) == 0xEF &&
             static_cast<unsigned char>(content[1]) == 0xBB &&
@@ -277,24 +277,24 @@ void SocialNetwork::loadFromFile(string filename) {
             content = content.substr(3);
         }
 
-        // 5. ½âÎö JSON
+        // 5. è§£æ JSON
         json data;
         try {
             data = json::parse(content);
         }
         catch (const json::parse_error& e) {
-            cout << "JSON ½âÎö´íÎó: " << e.what() << endl;
-            cout << "ÇëÈ·±£ÎÄ¼şÊÇÓĞĞ§µÄ JSON ¸ñÊ½£¡\n";
+            cout << "JSON è§£æé”™è¯¯: " << e.what() << endl;
+            cout << "è¯·ç¡®ä¿æ–‡ä»¶æ˜¯æœ‰æ•ˆçš„ JSON æ ¼å¼ï¼\n";
             return;
         }
 
-        // 6. ÑéÖ¤±ØĞè×Ö¶Î
+        // 6. éªŒè¯å¿…éœ€å­—æ®µ
         if (!data.contains("persons") || !data["persons"].is_array()) {
-            cout << "´íÎó: JSON ÎÄ¼şÖĞÈ±ÉÙ 'persons' Êı×é£¡\n";
+            cout << "é”™è¯¯: JSON æ–‡ä»¶ä¸­ç¼ºå°‘ 'persons' æ•°ç»„ï¼\n";
             return;
         }
 
-        // 7. ¼ÓÔØÈËÔ±ĞÅÏ¢
+        // 7. åŠ è½½äººå‘˜ä¿¡æ¯
         int loaded_persons = 0;
         for (const auto& person_json : data["persons"]) {
             if (person_json.contains("name") && person_json["name"].is_string()) {
@@ -311,10 +311,10 @@ void SocialNetwork::loadFromFile(string filename) {
         }
 
         if (loaded_persons == 0) {
-            cout << "¾¯¸æ: ÎÄ¼şÖĞÃ»ÓĞÕÒµ½ÓĞĞ§µÄÈËÔ±ĞÅÏ¢£¡\n";
+            cout << "è­¦å‘Š: æ–‡ä»¶ä¸­æ²¡æœ‰æ‰¾åˆ°æœ‰æ•ˆçš„äººå‘˜ä¿¡æ¯ï¼\n";
         }
 
-        // 8. ¼ÓÔØ¹ØÏµĞÅÏ¢£¨Èç¹û´æÔÚ£©
+        // 8. åŠ è½½å…³ç³»ä¿¡æ¯ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
         int loaded_edges = 0;
         if (data.contains("edges") && data["edges"].is_array()) {
             for (const auto& edge_json : data["edges"]) {
@@ -326,9 +326,9 @@ void SocialNetwork::loadFromFile(string filename) {
                     string to_name = edge_json["to"];
                     int weight = edge_json["weight"];
 
-                    // ÑéÖ¤È¨ÖØ·¶Î§
+                    // éªŒè¯æƒé‡èŒƒå›´
                     if (weight < 1 || weight > 100) {
-                        cout << "¾¯¸æ: ¹ØÏµÈ¨ÖØ " << weight << " ²»ÔÚÓĞĞ§·¶Î§(1-100)ÄÚ£¬½«±»ºöÂÔ\n";
+                        cout << "è­¦å‘Š: å…³ç³»æƒé‡ " << weight << " ä¸åœ¨æœ‰æ•ˆèŒƒå›´(1-100)å†…ï¼Œå°†è¢«å¿½ç•¥\n";
                         continue;
                     }
 
@@ -336,7 +336,7 @@ void SocialNetwork::loadFromFile(string filename) {
                     int to_index = findIndex(to_name);
 
                     if (from_index != -1 && to_index != -1 && from_index != to_index) {
-                        // ¼ì²é¹ØÏµÊÇ·ñÒÑ´æÔÚ
+                        // æ£€æŸ¥å…³ç³»æ˜¯å¦å·²å­˜åœ¨
                         bool exists = false;
                         for (const auto& edge : adjList[from_index]) {
                             if (edge.getTo() == to_index) {
@@ -358,33 +358,33 @@ void SocialNetwork::loadFromFile(string filename) {
                         }
                     }
                     else {
-                        cout << "¾¯¸æ: ÎŞ·¨Ìí¼Ó¹ØÏµ " << from_name << " -> " << to_name
-                            << "£¬ÒòÎªÖÁÉÙÒ»ÈË²»´æÔÚ»òÊÇÍ¬Ò»¸öÈË\n";
+                        cout << "è­¦å‘Š: æ— æ³•æ·»åŠ å…³ç³» " << from_name << " -> " << to_name
+                            << "ï¼Œå› ä¸ºè‡³å°‘ä¸€äººä¸å­˜åœ¨æˆ–æ˜¯åŒä¸€ä¸ªäºº\n";
                     }
                 }
             }
         }
 
-        // 9. ÏÔÊ¾¼ÓÔØÍ³¼ÆĞÅÏ¢
-        cout << "´ÓÎÄ¼ş " << filename << " ¼ÓÔØ³É¹¦£¡\n";
-        cout << "¼ÓÔØÁË " << loaded_persons << " ¸öÁªÏµÈËºÍ "
-            << loaded_edges << " Ìõ¹ØÏµ\n";
+        // 9. æ˜¾ç¤ºåŠ è½½ç»Ÿè®¡ä¿¡æ¯
+        cout << "ä»æ–‡ä»¶ " << filename << " åŠ è½½æˆåŠŸï¼\n";
+        cout << "åŠ è½½äº† " << loaded_persons << " ä¸ªè”ç³»äººå’Œ "
+            << loaded_edges << " æ¡å…³ç³»\n";
 
-        // 10. ÏÔÊ¾ÔªÊı¾İ£¨Èç¹û´æÔÚ£©
+        // 10. æ˜¾ç¤ºå…ƒæ•°æ®ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
         if (data.contains("metadata")) {
             auto& metadata = data["metadata"];
             if (metadata.contains("save_time")) {
-                cout << "Ô­±£´æÊ±¼ä: " << metadata["save_time"] << endl;
+                cout << "åŸä¿å­˜æ—¶é—´: " << metadata["save_time"] << endl;
             }
             if (metadata.contains("version")) {
-                cout << "ÎÄ¼ş°æ±¾: " << metadata["version"] << endl;
+                cout << "æ–‡ä»¶ç‰ˆæœ¬: " << metadata["version"] << endl;
             }
         }
 
     }
     catch (const std::exception& e) {
-        cout << "¼ÓÔØÎÄ¼şÊ±·¢Éú´íÎó: " << e.what() << endl;
-        cout << "ÇëÈ·±£ÎÄ¼ş´æÔÚÇÒ¸ñÊ½ÕıÈ·£¡\n";
+        cout << "åŠ è½½æ–‡ä»¶æ—¶å‘ç”Ÿé”™è¯¯: " << e.what() << endl;
+        cout << "è¯·ç¡®ä¿æ–‡ä»¶å­˜åœ¨ä¸”æ ¼å¼æ­£ç¡®ï¼\n";
     }
 }
 
@@ -395,25 +395,25 @@ void SocialNetwork::loadFromFile(string filename) {
 
 
 
-// ÏÔÊ¾ËùÓĞÁªÏµÈË¹ØÏµ
+// æ˜¾ç¤ºæ‰€æœ‰è”ç³»äººå…³ç³»
 void SocialNetwork::displayAll() {
     displayAllBeautiful();
 }
 
-// °´Ç×ÃÜ³Ì¶ÈÅÅĞòºÃÓÑ
+// æŒ‰äº²å¯†ç¨‹åº¦æ’åºå¥½å‹
 void SocialNetwork::sortFriends(string name, bool ascending) {
     displaySortFriendsBeautiful(name, ascending);
 }
-//Â·¾¶Ç×ÃÜ¶ÈÏÂ½ç×î´óÖµ
+//è·¯å¾„äº²å¯†åº¦ä¸‹ç•Œæœ€å¤§å€¼
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
-    // ÏÈ¼ÆËã½á¹û
+    // å…ˆè®¡ç®—ç»“æœ
     int start = findIndex(startName);
     int end = findIndex(endName);
 
     if (start == -1 || end == -1) return -1;
     if (start == end) return 0;
 
-    // ¼ì²éÊÇ·ñÊÇÖ±½ÓºÃÓÑ
+    // æ£€æŸ¥æ˜¯å¦æ˜¯ç›´æ¥å¥½å‹
     for (auto& e : adjList[start]) {
         if (e.getTo() == end) {
             displayBottleneckBeautiful(startName, endName);
@@ -421,7 +421,7 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
         }
     }
 
-    // ¼ÆËã×î´óÆ¿¾±Â·¾¶
+    // è®¡ç®—æœ€å¤§ç“¶é¢ˆè·¯å¾„
     int personCount = vertList.size();
     vector<int> maxBottleNeck(personCount, 0);
     vector<bool> visited(personCount, false);
@@ -431,7 +431,7 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
     pq.push({ INT_MAX, start });
 
     while (!pq.empty()) {
-        auto current = pq.top();  // ÏÈ»ñÈ¡¶¥²¿ÔªËØ
+        auto current = pq.top();  // å…ˆè·å–é¡¶éƒ¨å…ƒç´ 
         int currentBottleneck = current.first;
         int u = current.second;
         pq.pop();
@@ -468,13 +468,13 @@ void SocialNetwork::displayTop10() {
     displayTop10Beautiful();
 }
 int SocialNetwork::findIndex(string name) {
-	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// Î´ÕÒµ½Ãû×Ö¶ÔÓ¦µÄÈËµÄID£¬·µ»Ø-1
+	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// æœªæ‰¾åˆ°åå­—å¯¹åº”çš„äººçš„IDï¼Œè¿”å›-1
 	return nameToIndex[name];
 }
 
 
 
-// =============== ¸¨Öúº¯ÊıÊµÏÖ ===============
+// =============== è¾…åŠ©å‡½æ•°å®ç° ===============
 
 string SocialNetwork::createBoxedText(const string& text, int width) {
     string result;
@@ -490,7 +490,7 @@ string SocialNetwork::createSectionHeader(const string& title) {
     string border(60, '=');
     result = "\n" + border + "\n";
 
-    // ¼ÆËã¾ÓÖĞÎ»ÖÃ
+    // è®¡ç®—å±…ä¸­ä½ç½®
     int padding = (60 - title.length()) / 2;
     result += string(padding, ' ') + title + "\n";
     result += border + "\n";
@@ -538,29 +538,29 @@ string SocialNetwork::centerText(const string& text, int width) {
     return string(leftPadding, ' ') + text + string(rightPadding, ' ');
 }
 
-// =============== ÃÀ»¯ÏÔÊ¾º¯ÊıÊµÏÖ ===============
+// =============== ç¾åŒ–æ˜¾ç¤ºå‡½æ•°å®ç° ===============
 
-// ÃÀ»¯ÏÔÊ¾ËùÓĞÁªÏµÈË¹ØÏµ
+// ç¾åŒ–æ˜¾ç¤ºæ‰€æœ‰è”ç³»äººå…³ç³»
 void SocialNetwork::displayAllBeautiful() {
     if (vertList.empty()) {
-        cout << createSectionHeader("Éç½»ÍøÂç×´Ì¬");
-        cout << "\n" << ERROR_ICON << " Éç½»ÍøÂçÎª¿Õ£¡ÔİÊ±»¹Ã»ÓĞÈÎºÎÁªÏµÈË\n";
+        cout << createSectionHeader("ç¤¾äº¤ç½‘ç»œçŠ¶æ€");
+        cout << "\n" << ERROR_ICON << " ç¤¾äº¤ç½‘ç»œä¸ºç©ºï¼æš‚æ—¶è¿˜æ²¡æœ‰ä»»ä½•è”ç³»äºº\n";
         return;
     }
 
-    // Í·²¿
-    cout << createSectionHeader("Éç½»¹ØÏµÍøÂç×ÜÀÀ");
+    // å¤´éƒ¨
+    cout << createSectionHeader("ç¤¾äº¤å…³ç³»ç½‘ç»œæ€»è§ˆ");
 
     int totalFriends = 0;
     int totalIntimacy = 0;
 
-    // ÏÔÊ¾Ã¿¸öÁªÏµÈË
+    // æ˜¾ç¤ºæ¯ä¸ªè”ç³»äºº
     for (int i = 0; i < vertList.size(); i++) {
         string name = vertList[i].getName();
         int friendCount = adjList[i].size();
         totalFriends += friendCount;
 
-        // Ñ¡ÔñÍ¼±ê
+        // é€‰æ‹©å›¾æ ‡
         string icon;
         if (friendCount >= 10) icon = CROWN_ICON + " ";
         else if (friendCount >= 5) icon = STAR_ICON + " ";
@@ -569,9 +569,9 @@ void SocialNetwork::displayAllBeautiful() {
         else icon = NEW_ICON + " ";
 
         cout << "\n" << icon << " " << left << setw(20) << name;
-        cout << "ºÃÓÑÊı: [" << setw(2) << friendCount << "] ";
+        cout << "å¥½å‹æ•°: [" << setw(2) << friendCount << "] ";
 
-        // ÏÔÊ¾Ç×ÃÜ¶È½ø¶ÈÌõ
+        // æ˜¾ç¤ºäº²å¯†åº¦è¿›åº¦æ¡
         float avgIntimacy = 0;
         if (friendCount > 0) {
             int totalWeight = 0;
@@ -582,13 +582,13 @@ void SocialNetwork::displayAllBeautiful() {
             avgIntimacy = totalWeight / (float)friendCount;
         }
 
-        cout << "Ç×ÃÜ¶È: " << createProgressBar(avgIntimacy, 15);
+        cout << "äº²å¯†åº¦: " << createProgressBar(avgIntimacy, 15);
 
-        cout << "\n" << string(4, ' ') << "ºÃÓÑÁĞ±í: ";
+        cout << "\n" << string(4, ' ') << "å¥½å‹åˆ—è¡¨: ";
 
-        // ÏÔÊ¾ºÃÓÑ
+        // æ˜¾ç¤ºå¥½å‹
         if (adjList[i].empty()) {
-            cout << "ÔİÎŞºÃÓÑ";
+            cout << "æš‚æ— å¥½å‹";
         }
         else {
             int count = 0;
@@ -608,29 +608,29 @@ void SocialNetwork::displayAllBeautiful() {
             }
         }
 
-        // Ìí¼Ó·Ö¸ôÏß
+        // æ·»åŠ åˆ†éš”çº¿
         if (i < vertList.size() - 1) {
             cout << "\n" << LINE_DASH << "\n";
         }
     }
 
-    // Í³¼ÆĞÅÏ¢
+    // ç»Ÿè®¡ä¿¡æ¯
     cout << "\n\n" << LINE_THIN;
-    cout << "\n" << STATS_ICON << " ÍøÂçÍ³¼ÆĞÅÏ¢:";
-    cout << "\n   ×ÜÈËÊı: " << vertList.size();
-    cout << "\n   ×Ü¹ØÏµÊı: " << totalFriends / 2;
-    cout << "\n   ÈË¾ùºÃÓÑÊı: " << fixed << setprecision(1)
+    cout << "\n" << STATS_ICON << " ç½‘ç»œç»Ÿè®¡ä¿¡æ¯:";
+    cout << "\n   æ€»äººæ•°: " << vertList.size();
+    cout << "\n   æ€»å…³ç³»æ•°: " << totalFriends / 2;
+    cout << "\n   äººå‡å¥½å‹æ•°: " << fixed << setprecision(1)
         << (vertList.size() > 0 ? totalFriends / (float)vertList.size() : 0);
-    cout << "\n   Æ½¾ùÇ×ÃÜ¶È: " << fixed << setprecision(1)
+    cout << "\n   å¹³å‡äº²å¯†åº¦: " << fixed << setprecision(1)
         << (totalFriends > 0 ? totalIntimacy / (float)totalFriends : 0);
     cout << "\n" << LINE_THIN << "\n";
 }
 
-// ÃÀ»¯ÏÔÊ¾ÅÅĞòºÃÓÑ
+// ç¾åŒ–æ˜¾ç¤ºæ’åºå¥½å‹
 void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
     int index = findIndex(name);
     if (index == -1) {
-        cout << ERROR_ICON << " ÁªÏµÈË " << name << " ²»´æÔÚ£¡\n";
+        cout << ERROR_ICON << " è”ç³»äºº " << name << " ä¸å­˜åœ¨ï¼\n";
         return;
     }
 
@@ -640,18 +640,18 @@ void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
     }
 
     if (friend_infos.empty()) {
-        cout << INFO_ICON << " " << name << " ÔİÊ±Ã»ÓĞºÃÓÑ\n";
+        cout << INFO_ICON << " " << name << " æš‚æ—¶æ²¡æœ‰å¥½å‹\n";
         return;
     }
 
-    // ÅÅĞò
+    // æ’åº
     if (ascending) {
         sort(friend_infos.begin(), friend_infos.end(),
             [](const FriendInfo& a, const FriendInfo& b) {
                 return a.weight < b.weight;
             });
 
-        cout << createSectionHeader(name + " µÄºÃÓÑÁĞ±í£¨°´Ç×ÃÜ¶ÈÉıĞò£©");
+        cout << createSectionHeader(name + " çš„å¥½å‹åˆ—è¡¨ï¼ˆæŒ‰äº²å¯†åº¦å‡åºï¼‰");
     }
     else {
         sort(friend_infos.begin(), friend_infos.end(),
@@ -659,10 +659,10 @@ void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
                 return a.weight > b.weight;
             });
 
-        cout << createSectionHeader(name + " µÄºÃÓÑÁĞ±í£¨°´Ç×ÃÜ¶È½µĞò£©");
+        cout << createSectionHeader(name + " çš„å¥½å‹åˆ—è¡¨ï¼ˆæŒ‰äº²å¯†åº¦é™åºï¼‰");
 
-        // ÏÔÊ¾Ç°ÈıÃû
-        cout << "\n Ç°ÈıÃûºÃÓÑ:\n";
+        // æ˜¾ç¤ºå‰ä¸‰å
+        cout << "\n å‰ä¸‰åå¥½å‹:\n";
         cout << LINE_THIN << "\n";
 
         for (int i = 0; i < min(3, (int)friend_infos.size()); i++) {
@@ -675,46 +675,46 @@ void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
             cout << " -> " << createProgressBar(friend_infos[i].weight, 12);
 
             string level;
-            if (friend_infos[i].weight >= 90) level = " (Ö¿ÓÑ)";
-            else if (friend_infos[i].weight >= 70) level = " (ºÃÓÑ)";
-            else if (friend_infos[i].weight >= 50) level = " (ÆÕÍ¨)";
-            else level = " (ÏàÊ¶)";
+            if (friend_infos[i].weight >= 90) level = " (æŒšå‹)";
+            else if (friend_infos[i].weight >= 70) level = " (å¥½å‹)";
+            else if (friend_infos[i].weight >= 50) level = " (æ™®é€š)";
+            else level = " (ç›¸è¯†)";
 
             cout << level << "\n";
         }
 
         if (friend_infos.size() > 3) {
-            cout << "\n ÆäËûºÃÓÑ:\n";
+            cout << "\n å…¶ä»–å¥½å‹:\n";
             cout << LINE_THIN << "\n";
         }
     }
 
-    // ÏÔÊ¾ËùÓĞºÃÓÑ£¨Èç¹ûÊÇÉıĞò£¬ÏÔÊ¾È«²¿£»Èç¹ûÊÇ½µĞò£¬´ÓµÚ4¸ö¿ªÊ¼£©
+    // æ˜¾ç¤ºæ‰€æœ‰å¥½å‹ï¼ˆå¦‚æœæ˜¯å‡åºï¼Œæ˜¾ç¤ºå…¨éƒ¨ï¼›å¦‚æœæ˜¯é™åºï¼Œä»ç¬¬4ä¸ªå¼€å§‹ï¼‰
     int start = ascending ? 0 : 3;
     for (int i = start; i < friend_infos.size(); i++) {
         cout << " " << setw(2) << (i + 1) << ". " << left << setw(15) << friend_infos[i].name;
         cout << " -> " << createProgressBar(friend_infos[i].weight, 12) << "\n";
     }
 
-    // Í³¼ÆĞÅÏ¢
+    // ç»Ÿè®¡ä¿¡æ¯
     float avgWeight = 0;
     for (auto& info : friend_infos) avgWeight += info.weight;
     avgWeight /= friend_infos.size();
 
     cout << "\n" << LINE_THIN;
-    cout << "\n" << STATS_ICON << " Í³¼ÆĞÅÏ¢:";
-    cout << "\n   ºÃÓÑ×ÜÊı: " << friend_infos.size();
-    cout << "\n   Æ½¾ùÇ×ÃÜ¶È: " << fixed << setprecision(1) << avgWeight << "%";
-    cout << "\n   ×î¸ßÇ×ÃÜ¶È: " << friend_infos[0].weight << "%";
-    cout << "\n   ×îµÍÇ×ÃÜ¶È: " << friend_infos.back().weight << "%";
+    cout << "\n" << STATS_ICON << " ç»Ÿè®¡ä¿¡æ¯:";
+    cout << "\n   å¥½å‹æ€»æ•°: " << friend_infos.size();
+    cout << "\n   å¹³å‡äº²å¯†åº¦: " << fixed << setprecision(1) << avgWeight << "%";
+    cout << "\n   æœ€é«˜äº²å¯†åº¦: " << friend_infos[0].weight << "%";
+    cout << "\n   æœ€ä½äº²å¯†åº¦: " << friend_infos.back().weight << "%";
     cout << "\n" << LINE_THIN << "\n";
 }
 
-// ÃÀ»¯ÏÔÊ¾Éç½»´óÅ£Top10
+// ç¾åŒ–æ˜¾ç¤ºç¤¾äº¤å¤§ç‰›Top10
 void SocialNetwork::displayTop10Beautiful() {
     int personCount = vertList.size();
     if (personCount <= 0) {
-        cout << ERROR_ICON << " Éç½»ÍøÂçÎª¿Õ£¡\n";
+        cout << ERROR_ICON << " ç¤¾äº¤ç½‘ç»œä¸ºç©ºï¼\n";
         return;
     }
 
@@ -730,11 +730,11 @@ void SocialNetwork::displayTop10Beautiful() {
 
     int displayCount = min(10, personCount);
 
-    cout << createSectionHeader("Éç½»´óÅ£ÅÅĞĞ°ñ TOP" + to_string(displayCount));
+    cout << createSectionHeader("ç¤¾äº¤å¤§ç‰›æ’è¡Œæ¦œ TOP" + to_string(displayCount));
 
-    // ´´½¨±í¸ñ
+    // åˆ›å»ºè¡¨æ ¼
     cout << "\n" << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
-    cout << TABLE_VERT << " ÅÅÃû |       ĞÕÃû        | ºÃÓÑÊı | Éç½»Ó°ÏìÁ¦               " << TABLE_VERT << "\n";
+    cout << TABLE_VERT << " æ’å |       å§“å        | å¥½å‹æ•° | ç¤¾äº¤å½±å“åŠ›               " << TABLE_VERT << "\n";
     cout << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
 
     for (int i = 0; i < displayCount; i++) {
@@ -742,7 +742,7 @@ void SocialNetwork::displayTop10Beautiful() {
         string name = vertList[idx].getName();
         int count = friendCounts[i].second;
 
-        // ÅÅÃû
+        // æ’å
         string rank;
         if (i == 0) rank = TOP1_ICON;
         else if (i == 1) rank = TOP2_ICON;
@@ -751,7 +751,7 @@ void SocialNetwork::displayTop10Beautiful() {
 
         cout << TABLE_VERT << " " << left << setw(4) << rank;
 
-        // ĞÕÃû
+        // å§“å
         string nameIcon;
         if (count >= 15) nameIcon = CROWN_ICON;
         else if (count >= 10) nameIcon = STAR_ICON;
@@ -760,15 +760,15 @@ void SocialNetwork::displayTop10Beautiful() {
 
         cout << " | " << nameIcon << " " << setw(15) << name;
 
-        // ºÃÓÑÊı
+        // å¥½å‹æ•°
         int maxFriends = friendCounts[0].second;
         float friendRatio = (float)count / maxFriends;
         cout << " | [" << setw(2) << count << "] ";
 
-        // ½ø¶ÈÌõ
+        // è¿›åº¦æ¡
         cout << createSmallProgressBar(friendRatio * 100, 10);
 
-        // ºÃÓÑÁĞ±í£¨Ç°2¸ö£©
+        // å¥½å‹åˆ—è¡¨ï¼ˆå‰2ä¸ªï¼‰
         cout << " | ";
         int shown = 0;
         for (auto& edge : adjList[idx]) {
@@ -778,14 +778,14 @@ void SocialNetwork::displayTop10Beautiful() {
             shown++;
         }
         if (adjList[idx].size() > 2) {
-            cout << "µÈ" << adjList[idx].size() << "ÈË";
+            cout << "ç­‰" << adjList[idx].size() << "äºº";
         }
 
-        // ¶ÔÆë
+        // å¯¹é½
         int remaining = 20 - shown * 8;
         cout << string(remaining, ' ') << TABLE_VERT << "\n";
 
-        // ·Ö¸ôÏß
+        // åˆ†éš”çº¿
         if (i < displayCount - 1) {
             cout << TABLE_VERT << string(70, '-') << TABLE_VERT << "\n";
         }
@@ -793,53 +793,53 @@ void SocialNetwork::displayTop10Beautiful() {
 
     cout << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
 
-    // Í³¼ÆĞÅÏ¢
+    // ç»Ÿè®¡ä¿¡æ¯
     //float avgFriends = 0;
     //for (auto& p : friendCounts) avgFriends += p.second;
     //avgFriends /= personCount;
 
-    //cout << "\n" << STATS_ICON << " ÍøÂçÍ³¼Æ:";
-    //cout << "\n   ×ÜÈËÊı: " << personCount;
-    //cout << "\n   ÈË¾ùºÃÓÑÊı: " << fixed << setprecision(1) << avgFriends;
-    //cout << "\n   Éç½»´ïÈË±ê×¼: " << (personCount >= 10 ? friendCounts[0].second : 0) << "+ ºÃÓÑ";
-    //cout << "\n   Ç°" << displayCount << "ÃûÕ¼×ÜºÃÓÑÊı: "
+    //cout << "\n" << STATS_ICON << " ç½‘ç»œç»Ÿè®¡:";
+    //cout << "\n   æ€»äººæ•°: " << personCount;
+    //cout << "\n   äººå‡å¥½å‹æ•°: " << fixed << setprecision(1) << avgFriends;
+    //cout << "\n   ç¤¾äº¤è¾¾äººæ ‡å‡†: " << (personCount >= 10 ? friendCounts[0].second : 0) << "+ å¥½å‹";
+    //cout << "\n   å‰" << displayCount << "åå æ€»å¥½å‹æ•°: "
     //    << fixed << setprecision(1)
     //    << (friendCounts[0].second * displayCount * 100.0 / (avgFriends * personCount)) << "%";
     //cout << "\n" << LINE_THIN << "\n";
 }
 
-// ÃÀ»¯ÏÔÊ¾Ç×ÃÜ¶È²éÑ¯
+// ç¾åŒ–æ˜¾ç¤ºäº²å¯†åº¦æŸ¥è¯¢
 void SocialNetwork::displayBottleneckBeautiful(string startName, string endName) {
     int start = findIndex(startName);
     int end = findIndex(endName);
 
     if (start == -1 || end == -1) {
-        cout << ERROR_ICON << " ÖÁÉÙÒ»¸öÁªÏµÈË²»´æÔÚ£¡\n";
+        cout << ERROR_ICON << " è‡³å°‘ä¸€ä¸ªè”ç³»äººä¸å­˜åœ¨ï¼\n";
         return;
     }
 
     if (start == end) {
-        cout << INFO_ICON << " ÕâÊÇÍ¬Ò»¸öÈË£¡\n";
+        cout << INFO_ICON << " è¿™æ˜¯åŒä¸€ä¸ªäººï¼\n";
         return;
     }
 
-    // ¼ì²éÊÇ·ñÊÇÖ±½ÓºÃÓÑ
+    // æ£€æŸ¥æ˜¯å¦æ˜¯ç›´æ¥å¥½å‹
     for (auto& e : adjList[start]) {
         if (e.getTo() == end) {
-            cout << createSectionHeader("Ö±½ÓºÃÓÑ¹ØÏµ¼ì²â");
-            cout << "\n" << SUCCESS_ICON << " " << startName << " ºÍ " << endName << " ÊÇÖ±½ÓºÃÓÑ£¡\n";
-            cout << "\n   Ç×ÃÜ¶È: " << createProgressBar(e.getWeight(), 20);
-            cout << "\n   ¹ØÏµÇ¿¶È: ";
-            if (e.getWeight() >= 80) cout << "Ç¿¹ØÏµ (Ç×ÃÜºÃÓÑ)";
-            else if (e.getWeight() >= 60) cout << "ÖĞ¹ØÏµ (ÆÕÍ¨ºÃÓÑ)";
-            else if (e.getWeight() >= 40) cout << "Èõ¹ØÏµ (ÈÏÊ¶µÄÈË)";
-            else cout << "Î¢Èõ¹ØÏµ (¸ÕÈÏÊ¶)";
+            cout << createSectionHeader("ç›´æ¥å¥½å‹å…³ç³»æ£€æµ‹");
+            cout << "\n" << SUCCESS_ICON << " " << startName << " å’Œ " << endName << " æ˜¯ç›´æ¥å¥½å‹ï¼\n";
+            cout << "\n   äº²å¯†åº¦: " << createProgressBar(e.getWeight(), 20);
+            cout << "\n   å…³ç³»å¼ºåº¦: ";
+            if (e.getWeight() >= 80) cout << "å¼ºå…³ç³» (äº²å¯†å¥½å‹)";
+            else if (e.getWeight() >= 60) cout << "ä¸­å…³ç³» (æ™®é€šå¥½å‹)";
+            else if (e.getWeight() >= 40) cout << "å¼±å…³ç³» (è®¤è¯†çš„äºº)";
+            else cout << "å¾®å¼±å…³ç³» (åˆšè®¤è¯†)";
             cout << "\n" << LINE_THIN << "\n";
             return;
         }
     }
 
-    // Èç¹û²»ÊÇÖ±½ÓºÃÓÑ£¬¼ÆËã×î´óÆ¿¾±Â·¾¶
+    // å¦‚æœä¸æ˜¯ç›´æ¥å¥½å‹ï¼Œè®¡ç®—æœ€å¤§ç“¶é¢ˆè·¯å¾„
     int personCount = vertList.size();
     vector<int> maxBottleNeck(personCount, 0);
     vector<bool> visited(personCount, false);
@@ -849,7 +849,7 @@ void SocialNetwork::displayBottleneckBeautiful(string startName, string endName)
     pq.push({ INT_MAX, start });
 
     while (!pq.empty()) {
-        auto current = pq.top();  // ÏÈ»ñÈ¡¶¥²¿ÔªËØ
+        auto current = pq.top();  // å…ˆè·å–é¡¶éƒ¨å…ƒç´ 
         int currentBottleneck = current.first;
         int u = current.second;
         pq.pop();
@@ -874,27 +874,238 @@ void SocialNetwork::displayBottleneckBeautiful(string startName, string endName)
     }
 
     if (maxBottleNeck[end] == 0) {
-        cout << createSectionHeader("Ç×ÃÜ¶ÈÂ·¾¶·ÖÎö");
-        cout << "\n" << ERROR_ICON << " " << startName << " ºÍ " << endName << " Ö®¼äÃ»ÓĞ¿É´ïÂ·¾¶£¡\n";
-        cout << "\n   ·ÖÎö½á¹û: Á½ÈËÖ®¼äÃ»ÓĞÖ±½ÓµÄÉç½»ÁªÏµ\n";
-        cout << "   ½¨Òé: Í¨¹ı¹²Í¬ºÃÓÑ½¨Á¢ÁªÏµ\n";
+        cout << createSectionHeader("äº²å¯†åº¦è·¯å¾„åˆ†æ");
+        cout << "\n" << ERROR_ICON << " " << startName << " å’Œ " << endName << " ä¹‹é—´æ²¡æœ‰å¯è¾¾è·¯å¾„ï¼\n";
+        cout << "\n   åˆ†æç»“æœ: ä¸¤äººä¹‹é—´æ²¡æœ‰ç›´æ¥çš„ç¤¾äº¤è”ç³»\n";
+        cout << "   å»ºè®®: é€šè¿‡å…±åŒå¥½å‹å»ºç«‹è”ç³»\n";
         cout << LINE_THIN << "\n";
         return;
     }
 
-    cout << createSectionHeader("Ç×ÃÜ¶ÈÂ·¾¶·ÖÎö");
-    cout << "\n" << INFO_ICON << " ²éÑ¯: " << startName << " -> " << endName << "\n";
+    cout << createSectionHeader("äº²å¯†åº¦è·¯å¾„åˆ†æ");
+    cout << "\n" << INFO_ICON << " æŸ¥è¯¢: " << startName << " -> " << endName << "\n";
     cout << LINE_THIN << "\n";
-    cout << "   ×î´óÇ×ÃÜ¶ÈÏÂÏŞ: " << createProgressBar(maxBottleNeck[end], 20) << "\n";
+    cout << "   æœ€å¤§äº²å¯†åº¦ä¸‹é™: " << createProgressBar(maxBottleNeck[end], 20) << "\n";
 
     string relationship;
-    if (maxBottleNeck[end] >= 80) relationship = "Ç¿Éç½»¹ØÏµ (¿ÉÒÔÍ¨¹ıÇ×ÃÜÅóÓÑÁªÏµ)";
-    else if (maxBottleNeck[end] >= 60) relationship = "ÖĞµÈÉç½»¹ØÏµ (¿ÉÒÔÍ¨¹ıÆÕÍ¨ÅóÓÑÁªÏµ)";
-    else if (maxBottleNeck[end] >= 40) relationship = "ÈõÉç½»¹ØÏµ (¿ÉÒÔÍ¨¹ıÊìÈËÁªÏµ)";
-    else relationship = "Î¢ÈõÉç½»¹ØÏµ (ÁªÏµ½ÏÈõ)";
+    if (maxBottleNeck[end] >= 80) relationship = "å¼ºç¤¾äº¤å…³ç³» (å¯ä»¥é€šè¿‡äº²å¯†æœ‹å‹è”ç³»)";
+    else if (maxBottleNeck[end] >= 60) relationship = "ä¸­ç­‰ç¤¾äº¤å…³ç³» (å¯ä»¥é€šè¿‡æ™®é€šæœ‹å‹è”ç³»)";
+    else if (maxBottleNeck[end] >= 40) relationship = "å¼±ç¤¾äº¤å…³ç³» (å¯ä»¥é€šè¿‡ç†Ÿäººè”ç³»)";
+    else relationship = "å¾®å¼±ç¤¾äº¤å…³ç³» (è”ç³»è¾ƒå¼±)";
 
-    cout << "   ¹ØÏµÇ¿¶È: " << relationship << "\n";
-    cout << "   ËµÃ÷: ÕâÊÇËùÓĞ¿É´ïÂ·¾¶ÖĞµÄ×î¸ßÇ×ÃÜ¶ÈÏÂÏŞ\n";
-    cout << "         ±íÊ¾Á½ÈËÁªÏµµÄ×îÇ×ÃÜ³Ì¶È\n";
+    cout << "   å…³ç³»å¼ºåº¦: " << relationship << "\n";
+    cout << "   è¯´æ˜: è¿™æ˜¯æ‰€æœ‰å¯è¾¾è·¯å¾„ä¸­çš„æœ€é«˜äº²å¯†åº¦ä¸‹é™\n";
+    cout << "         è¡¨ç¤ºä¸¤äººè”ç³»çš„æœ€äº²å¯†ç¨‹åº¦\n";
     cout << LINE_THIN << "\n";
 }
+
+void SocialNetwork::displayGraphASCII() {
+    if (vertList.empty()) {
+        cout << "ç¤¾äº¤ç½‘ç»œä¸ºç©ºï¼\n";
+        return;
+    }
+
+    cout << createSectionHeader("ç¤¾äº¤ç½‘ç»œå›¾");
+
+    // ç®€å•å¸ƒå±€ç®—æ³• - å°†äººå‘˜æ”¾ç½®åœ¨ä¸€ä¸ªåœ†å½¢ä¸Š
+    const int RADIUS = 15;
+    const int CENTER_X = 25;
+    const int CENTER_Y = 10;
+    const int CANVAS_WIDTH = 50;
+    const int CANVAS_HEIGHT = 25;
+
+    // åˆ›å»ºç”»å¸ƒ
+    vector<vector<char>> canvas(CANVAS_HEIGHT, vector<char>(CANVAS_WIDTH, ' '));
+
+    // è®¡ç®—æ¯ä¸ªäººçš„ä½ç½®ï¼ˆåœ†å½¢å¸ƒå±€ï¼‰
+    vector<pair<int, int>> positions;
+    int n = vertList.size();
+    for (int i = 0; i < n; i++) {
+        double angle = 2 * 3.14159 * i / n;
+        int x = CENTER_X + RADIUS * cos(angle);
+        int y = CENTER_Y + RADIUS * sin(angle);
+        positions.push_back({ x, y });
+
+        // åœ¨ç”»å¸ƒä¸Šæ”¾ç½®äººå‘˜ï¼ˆç”¨å­—æ¯è¡¨ç¤ºï¼‰
+        if (y >= 0 && y < CANVAS_HEIGHT && x >= 0 && x < CANVAS_WIDTH) {
+            canvas[y][x] = 'A' + (i % 26); // ç”¨å­—æ¯ä»£è¡¨ä¸åŒçš„äºº
+        }
+    }
+
+    // ç»˜åˆ¶å…³ç³»çº¿
+    for (int i = 0; i < n; i++) {
+        for (auto& edge : adjList[i]) {
+            int j = edge.getTo();
+            if (i < j) { // é¿å…é‡å¤ç»˜åˆ¶
+                int x1 = positions[i].first;
+                int y1 = positions[i].second;
+                int x2 = positions[j].first;
+                int y2 = positions[j].second;
+
+                // ç®€å•çš„Bresenhamç›´çº¿ç®—æ³•
+                int dx = abs(x2 - x1);
+                int dy = abs(y2 - y1);
+                int sx = (x1 < x2) ? 1 : -1;
+                int sy = (y1 < y2) ? 1 : -1;
+                int err = dx - dy;
+
+                while (true) {
+                    if (y1 >= 0 && y1 < CANVAS_HEIGHT && x1 >= 0 && x1 < CANVAS_WIDTH) {
+                        if (canvas[y1][x1] == ' ') {
+                            // æ ¹æ®äº²å¯†åº¦ä½¿ç”¨ä¸åŒå­—ç¬¦
+                            int weight = edge.getWeight();
+                            if (weight >= 80) canvas[y1][x1] = '=';
+                            else if (weight >= 60) canvas[y1][x1] = '-';
+                            else if (weight >= 40) canvas[y1][x1] = '.';
+                            else canvas[y1][x1] = 'Â·';
+                        }
+                    }
+
+                    if (x1 == x2 && y1 == y2) break;
+
+                    int e2 = 2 * err;
+                    if (e2 > -dy) {
+                        err -= dy;
+                        x1 += sx;
+                    }
+                    if (e2 < dx) {
+                        err += dx;
+                        y1 += sy;
+                    }
+                }
+            }
+        }
+    }
+
+    // æ‰“å°ç”»å¸ƒ
+    cout << "\n";
+    for (int y = 0; y < CANVAS_HEIGHT; y++) {
+        for (int x = 0; x < CANVAS_WIDTH; x++) {
+            cout << canvas[y][x];
+        }
+        cout << "\n";
+    }
+
+    // æ˜¾ç¤ºå›¾ä¾‹
+    cout << "\n" << LINE_THIN << "\n";
+    cout << "å›¾ä¾‹è¯´æ˜:\n";
+    cout << "  A, B, C... : è”ç³»äººï¼ˆå­—æ¯ä»£è¡¨ï¼‰\n";
+    cout << "  =========  : é«˜äº²å¯†åº¦å…³ç³» (80-100)\n";
+    cout << "  ---------  : ä¸­äº²å¯†åº¦å…³ç³» (60-79)\n";
+    cout << "  ........   : ä½äº²å¯†åº¦å…³ç³» (40-59)\n";
+    cout << "  Â·Â·Â·Â·Â·Â·Â·Â·Â·  : å¾®å¼±å…³ç³» (1-39)\n";
+
+    // æ˜¾ç¤ºäººå‘˜å¯¹åº”å…³ç³»
+    cout << "\näººå‘˜å¯¹åº”å…³ç³»:\n";
+    for (int i = 0; i < min(n, 26); i++) {
+        cout << "  " << char('A' + i) << " : " << vertList[i].getName();
+        if ((i + 1) % 3 == 0) cout << "\n";
+        else if (i < n - 1) cout << " | ";
+    }
+    if (n > 26) cout << "\n  (ä»…æ˜¾ç¤ºå‰26äºº)";
+    cout << "\n" << LINE_THIN << "\n";
+}
+
+
+void SocialNetwork::exportToHTML(string filename) {
+    ofstream file(filename, ios::binary);  // äºŒè¿›åˆ¶æ¨¡å¼é¿å…ç¼–ç è½¬æ¢
+
+    // å†™å…¥UTF-8 BOM
+    const unsigned char bom[] = { 0xEF, 0xBB, 0xBF };
+    file.write((const char*)bom, sizeof(bom));
+
+    file << R"(<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ç¤¾äº¤ç½‘ç»œå›¾</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; padding: 20px; 
+                 background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        #network { width: 100%; height: 600px; background: white; 
+                  border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend { margin-top: 20px; padding: 15px; background: white; 
+                 border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend-item { display: inline-block; margin-right: 20px; }
+        .node-sample { display: inline-block; width: 15px; height: 15px; 
+                      border-radius: 50%; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ç¤¾äº¤å…³ç³»ç½‘ç»œå›¾</h1>
+            <p>æ€»äººæ•°: )" << vertList.size() << R"( | ç”Ÿæˆæ—¶é—´: )" << __DATE__ << R"(</p>
+        </div>
+        <div id="network"></div>
+    </div>
+    
+    <script>
+        // åˆ›å»ºèŠ‚ç‚¹æ•°æ®
+        var nodes = new vis.DataSet([)";
+
+    for (int i = 0; i < vertList.size(); i++) {
+        file << (i > 0 ? "," : "") << "\n{id: " << i
+            << ", label: '" << vertList[i].getName()
+            << "', value: " << adjList[i].size() << "}";
+    }
+
+    file << R"(]);
+        
+        // åˆ›å»ºè¾¹æ•°æ®
+        var edges = new vis.DataSet([)";
+
+    set<pair<int, int>> addedEdges;
+    bool firstEdge = true;
+    for (int i = 0; i < vertList.size(); i++) {
+        for (auto& edge : adjList[i]) {
+            int j = edge.getTo();
+            if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
+                file << (firstEdge ? "\n" : ",\n") << "{from: " << i << ", to: " << j
+                    << ", value: " << edge.getWeight() << "}";
+                addedEdges.insert({ i, j });
+                firstEdge = false;
+            }
+        }
+    }
+
+    file << R"(]);
+        
+        // åˆ›å»ºç½‘ç»œå›¾
+        var container = document.getElementById('network');
+        var data = { nodes: nodes, edges: edges };
+        var options = {
+            nodes: {
+                shape: 'dot',
+                size: 20,
+                font: { size: 12 },
+                borderWidth: 2
+            },
+            edges: {
+                width: 1,
+                smooth: { type: 'continuous' }
+            },
+            physics: {
+                stabilization: true,
+                barnesHut: {
+                    gravitationalConstant: -8000,
+                    springConstant: 0.04,
+                    springLength: 95
+                }
+            },
+            interaction: { hover: true }
+        };
+        
+        var network = new vis.Network(container, data, options);
+    </script>
+</body>
+</html>)";
+
+    file.close();
+    cout << "HTMLæ–‡ä»¶å·²ç”Ÿæˆ: " << filename << endl;
+}
+

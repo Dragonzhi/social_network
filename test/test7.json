@@ -53,7 +53,7 @@
         
         {"from": "Alex01", "to": "Chris01", "weight": 80}, {"from": "Alex01", "to": "Dan01", "weight": 75},
         {"from": "Alex01", "to": "Eve01", "weight": 68}, {"from": "Ben01", "to": "Fay01", "weight": 82},
-        {"from": "Ben01", "to": "Gina01", "weight": 77}, {"from": "Chris01", "to": "Hal01", "weight": 79},
+        {"from": ".", "to": "Gina01", "weight": 77}, {"from": "Chris01", "to": "Hal01", "weight": 79},
         {"from": "Dan01", "to": "Ian01", "weight": 85}, {"from": "Eve01", "to": "Jay01", "weight": 72},
         {"from": "Fay01", "to": "Alex05", "weight": 64}, {"from": "Gina01", "to": "Ben05", "weight": 83},
         {"from": "Hal01", "to": "Chris05", "weight": 76}, {"from": "Ian01", "to": "Dan05", "weight": 88},

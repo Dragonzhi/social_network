@@ -1,0 +1,248 @@
+ï»¿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Éç½»ÍøÂçÍ¼</title>
+    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; padding: 20px; 
+                 background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        #network { width: 100%; height: 600px; background: white; 
+                  border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend { margin-top: 20px; padding: 15px; background: white; 
+                 border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .legend-item { display: inline-block; margin-right: 20px; }
+        .node-sample { display: inline-block; width: 15px; height: 15px; 
+                      border-radius: 50%; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Éç½»¹ØÏµÍøÂçÍ¼</h1>
+            <p>×ÜÈËÊý: 100 | Éú³ÉÊ±¼ä: Dec 30 2025</p>
+        </div>
+        <div id="network"></div>
+    </div>
+    
+    <script>
+        // ´´½¨½ÚµãÊý¾Ý
+        var nodes = new vis.DataSet([
+{id: 0, label: 'Alex01', value: 9},
+{id: 1, label: 'Alex02', value: 4},
+{id: 2, label: 'Alex03', value: 6},
+{id: 3, label: 'Alex04', value: 3},
+{id: 4, label: 'Alex05', value: 5},
+{id: 5, label: 'Alex06', value: 3},
+{id: 6, label: 'Alex07', value: 3},
+{id: 7, label: 'Alex08', value: 4},
+{id: 8, label: 'Alex09', value: 3},
+{id: 9, label: 'Alex10', value: 3},
+{id: 10, label: 'Ben01', value: 6},
+{id: 11, label: 'Ben02', value: 4},
+{id: 12, label: 'Ben03', value: 4},
+{id: 13, label: 'Ben04', value: 4},
+{id: 14, label: 'Ben05', value: 4},
+{id: 15, label: 'Ben06', value: 3},
+{id: 16, label: 'Ben07', value: 5},
+{id: 17, label: 'Ben08', value: 3},
+{id: 18, label: 'Ben09', value: 3},
+{id: 19, label: 'Ben10', value: 4},
+{id: 20, label: 'Chris01', value: 3},
+{id: 21, label: 'Chris02', value: 0},
+{id: 22, label: 'Chris03', value: 1},
+{id: 23, label: 'Chris04', value: 1},
+{id: 24, label: 'Chris05', value: 2},
+{id: 25, label: 'Chris06', value: 1},
+{id: 26, label: 'Chris07', value: 0},
+{id: 27, label: 'Chris08', value: 0},
+{id: 28, label: 'Chris09', value: 1},
+{id: 29, label: 'Chris10', value: 2},
+{id: 30, label: 'Dan01', value: 3},
+{id: 31, label: 'Dan02', value: 1},
+{id: 32, label: 'Dan03', value: 0},
+{id: 33, label: 'Dan04', value: 1},
+{id: 34, label: 'Dan05', value: 2},
+{id: 35, label: 'Dan06', value: 1},
+{id: 36, label: 'Dan07', value: 0},
+{id: 37, label: 'Dan08', value: 1},
+{id: 38, label: 'Dan09', value: 1},
+{id: 39, label: 'Dan10', value: 2},
+{id: 40, label: 'Eve01', value: 3},
+{id: 41, label: 'Eve02', value: 1},
+{id: 42, label: 'Eve03', value: 0},
+{id: 43, label: 'Eve04', value: 1},
+{id: 44, label: 'Eve05', value: 1},
+{id: 45, label: 'Eve06', value: 1},
+{id: 46, label: 'Eve07', value: 1},
+{id: 47, label: 'Eve08', value: 1},
+{id: 48, label: 'Eve09', value: 0},
+{id: 49, label: 'Eve10', value: 2},
+{id: 50, label: 'Fay01', value: 2},
+{id: 51, label: 'Fay02', value: 1},
+{id: 52, label: 'Fay03', value: 2},
+{id: 53, label: 'Fay04', value: 1},
+{id: 54, label: 'Fay05', value: 1},
+{id: 55, label: 'Fay06', value: 0},
+{id: 56, label: 'Fay07', value: 0},
+{id: 57, label: 'Fay08', value: 0},
+{id: 58, label: 'Fay09', value: 1},
+{id: 59, label: 'Fay10', value: 2},
+{id: 60, label: 'Gina01', value: 1},
+{id: 61, label: 'Gina02', value: 1},
+{id: 62, label: 'Gina03', value: 1},
+{id: 63, label: 'Gina04', value: 0},
+{id: 64, label: 'Gina05', value: 1},
+{id: 65, label: 'Gina06', value: 1},
+{id: 66, label: 'Gina07', value: 1},
+{id: 67, label: 'Gina08', value: 1},
+{id: 68, label: 'Gina09', value: 0},
+{id: 69, label: 'Gina10', value: 2},
+{id: 70, label: 'Hal01', value: 3},
+{id: 71, label: 'Hal02', value: 1},
+{id: 72, label: 'Hal03', value: 0},
+{id: 73, label: 'Hal04', value: 1},
+{id: 74, label: 'Hal05', value: 1},
+{id: 75, label: 'Hal06', value: 0},
+{id: 76, label: 'Hal07', value: 0},
+{id: 77, label: 'Hal08', value: 1},
+{id: 78, label: 'Hal09', value: 0},
+{id: 79, label: 'Hal10', value: 3},
+{id: 80, label: 'Ian01', value: 2},
+{id: 81, label: 'Ian02', value: 1},
+{id: 82, label: 'Ian03', value: 1},
+{id: 83, label: 'Ian04', value: 1},
+{id: 84, label: 'Ian05', value: 0},
+{id: 85, label: 'Ian06', value: 1},
+{id: 86, label: 'Ian07', value: 1},
+{id: 87, label: 'Ian08', value: 0},
+{id: 88, label: 'Ian09', value: 1},
+{id: 89, label: 'Ian10', value: 2},
+{id: 90, label: 'Jay01', value: 2},
+{id: 91, label: 'Jay02', value: 0},
+{id: 92, label: 'Jay03', value: 1},
+{id: 93, label: 'Jay04', value: 1},
+{id: 94, label: 'Jay05', value: 0},
+{id: 95, label: 'Jay06', value: 1},
+{id: 96, label: 'Jay07', value: 1},
+{id: 97, label: 'Jay08', value: 0},
+{id: 98, label: 'Jay09', value: 0},
+{id: 99, label: 'Jay10', value: 2}]);
+        
+        // ´´½¨±ßÊý¾Ý
+        var edges = new vis.DataSet([
+{from: 0, to: 1, value: 85},
+{from: 0, to: 2, value: 78},
+{from: 0, to: 3, value: 92},
+{from: 0, to: 9, value: 62},
+{from: 0, to: 10, value: 55},
+{from: 0, to: 20, value: 80},
+{from: 0, to: 30, value: 75},
+{from: 0, to: 40, value: 68},
+{from: 0, to: 99, value: 52},
+{from: 1, to: 2, value: 81},
+{from: 1, to: 4, value: 67},
+{from: 1, to: 12, value: 61},
+{from: 2, to: 3, value: 89},
+{from: 2, to: 5, value: 73},
+{from: 2, to: 88, value: 54},
+{from: 2, to: 96, value: 45},
+{from: 3, to: 6, value: 84},
+{from: 4, to: 5, value: 76},
+{from: 4, to: 7, value: 90},
+{from: 4, to: 20, value: 58},
+{from: 4, to: 50, value: 64},
+{from: 5, to: 6, value: 65},
+{from: 6, to: 7, value: 88},
+{from: 7, to: 8, value: 71},
+{from: 7, to: 31, value: 63},
+{from: 8, to: 9, value: 94},
+{from: 8, to: 85, value: 49},
+{from: 9, to: 19, value: 62},
+{from: 10, to: 11, value: 87},
+{from: 10, to: 12, value: 79},
+{from: 10, to: 13, value: 91},
+{from: 10, to: 19, value: 74},
+{from: 10, to: 50, value: 82},
+{from: 11, to: 12, value: 83},
+{from: 11, to: 14, value: 68},
+{from: 11, to: 47, value: 48},
+{from: 12, to: 15, value: 75},
+{from: 13, to: 14, value: 86},
+{from: 13, to: 16, value: 72},
+{from: 13, to: 24, value: 67},
+{from: 14, to: 17, value: 93},
+{from: 14, to: 60, value: 83},
+{from: 15, to: 16, value: 64},
+{from: 15, to: 18, value: 80},
+{from: 16, to: 17, value: 77},
+{from: 16, to: 37, value: 59},
+{from: 16, to: 82, value: 50},
+{from: 17, to: 18, value: 85},
+{from: 18, to: 19, value: 69},
+{from: 19, to: 29, value: 58},
+{from: 20, to: 70, value: 79},
+{from: 22, to: 30, value: 72},
+{from: 23, to: 77, value: 55},
+{from: 24, to: 70, value: 76},
+{from: 25, to: 43, value: 65},
+{from: 28, to: 52, value: 53},
+{from: 29, to: 39, value: 65},
+{from: 30, to: 80, value: 85},
+{from: 33, to: 64, value: 57},
+{from: 34, to: 41, value: 70},
+{from: 34, to: 80, value: 88},
+{from: 35, to: 51, value: 60},
+{from: 38, to: 52, value: 56},
+{from: 39, to: 49, value: 71},
+{from: 40, to: 54, value: 74},
+{from: 40, to: 90, value: 72},
+{from: 44, to: 90, value: 70},
+{from: 45, to: 71, value: 62},
+{from: 46, to: 61, value: 68},
+{from: 49, to: 59, value: 67},
+{from: 53, to: 65, value: 63},
+{from: 58, to: 70, value: 77},
+{from: 59, to: 69, value: 74},
+{from: 62, to: 73, value: 71},
+{from: 66, to: 93, value: 54},
+{from: 67, to: 81, value: 66},
+{from: 69, to: 79, value: 69},
+{from: 74, to: 86, value: 73},
+{from: 79, to: 92, value: 60},
+{from: 79, to: 89, value: 63},
+{from: 83, to: 95, value: 69},
+{from: 89, to: 99, value: 77}]);
+        
+        // ´´½¨ÍøÂçÍ¼
+        var container = document.getElementById('network');
+        var data = { nodes: nodes, edges: edges };
+        var options = {
+            nodes: {
+                shape: 'dot',
+                size: 20,
+                font: { size: 12 },
+                borderWidth: 2
+            },
+            edges: {
+                width: 1,
+                smooth: { type: 'continuous' }
+            },
+            physics: {
+                stabilization: true,
+                barnesHut: {
+                    gravitationalConstant: -8000,
+                    springConstant: 0.04,
+                    springLength: 95
+                }
+            },
+            interaction: { hover: true }
+        };
+        
+        var network = new vis.Network(container, data, options);
+    </script>
+</body>
+</html>

@@ -47,7 +47,8 @@ public:
     void displayTop10Beautiful();
     void displaySortFriendsBeautiful(string name, bool ascending);
     void displayBottleneckBeautiful(string startName, string endName);
-
+    void displayGraphASCII();
+    void exportToHTML(string filename);
 private:
 	vector<Person> vertList;
 	vector<list<Edge>> adjList;

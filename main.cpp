@@ -35,12 +35,13 @@ void showASCIIMenu() {
     cout << "                              主菜单                              " << endl;
     cout << thinLine << endl;
 
-    cout << "  [1] 添加联系人                [7] 查询两人亲密度" << endl;
-    cout << "  [2] 删除联系人                [8] 显示社交大牛(Top10)" << endl;
-    cout << "  [3] 添加关系(亲密度)          [9] 保存到文件" << endl;
-    cout << "  [4] 删除关系                 [10] 从文件加载" << endl;
-    cout << "  [5] 显示所有联系人关系       [11] 网络统计" << endl;
-    cout << "  [6] 按亲密程度排序好友        [0] 退出系统" << endl;
+    cout << "  [1]  添加联系人           [2]  删除联系人" << endl;
+    cout << "  [3]  添加关系(亲密度)     [4]  删除关系" << endl;
+    cout << "  [5]  显示所有联系人关系   [6]  按亲密程度排序好友" << endl;
+    cout << "  [7]  查询两人亲密度       [8]  显示社交大牛(Top10)" << endl;
+    cout << "  [9]  保存到文件          [10]  从文件加载" << endl;
+    cout << "  [11] 网络统计            [12]  图形化展示" << endl;
+    cout << "  [13] 导出HTML可视化       [0]  退出系统" << endl;
 
     cout << thinLine << endl;
     cout << "  提示: 输入数字选择对应功能，按Enter键确认" << endl;
@@ -215,6 +216,20 @@ int main() {
             waitForUser();
             break;
 
+        case 12:
+            showOperationTitle("图形化展示");
+            network.displayGraphASCII();
+            waitForUser();
+            break;
+
+        case 13:
+            showOperationTitle("导出HTML可视化");
+            cout << "\n  请输入HTML文件名 (例如: network.html): ";
+            getline(cin, filename);
+            network.exportToHTML(filename);
+            waitForUser();
+            break;
+
         case 0:
             system("cls");
             cout << "\n================================================================================" << endl;
@@ -230,7 +245,7 @@ int main() {
             return 0;
 
         default:
-            showErrorMsg("无效的选择，请输入 0-11 之间的数字！");
+            showErrorMsg("无效的选择，请输入 0-13 之间的数字！");
             waitForUser();
         }
     }
