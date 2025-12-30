@@ -1,0 +1,39 @@
+{
+    "persons": [
+        {"name": "Ryan"},
+        {"name": "Sophia"},
+        {"name": "Tyler"},
+        {"name": "Uma"},
+        {"name": "Victor"},
+        {"name": "Wendy"},
+        {"name": "Xander"},
+        {"name": "Yvonne"},
+        {"name": "Zack"},
+        {"name": "Amy"}
+    ],
+    "edges": [
+        {"from": "Ryan", "to": "Sophia", "weight": 93},
+        {"from": "Ryan", "to": "Tyler", "weight": 85},
+        {"from": "Ryan", "to": "Uma", "weight": 77},
+        {"from": "Sophia", "to": "Tyler", "weight": 88},
+        {"from": "Sophia", "to": "Victor", "weight": 72},
+        {"from": "Tyler", "to": "Wendy", "weight": 69},
+        {"from": "Uma", "to": "Victor", "weight": 91},
+        {"from": "Uma", "to": "Wendy", "weight": 64},
+        {"from": "Victor", "to": "Xander", "weight": 79},
+        {"from": "Wendy", "to": "Xander", "weight": 83},
+        {"from": "Wendy", "to": "Yvonne", "weight": 75},
+        {"from": "Xander", "to": "Yvonne", "weight": 87},
+        {"from": "Xander", "to": "Zack", "weight": 68},
+        {"from": "Yvonne", "to": "Zack", "weight": 94},
+        {"from": "Zack", "to": "Amy", "weight": 81},
+        {"from": "Amy", "to": "Ryan", "weight": 52},
+        {"from": "Amy", "to": "Sophia", "weight": 61}
+    ],
+    "metadata": {
+        "person_count": 10,
+        "edge_count": 17,
+        "save_time": "2025-01-15 18:30:00",
+        "version": "1.0"
+    }
+}
