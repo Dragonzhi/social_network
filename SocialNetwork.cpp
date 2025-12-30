@@ -332,194 +332,504 @@ void SocialNetwork::loadFromFile(string filename) {
 }
 // 显示所有联系人关系
 void SocialNetwork::displayAll() {
-    if (vertList.empty()) {
-        cout << "社交网络为空！\n";
-        return;
-    }
-
-    cout << "\n======= 所有联系人关系 =======\n";
-    for (int i = 0; i < vertList.size(); i++) {
-        cout << vertList[i].getName() << " 的好友: ";
-
-        if (adjList[i].empty()) {
-            cout << "暂无好友";
-        }
-        else {
-            auto& friends = adjList[i];
-            for (auto& edge : friends) {
-                int to = edge.getTo();
-                cout << vertList[to].getName() << "(" << edge.getWeight() << ") ";
-            }
-        }
-        cout << endl;
-    }
-    cout << "=============================\n";
+    displayAllBeautiful();
 }
 
 // 按亲密程度排序好友
 void SocialNetwork::sortFriends(string name, bool ascending) {
-	int index = findIndex(name);
-	if (index == -1) {
-		cout << "联系人 " << name << " 不存在！" << endl;
-		return;
-	}
-
-	vector<FriendInfo> friend_infos;
-	for (auto& e : adjList[index]) {
-		friend_infos.push_back(FriendInfo(vertList[e.getTo()].getName(), e.getWeight(), e.getTo()));
-	}
-
-	if (friend_infos.empty()) {
-		cout << name << "暂时没有好友！" << endl;
-		return;
-	}
-
-	// 排序
-	if (ascending) {
-		sort(friend_infos.begin(), friend_infos.end(),
-			[](const FriendInfo& a, const FriendInfo& b) {
-			return a.weight < b.weight;
-		});
-		cout << "\n" << name << " 的好友（按亲密度升序）：" << endl;
-	}
-	else {
-		sort(friend_infos.begin(), friend_infos.end(),
-			[](const FriendInfo& a, const FriendInfo& b) {
-				return a.weight > b.weight;
-			});
-		cout << "\n" << name << " 的好友（按亲密度降序）：" << endl;
-	}
-
-	for (int i = 0; i < friend_infos.size(); i++) {
-		cout << i + 1 << ". " << friend_infos[i].name << " (亲密度: " << friend_infos[i].weight << ")" << endl;
-	}
+    displaySortFriendsBeautiful(name, ascending);
 }
 //路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
-	int start = findIndex(startName);
-	int end = findIndex(endName);
+    // 先计算结果
+    int start = findIndex(startName);
+    int end = findIndex(endName);
 
-	if (start == -1 || end == -1) {
-		cout << "至少一个联系人不存在！" << endl;
-		return -1;
-	}
+    if (start == -1 || end == -1) return -1;
+    if (start == end) return 0;
 
-	if (start == end) {
-		cout << "这是同一个人！" << endl;
-		return 0;
-	}
+    // 检查是否是直接好友
+    for (auto& e : adjList[start]) {
+        if (e.getTo() == end) {
+            displayBottleneckBeautiful(startName, endName);
+            return e.getWeight();
+        }
+    }
 
-	// 查询是否是直接好友
-	for (auto& e : adjList[start]) {
-		if (e.getTo() == end) {
-			cout << "他们是直接好友，亲密度为：" << e.getWeight() << endl;
-			return e.getWeight();
-		}
-	}
+    // 计算最大瓶颈路径
+    int personCount = vertList.size();
+    vector<int> maxBottleNeck(personCount, 0);
+    vector<bool> visited(personCount, false);
+    priority_queue<pair<int, int>> pq;
 
-	int personCount = vertList.size();
-	vector<int> distToTree(personCount, -1);
-	vector<int> parent(personCount, -1);
-	vector<bool> inMST(personCount, false);
-	// 最大堆， 存储{权值， 节点ID｝
-	priority_queue<pair<int, int>> pq;
+    maxBottleNeck[start] = INT_MAX;
+    pq.push({ INT_MAX, start });
 
-	distToTree[start] = INT_MAX;
-	pq.push({ 0, start });
-	
-	while (!pq.empty()) {
-		int u = pq.top().second;
-		pq.pop();
+    while (!pq.empty()) {
+        auto current = pq.top();  // 先获取顶部元素
+        int currentBottleneck = current.first;
+        int u = current.second;
+        pq.pop();
 
-		if (inMST[u]) continue;
-		else inMST[u] = true;
+        if (visited[u]) continue;
+        visited[u] = true;
 
-		if (u == end) break;		//  路径已经可达
+        if (u == end) break;
 
-		for (auto& e : adjList[u]) {
-			int v = e.getTo();
-			int w = e.getWeight();
+        for (auto& e : adjList[u]) {
+            int v = e.getTo();
+            int weight = e.getWeight();
 
-			if (!inMST[v] && min(distToTree[u], w)) {
-				distToTree[v] = w;
-				parent[v] = u;
-				pq.push({ distToTree[v], v });
-			}
-		}
-	}
+            if (!visited[v]) {
+                int newBottleneck = min(maxBottleNeck[u], weight);
+                if (newBottleneck > maxBottleNeck[v]) {
+                    maxBottleNeck[v] = newBottleneck;
+                    pq.push({ newBottleneck, v });
+                }
+            }
+        }
+    }
 
-	if (!inMST[end]) {
-		return -1;		//两点无法连通
-	}
-	
-	int miniIntimacy = INT_MAX;
-	int curr = end;
+    if (maxBottleNeck[end] == 0) {
+        displayBottleneckBeautiful(startName, endName);
+        return 0;
+    }
 
-	while (curr != start) {
-		int currentEdgeWeight = distToTree[curr];
-		if (currentEdgeWeight < miniIntimacy) {
-			miniIntimacy = currentEdgeWeight;
-		}
-		curr = parent[curr];
-	}
-	return miniIntimacy;
+    displayBottleneckBeautiful(startName, endName);
+    return maxBottleNeck[end];
 }
 	
 void SocialNetwork::displayTop10() {
-	int personCount = vertList.size();
-	if (personCount <= 0) {
-		cout << "社交网络为空！" << endl;
-		return;
-	}
-
-	// {ID， 好友人数}
-	vector<pair<int, int>> friendCounts;
-	for (int i = 0; i < personCount; i++) {
-		friendCounts.push_back({ i, adjList[i].size() });
-	}
-
-	sort(friendCounts.begin(), friendCounts.end(), 
-		[](const pair<int, int>& a, const pair<int, int>& b){
-		return a.second > b.second;
-		});
-
-	int displayCount = min(10, personCount);
-	cout << "\n========== 社交大牛Top" << displayCount << " ==========" << endl;
-	cout << "排名\t姓名\t\t好友数\t\t直接好友" << endl;
-	cout << "---------------------------------------------" << endl;
-
-	for (int i = 0; i < displayCount; i++) {
-		int idx = friendCounts[i].first;
-		cout << i + 1 << "\t" << vertList[idx].getName();
-
-		// 调整格式
-		if (vertList[idx].getName().length() < 8) {
-			cout << "\t\t";
-		}
-		else {
-			cout << "\t";
-		}
-
-		cout << friendCounts[i].second << "\t\t";
-
-		// 显示前3个好友
-		int count = 0;
-		for (auto& edge : adjList[idx]) {
-			if (count >= 3) break;
-			cout << vertList[edge.getTo()].getName();
-			if (count < 2 && count < adjList[idx].size() - 1) {
-				cout << ", ";
-			}
-			count++;
-		}
-		if (adjList[idx].size() > 3) {
-			cout << "...";
-		}
-		cout << endl;
-	}
-	cout << "==========================================" << endl;
+    displayTop10Beautiful();
 }
 int SocialNetwork::findIndex(string name) {
 	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
 	return nameToIndex[name];
+}
+
+
+
+// =============== 辅助函数实现 ===============
+
+string SocialNetwork::createBoxedText(const string& text, int width) {
+    string result;
+    string border(width, '=');
+    result = border + "\n";
+    result += centerText(text, width) + "\n";
+    result += border + "\n";
+    return result;
+}
+
+string SocialNetwork::createSectionHeader(const string& title) {
+    string result;
+    string border(60, '=');
+    result = "\n" + border + "\n";
+
+    // 计算居中位置
+    int padding = (60 - title.length()) / 2;
+    result += string(padding, ' ') + title + "\n";
+    result += border + "\n";
+
+    return result;
+}
+
+string SocialNetwork::createProgressBar(float percentage, int length) {
+    string bar = "[";
+    int filled = (int)(percentage * length / 100);
+
+    for (int i = 0; i < length; i++) {
+        if (i < filled) {
+            if (percentage >= 80) bar += BAR_FULL;
+            else if (percentage >= 60) bar += BAR_MID;
+            else if (percentage >= 40) bar += BAR_LOW;
+            else bar += BAR_LOW;
+        }
+        else {
+            bar += BAR_EMPTY;
+        }
+    }
+    bar += "] " + to_string((int)percentage) + "%";
+    return bar;
+}
+
+string SocialNetwork::createSmallProgressBar(float percentage, int length) {
+    string bar = "[";
+    int filled = (int)(percentage * length / 100);
+
+    for (int i = 0; i < length; i++) {
+        if (i < filled) bar += BAR_FULL;
+        else bar += BAR_EMPTY;
+    }
+    bar += "]";
+    return bar;
+}
+
+string SocialNetwork::centerText(const string& text, int width) {
+    if (text.length() >= width) return text;
+
+    int leftPadding = (width - text.length()) / 2;
+    int rightPadding = width - text.length() - leftPadding;
+
+    return string(leftPadding, ' ') + text + string(rightPadding, ' ');
+}
+
+// =============== 美化显示函数实现 ===============
+
+// 美化显示所有联系人关系
+void SocialNetwork::displayAllBeautiful() {
+    if (vertList.empty()) {
+        cout << createSectionHeader("社交网络状态");
+        cout << "\n" << ERROR_ICON << " 社交网络为空！暂时还没有任何联系人\n";
+        return;
+    }
+
+    // 头部
+    cout << createSectionHeader("社交关系网络总览");
+
+    int totalFriends = 0;
+    int totalIntimacy = 0;
+
+    // 显示每个联系人
+    for (int i = 0; i < vertList.size(); i++) {
+        string name = vertList[i].getName();
+        int friendCount = adjList[i].size();
+        totalFriends += friendCount;
+
+        // 选择图标
+        string icon;
+        if (friendCount >= 10) icon = CROWN_ICON + " ";
+        else if (friendCount >= 5) icon = STAR_ICON + " ";
+        else if (friendCount >= 2) icon = USER_ICON + " ";
+        else if (friendCount == 1) icon = FRIEND_ICON + " ";
+        else icon = NEW_ICON + " ";
+
+        cout << "\n" << icon << " " << left << setw(20) << name;
+        cout << "好友数: [" << setw(2) << friendCount << "] ";
+
+        // 显示亲密度进度条
+        float avgIntimacy = 0;
+        if (friendCount > 0) {
+            int totalWeight = 0;
+            for (auto& edge : adjList[i]) {
+                totalWeight += edge.getWeight();
+                totalIntimacy += edge.getWeight();
+            }
+            avgIntimacy = totalWeight / (float)friendCount;
+        }
+
+        cout << "亲密度: " << createProgressBar(avgIntimacy, 15);
+
+        cout << "\n" << string(4, ' ') << "好友列表: ";
+
+        // 显示好友
+        if (adjList[i].empty()) {
+            cout << "暂无好友";
+        }
+        else {
+            int count = 0;
+            for (auto& edge : adjList[i]) {
+                int to = edge.getTo();
+                int weight = edge.getWeight();
+
+                cout << vertList[to].getName() << "(" << weight << ")";
+                count++;
+
+                if (count < adjList[i].size()) {
+                    cout << ", ";
+                    if (count % 4 == 0) {
+                        cout << "\n" << string(15, ' ');
+                    }
+                }
+            }
+        }
+
+        // 添加分隔线
+        if (i < vertList.size() - 1) {
+            cout << "\n" << LINE_DASH << "\n";
+        }
+    }
+
+    // 统计信息
+    cout << "\n\n" << LINE_THIN;
+    cout << "\n" << STATS_ICON << " 网络统计信息:";
+    cout << "\n   总人数: " << vertList.size();
+    cout << "\n   总关系数: " << totalFriends / 2;
+    cout << "\n   人均好友数: " << fixed << setprecision(1)
+        << (vertList.size() > 0 ? totalFriends / (float)vertList.size() : 0);
+    cout << "\n   平均亲密度: " << fixed << setprecision(1)
+        << (totalFriends > 0 ? totalIntimacy / (float)totalFriends : 0);
+    cout << "\n" << LINE_THIN << "\n";
+}
+
+// 美化显示排序好友
+void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
+    int index = findIndex(name);
+    if (index == -1) {
+        cout << ERROR_ICON << " 联系人 " << name << " 不存在！\n";
+        return;
+    }
+
+    vector<FriendInfo> friend_infos;
+    for (auto& e : adjList[index]) {
+        friend_infos.push_back(FriendInfo(vertList[e.getTo()].getName(), e.getWeight(), e.getTo()));
+    }
+
+    if (friend_infos.empty()) {
+        cout << INFO_ICON << " " << name << " 暂时没有好友\n";
+        return;
+    }
+
+    // 排序
+    if (ascending) {
+        sort(friend_infos.begin(), friend_infos.end(),
+            [](const FriendInfo& a, const FriendInfo& b) {
+                return a.weight < b.weight;
+            });
+
+        cout << createSectionHeader(name + " 的好友列表（按亲密度升序）");
+    }
+    else {
+        sort(friend_infos.begin(), friend_infos.end(),
+            [](const FriendInfo& a, const FriendInfo& b) {
+                return a.weight > b.weight;
+            });
+
+        cout << createSectionHeader(name + " 的好友列表（按亲密度降序）");
+
+        // 显示前三名
+        cout << "\n 前三名好友:\n";
+        cout << LINE_THIN << "\n";
+
+        for (int i = 0; i < min(3, (int)friend_infos.size()); i++) {
+            string rank;
+            if (i == 0) rank = TOP1_ICON;
+            else if (i == 1) rank = TOP2_ICON;
+            else rank = TOP3_ICON;
+
+            cout << " " << rank << " " << left << setw(15) << friend_infos[i].name;
+            cout << " -> " << createProgressBar(friend_infos[i].weight, 12);
+
+            string level;
+            if (friend_infos[i].weight >= 90) level = " (挚友)";
+            else if (friend_infos[i].weight >= 70) level = " (好友)";
+            else if (friend_infos[i].weight >= 50) level = " (普通)";
+            else level = " (相识)";
+
+            cout << level << "\n";
+        }
+
+        if (friend_infos.size() > 3) {
+            cout << "\n 其他好友:\n";
+            cout << LINE_THIN << "\n";
+        }
+    }
+
+    // 显示所有好友（如果是升序，显示全部；如果是降序，从第4个开始）
+    int start = ascending ? 0 : 3;
+    for (int i = start; i < friend_infos.size(); i++) {
+        cout << " " << setw(2) << (i + 1) << ". " << left << setw(15) << friend_infos[i].name;
+        cout << " -> " << createProgressBar(friend_infos[i].weight, 12) << "\n";
+    }
+
+    // 统计信息
+    float avgWeight = 0;
+    for (auto& info : friend_infos) avgWeight += info.weight;
+    avgWeight /= friend_infos.size();
+
+    cout << "\n" << LINE_THIN;
+    cout << "\n" << STATS_ICON << " 统计信息:";
+    cout << "\n   好友总数: " << friend_infos.size();
+    cout << "\n   平均亲密度: " << fixed << setprecision(1) << avgWeight << "%";
+    cout << "\n   最高亲密度: " << friend_infos[0].weight << "%";
+    cout << "\n   最低亲密度: " << friend_infos.back().weight << "%";
+    cout << "\n" << LINE_THIN << "\n";
+}
+
+// 美化显示社交大牛Top10
+void SocialNetwork::displayTop10Beautiful() {
+    int personCount = vertList.size();
+    if (personCount <= 0) {
+        cout << ERROR_ICON << " 社交网络为空！\n";
+        return;
+    }
+
+    vector<pair<int, int>> friendCounts;
+    for (int i = 0; i < personCount; i++) {
+        friendCounts.push_back({ i, (int)adjList[i].size() });
+    }
+
+    sort(friendCounts.begin(), friendCounts.end(),
+        [](const pair<int, int>& a, const pair<int, int>& b) {
+            return a.second > b.second;
+        });
+
+    int displayCount = min(10, personCount);
+
+    cout << createSectionHeader("社交大牛排行榜 TOP" + to_string(displayCount));
+
+    // 创建表格
+    cout << "\n" << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
+    cout << TABLE_VERT << " 排名 |       姓名        | 好友数 | 社交影响力               " << TABLE_VERT << "\n";
+    cout << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
+
+    for (int i = 0; i < displayCount; i++) {
+        int idx = friendCounts[i].first;
+        string name = vertList[idx].getName();
+        int count = friendCounts[i].second;
+
+        // 排名
+        string rank;
+        if (i == 0) rank = TOP1_ICON;
+        else if (i == 1) rank = TOP2_ICON;
+        else if (i == 2) rank = TOP3_ICON;
+        else rank = " " + to_string(i + 1) + " ";
+
+        cout << TABLE_VERT << " " << left << setw(4) << rank;
+
+        // 姓名
+        string nameIcon;
+        if (count >= 15) nameIcon = CROWN_ICON;
+        else if (count >= 10) nameIcon = STAR_ICON;
+        else if (count >= 5) nameIcon = USER_ICON;
+        else nameIcon = "   ";
+
+        cout << " | " << nameIcon << " " << setw(15) << name;
+
+        // 好友数
+        int maxFriends = friendCounts[0].second;
+        float friendRatio = (float)count / maxFriends;
+        cout << " | [" << setw(2) << count << "] ";
+
+        // 进度条
+        cout << createSmallProgressBar(friendRatio * 100, 10);
+
+        // 好友列表（前2个）
+        cout << " | ";
+        int shown = 0;
+        for (auto& edge : adjList[idx]) {
+            if (shown >= 2) break;
+            cout << vertList[edge.getTo()].getName();
+            if (shown < 1 && adjList[idx].size() > 1) cout << ",";
+            shown++;
+        }
+        if (adjList[idx].size() > 2) {
+            cout << "等" << adjList[idx].size() << "人";
+        }
+
+        // 对齐
+        int remaining = 20 - shown * 8;
+        cout << string(remaining, ' ') << TABLE_VERT << "\n";
+
+        // 分隔线
+        if (i < displayCount - 1) {
+            cout << TABLE_VERT << string(70, '-') << TABLE_VERT << "\n";
+        }
+    }
+
+    cout << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
+
+    // 统计信息
+    //float avgFriends = 0;
+    //for (auto& p : friendCounts) avgFriends += p.second;
+    //avgFriends /= personCount;
+
+    //cout << "\n" << STATS_ICON << " 网络统计:";
+    //cout << "\n   总人数: " << personCount;
+    //cout << "\n   人均好友数: " << fixed << setprecision(1) << avgFriends;
+    //cout << "\n   社交达人标准: " << (personCount >= 10 ? friendCounts[0].second : 0) << "+ 好友";
+    //cout << "\n   前" << displayCount << "名占总好友数: "
+    //    << fixed << setprecision(1)
+    //    << (friendCounts[0].second * displayCount * 100.0 / (avgFriends * personCount)) << "%";
+    //cout << "\n" << LINE_THIN << "\n";
+}
+
+// 美化显示亲密度查询
+void SocialNetwork::displayBottleneckBeautiful(string startName, string endName) {
+    int start = findIndex(startName);
+    int end = findIndex(endName);
+
+    if (start == -1 || end == -1) {
+        cout << ERROR_ICON << " 至少一个联系人不存在！\n";
+        return;
+    }
+
+    if (start == end) {
+        cout << INFO_ICON << " 这是同一个人！\n";
+        return;
+    }
+
+    // 检查是否是直接好友
+    for (auto& e : adjList[start]) {
+        if (e.getTo() == end) {
+            cout << createSectionHeader("直接好友关系检测");
+            cout << "\n" << SUCCESS_ICON << " " << startName << " 和 " << endName << " 是直接好友！\n";
+            cout << "\n   亲密度: " << createProgressBar(e.getWeight(), 20);
+            cout << "\n   关系强度: ";
+            if (e.getWeight() >= 80) cout << "强关系 (亲密好友)";
+            else if (e.getWeight() >= 60) cout << "中关系 (普通好友)";
+            else if (e.getWeight() >= 40) cout << "弱关系 (认识的人)";
+            else cout << "微弱关系 (刚认识)";
+            cout << "\n" << LINE_THIN << "\n";
+            return;
+        }
+    }
+
+    // 如果不是直接好友，计算最大瓶颈路径
+    int personCount = vertList.size();
+    vector<int> maxBottleNeck(personCount, 0);
+    vector<bool> visited(personCount, false);
+    priority_queue<pair<int, int>> pq;
+
+    maxBottleNeck[start] = INT_MAX;
+    pq.push({ INT_MAX, start });
+
+    while (!pq.empty()) {
+        auto current = pq.top();  // 先获取顶部元素
+        int currentBottleneck = current.first;
+        int u = current.second;
+        pq.pop();
+
+        if (visited[u]) continue;
+        visited[u] = true;
+
+        if (u == end) break;
+
+        for (auto& e : adjList[u]) {
+            int v = e.getTo();
+            int weight = e.getWeight();
+
+            if (!visited[v]) {
+                int newBottleneck = min(maxBottleNeck[u], weight);
+                if (newBottleneck > maxBottleNeck[v]) {
+                    maxBottleNeck[v] = newBottleneck;
+                    pq.push({ newBottleneck, v });
+                }
+            }
+        }
+    }
+
+    if (maxBottleNeck[end] == 0) {
+        cout << createSectionHeader("亲密度路径分析");
+        cout << "\n" << ERROR_ICON << " " << startName << " 和 " << endName << " 之间没有可达路径！\n";
+        cout << "\n   分析结果: 两人之间没有直接的社交联系\n";
+        cout << "   建议: 通过共同好友建立联系\n";
+        cout << LINE_THIN << "\n";
+        return;
+    }
+
+    cout << createSectionHeader("亲密度路径分析");
+    cout << "\n" << INFO_ICON << " 查询: " << startName << " -> " << endName << "\n";
+    cout << LINE_THIN << "\n";
+    cout << "   最大亲密度下限: " << createProgressBar(maxBottleNeck[end], 20) << "\n";
+
+    string relationship;
+    if (maxBottleNeck[end] >= 80) relationship = "强社交关系 (可以通过亲密朋友联系)";
+    else if (maxBottleNeck[end] >= 60) relationship = "中等社交关系 (可以通过普通朋友联系)";
+    else if (maxBottleNeck[end] >= 40) relationship = "弱社交关系 (可以通过熟人联系)";
+    else relationship = "微弱社交关系 (联系较弱)";
+
+    cout << "   关系强度: " << relationship << "\n";
+    cout << "   说明: 这是所有可达路径中的最高亲密度下限\n";
+    cout << "         表示两人联系的最亲密程度\n";
+    cout << LINE_THIN << "\n";
 }
