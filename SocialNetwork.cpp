@@ -12,12 +12,6 @@ SocialNetwork::~SocialNetwork()
     // 析构函数，清理资源
 }
 
-// 查找人员索引
-int SocialNetwork::findIndex(string name) {
-    if (nameToIndex.find(name) == nameToIndex.end()) return -1;
-    return nameToIndex[name];
-}
-
 // 添加联系人
 void SocialNetwork::addPerson(string name) {
     if (findIndex(name) != -1) {
@@ -154,6 +148,13 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
     else {
         cout << name1 << " 和 " << name2 << " 之间没有关系\n";
     }
+}
+
+void SocialNetwork::saveToFile(string filename) {
+
+}
+void SocialNetwork::loadFromFile(string filename) {
+
 }
 
 // 显示所有联系人关系
