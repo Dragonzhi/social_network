@@ -1,5 +1,6 @@
 #include "SocialNetwork.h"
 #include <queue>
+#include "json.hpp"
 
 SocialNetwork::SocialNetwork()
 {

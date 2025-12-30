@@ -120,6 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Edge.h" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="Person.h" />
     <ClInclude Include="SocialNetwork.h" />
   </ItemGroup>
