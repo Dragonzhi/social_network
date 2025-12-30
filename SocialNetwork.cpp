@@ -1,8 +1,6 @@
 #include "SocialNetwork.h"
 #include <queue>
-#include <algorithm>
-#include <sstream>
-using namespace std;
+#include "json.hpp"
 
 SocialNetwork::SocialNetwork()
 {
@@ -186,204 +184,168 @@ void SocialNetwork::displayAll() {
 
 // 按亲密程度排序好友
 void SocialNetwork::sortFriends(string name, bool ascending) {
-    int index = findIndex(name);
-    if (index == -1) {
-        cout << "联系人 " << name << " 不存在！\n";
-        return;
-    }
+	int index = findIndex(name);
+	if (index == -1) {
+		cout << "联系人 " << name << " 不存在！" << endl;
+		return;
+	}
 
-    auto& friends = adjList[index];
-    if (friends.empty()) {
-        cout << name << " 暂无好友\n";
-        return;
-    }
+	vector<FriendInfo> friend_infos;
+	for (auto& e : adjList[index]) {
+		friend_infos.push_back(FriendInfo(vertList[e.getTo()].getName(), e.getWeight(), e.getTo()));
+	}
 
-    // 将好友列表转换为vector以便排序
-    vector<pair<int, int>> friendWeights; // pair<朋友索引, 亲密度>
-    for (auto& edge : friends) {
-        friendWeights.push_back({ edge.getTo(), edge.getWeight() });
-    }
+	if (friend_infos.empty()) {
+		cout << name << "暂时没有好友！" << endl;
+		return;
+	}
 
-    // 排序
-    if (ascending) {
-        sort(friendWeights.begin(), friendWeights.end(),
-            [](const pair<int, int>& a, const pair<int, int>& b) {
-                return a.second < b.second;
-            });
-    }
-    else {
-        sort(friendWeights.begin(), friendWeights.end(),
-            [](const pair<int, int>& a, const pair<int, int>& b) {
-                return a.second > b.second;
-            });
-    }
+	// 排序
+	if (ascending) {
+		sort(friend_infos.begin(), friend_infos.end(),
+			[](const FriendInfo& a, const FriendInfo& b) {
+			return a.weight < b.weight;
+		});
+		cout << "\n" << name << " 的好友（按亲密度升序）：" << endl;
+	}
+	else {
+		sort(friend_infos.begin(), friend_infos.end(),
+			[](const FriendInfo& a, const FriendInfo& b) {
+				return a.weight > b.weight;
+			});
+		cout << "\n" << name << " 的好友（按亲密度降序）：" << endl;
+	}
 
-    // 显示结果
-    cout << name << " 的好友按亲密度" << (ascending ? "升序" : "降序") << "排序:\n";
-    for (auto& fw : friendWeights) {
-        cout << vertList[fw.first].getName() << " - 亲密度: " << fw.second << endl;
-    }
+	for (int i = 0; i < friend_infos.size(); i++) {
+		cout << i + 1 << ". " << friend_infos[i].name << " (亲密度: " << friend_infos[i].weight << ")" << endl;
+	}
 }
-
-// 计算瓶颈路径（最大最小值路径）
+//路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
-    int start = findIndex(startName);
-    int end = findIndex(endName);
+	int start = findIndex(startName);
+	int end = findIndex(endName);
 
-    if (start == -1 || end == -1) {
-        return -1;
-    }
+	if (start == -1 || end == -1) {
+		cout << "至少一个联系人不存在！" << endl;
+		return -1;
+	}
 
-    if (start == end) {
-        return 0;
-    }
+	if (start == end) {
+		cout << "这是同一个人！" << endl;
+		return 0;
+	}
 
-    // 使用Dijkstra变种算法，求最大最小值路径
-    vector<int> maxMin(vertList.size(), -1); // 存储到每个节点的最大最小值
-    vector<bool> visited(vertList.size(), false);
+	// 查询是否是直接好友
+	for (auto& e : adjList[start]) {
+		if (e.getTo() == end) {
+			cout << "他们是直接好友，亲密度为：" << e.getWeight() << endl;
+			return e.getWeight();
+		}
+	}
 
-    maxMin[start] = INT_MAX; // 起始节点设置为最大值
+	int personCount = vertList.size();
+	vector<int> distToTree(personCount, -1);
+	vector<int> parent(personCount, -1);
+	vector<bool> inMST(personCount, false);
+	// 最大堆， 存储{权值， 节点ID｝
+	priority_queue<pair<int, int>> pq;
 
-    // 使用优先队列，按最大最小值降序排列
-    priority_queue<pair<int, int>> pq; // pair<最大最小值, 节点索引>
-    pq.push({ INT_MAX, start });
+	distToTree[start] = 0;
+	pq.push({ 0, start });
+	
+	while (!pq.empty()) {
+		int u = pq.top().second;
+		pq.pop();
 
-    while (!pq.empty()) {
-        auto current = pq.top();
-        pq.pop();
-        int u = current.second;
+		if (inMST[u]) continue;
+		else inMST[u] = true;
 
-        if (visited[u]) continue;
-        visited[u] = true;
+		if (u == end) break;		//  路径已经可达
 
-        // 如果到达目标节点
-        if (u == end) {
-            return maxMin[u];
-        }
+		for (auto& e : adjList[u]) {
+			int v = e.getTo();
+			int w = e.getWeight();
 
-        // 遍历所有邻居
-        for (auto& edge : adjList[u]) {
-            int v = edge.getTo();
-            int weight = edge.getWeight();
+			if (!inMST[v] && w > distToTree[v]) {
+				distToTree[v] = w;
+				parent[v] = v;
+				pq.push({ distToTree[v], v });
+			}
+		}
+	}
 
-            // 计算到v的最大最小值
-            int newMin = min(maxMin[u], weight);
+	if (!inMST[end]) {
+		return -1;		//两点无法连通
+	}
+	
+	int miniIntimacy = INT_MAX;
+	int curr = end;
 
-            if (newMin > maxMin[v]) {
-                maxMin[v] = newMin;
-                pq.push({ newMin, v });
-            }
-        }
-    }
-
-    return -1; // 没有路径
+	while (curr != start) {
+		int currentEdgeWeight = distToTree[curr];
+		if (currentEdgeWeight < miniIntimacy) {
+			miniIntimacy = currentEdgeWeight;
+		}
+		curr = parent[curr];
+	}
+	return miniIntimacy;
 }
-
-// 显示社交大牛（Top10）
+	
 void SocialNetwork::displayTop10() {
-    if (vertList.empty()) {
-        cout << "社交网络为空！\n";
-        return;
-    }
+	int personCount = vertList.size();
+	if (personCount <= 0) {
+		cout << "社交网络为空！" << endl;
+		return;
+	}
 
-    // 收集每个人的好友数量
-    vector<pair<string, int>> friendCounts;
-    for (int i = 0; i < vertList.size(); i++) {
-        string name = vertList[i].getName();
-        int count = adjList[i].size();
-        friendCounts.push_back({ name, count });
-    }
+	// {ID， 好友人数}
+	vector<pair<int, int>> friendCounts;
+	for (int i = 0; i < personCount; i++) {
+		friendCounts.push_back({ i, adjList[i].size() });
+	}
 
-    // 按好友数量降序排序
-    sort(friendCounts.begin(), friendCounts.end(),
-        [](const pair<string, int>& a, const pair<string, int>& b) {
-            return a.second > b.second;
-        });
+	sort(friendCounts.begin(), friendCounts.end(), 
+		[](const pair<int, int>& a, const pair<int, int>& b){
+		return a.second > b.second;
+		});
 
-    // 显示Top10
-    cout << "\n======= 社交大牛Top10 =======\n";
-    int limit = min(10, (int)friendCounts.size());
-    for (int i = 0; i < limit; i++) {
-        cout << i + 1 << ". " << friendCounts[i].first
-            << " - 好友数量: " << friendCounts[i].second << endl;
-    }
-    cout << "============================\n";
+	int displayCount = min(10, personCount);
+	cout << "\n========== 社交大牛Top" << displayCount << " ==========" << endl;
+	cout << "排名\t姓名\t\t好友数\t\t直接好友" << endl;
+	cout << "---------------------------------------------" << endl;
+
+	for (int i = 0; i < displayCount; i++) {
+		int idx = friendCounts[i].first;
+		cout << i + 1 << "\t" << vertList[idx].getName();
+
+		// 调整格式
+		if (vertList[idx].getName().length() < 8) {
+			cout << "\t\t";
+		}
+		else {
+			cout << "\t";
+		}
+
+		cout << friendCounts[i].second << "\t\t";
+
+		// 显示前3个好友
+		int count = 0;
+		for (auto& edge : adjList[idx]) {
+			if (count >= 3) break;
+			cout << vertList[edge.getTo()].getName();
+			if (count < 2 && count < adjList[idx].size() - 1) {
+				cout << ", ";
+			}
+			count++;
+		}
+		if (adjList[idx].size() > 3) {
+			cout << "...";
+		}
+		cout << endl;
+	}
+	cout << "==========================================" << endl;
 }
-
-// 保存到文件
-void SocialNetwork::saveToFile(string filename) {
-    ofstream file(filename);
-    if (!file.is_open()) {
-        cout << "无法打开文件: " << filename << endl;
-        return;
-    }
-
-    // 保存所有人员
-    file << vertList.size() << endl;
-    for (int i = 0; i < vertList.size(); i++) {
-        file << vertList[i].getName() << endl;
-    }
-
-    // 保存所有关系
-    int edgeCount = 0;
-    for (int i = 0; i < adjList.size(); i++) {
-        edgeCount += adjList[i].size();
-    }
-    edgeCount /= 2; // 因为是无向图
-
-    file << edgeCount << endl;
-
-    // 只保存i < j的关系，避免重复
-    for (int i = 0; i < adjList.size(); i++) {
-        for (auto& edge : adjList[i]) {
-            int j = edge.getTo();
-            if (i < j) { // 只保存一次
-                file << vertList[i].getName() << " "
-                    << vertList[j].getName() << " "
-                    << edge.getWeight() << endl;
-            }
-        }
-    }
-
-    file.close();
-    cout << "数据已保存到文件: " << filename << endl;
-}
-
-// 从文件加载
-void SocialNetwork::loadFromFile(string filename) {
-    ifstream file(filename);
-    if (!file.is_open()) {
-        cout << "无法打开文件: " << filename << endl;
-        return;
-    }
-
-    // 清空现有数据
-    vertList.clear();
-    adjList.clear();
-    nameToIndex.clear();
-
-    int personCount;
-    file >> personCount;
-    file.ignore(); // 忽略换行符
-
-    // 读取所有人员
-    for (int i = 0; i < personCount; i++) {
-        string name;
-        getline(file, name);
-        addPerson(name);
-    }
-
-    int edgeCount;
-    file >> edgeCount;
-
-    // 读取所有关系
-    for (int i = 0; i < edgeCount; i++) {
-        string name1, name2;
-        int weight;
-        file >> name1 >> name2 >> weight;
-        addEdge(name1, name2, weight);
-    }
-
-    file.close();
-    cout << "已从文件加载数据: " << filename << endl;
+int SocialNetwork::findIndex(string name) {
+	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
+	return nameToIndex[name];
 }
