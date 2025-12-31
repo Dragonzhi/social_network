@@ -40,13 +40,12 @@ void showASCIIMenu() {
     cout << "  [5]  显示所有联系人关系   [6]  按亲密程度排序好友" << endl;
     cout << "  [7]  查询两人亲密度       [8]  显示社交大牛(Top10)" << endl;
     cout << "  [9]  保存到文件          [10]  从文件加载" << endl;
-    cout << "  [11] 网络统计            [12]  图形化展示" << endl;
-    cout << "  [13] 导出HTML可视化       [0]  退出系统" << endl;
+    cout << "  [11] 导出HTML可视化       [0]  退出系统" << endl;
 
     cout << thinLine << endl;
     cout << "  提示: 输入数字选择对应功能，按Enter键确认" << endl;
     cout << dashLine << endl;
-    cout << "  请选择操作 (0-13): ";
+    cout << "  请选择操作 (0-11): ";
 }
 
 // 显示操作标题
@@ -206,23 +205,6 @@ int main() {
             break;
 
         case 11:
-            showOperationTitle("网络统计");
-            cout << "\n  网络统计功能正在开发中...\n";
-            cout << "\n  当前功能包括:\n";
-            cout << "    - 联系人总数显示\n";
-            cout << "    - 关系总数统计\n";
-            cout << "    - 平均好友数计算\n";
-            cout << "    - 亲密度分布分析\n";
-            waitForUser();
-            break;
-
-        case 12:
-            showOperationTitle("图形化展示");
-            network.displayGraphASCII();
-            waitForUser();
-            break;
-
-        case 13:
             showOperationTitle("导出HTML可视化");
             cout << "\n  请输入HTML文件名 (例如: network.html): ";
             getline(cin, filename);
@@ -245,7 +227,7 @@ int main() {
             return 0;
 
         default:
-            showErrorMsg("无效的选择，请输入 0-13 之间的数字！");
+            showErrorMsg("无效的选择，请输入 0-11 之间的数字！");
             waitForUser();
         }
     }
