@@ -1106,5 +1106,14 @@ void SocialNetwork::exportToHTML(string filename) {
 
     file.close();
     cout << "HTML文件已生成: " << filename << endl;
+
+    std::string command = "start \"\" \"" + filename + "\"";
+    int result = system(command.c_str());
+    if (result != 0) {
+        std::cout << "无法打开HTML文件: " << filename << std::endl;
+    }
+    else {
+        std::cout << "已自动打开HTML文件: " << filename << std::endl;
+    }
 }
 
