@@ -1008,17 +1008,17 @@ void SocialNetwork::displayGraphASCII() {
 
 
 void SocialNetwork::exportToHTML(string filename) {
-    ofstream file(filename, ios::binary);  // 二进制模式避免编码转换
+    ofstream file(filename, ios::out | ios::binary);
 
-    // 写入UTF-8 BOM
-    const unsigned char bom[] = { 0xEF, 0xBB, 0xBF };
-    file.write((const char*)bom, sizeof(bom));
+
+    const unsigned char utf8Bom[3] = { 0xEF, 0xBB, 0xBF };
+    file.write((const char*)utf8Bom, sizeof(utf8Bom));
 
     file << R"(<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>社交网络图</title>
+    <title>SocialNetwork</title>
     <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1038,14 +1038,14 @@ void SocialNetwork::exportToHTML(string filename) {
 <body>
     <div class="container">
         <div class="header">
-            <h1>社交关系网络图</h1>
-            <p>总人数: )" << vertList.size() << R"( | 生成时间: )" << __DATE__ << R"(</p>
+            <h1>SocialNetwork</h1>
+            <p>Total number of people: )" << vertList.size() << R"( | Generation Time: )" << __DATE__ << R"(</p>
         </div>
         <div id="network"></div>
     </div>
     
     <script>
-        // 创建节点数据
+
         var nodes = new vis.DataSet([)";
 
     for (int i = 0; i < vertList.size(); i++) {
@@ -1056,7 +1056,7 @@ void SocialNetwork::exportToHTML(string filename) {
 
     file << R"(]);
         
-        // 创建边数据
+
         var edges = new vis.DataSet([)";
 
     set<pair<int, int>> addedEdges;
@@ -1074,8 +1074,7 @@ void SocialNetwork::exportToHTML(string filename) {
     }
 
     file << R"(]);
-        
-        // 创建网络图
+
         var container = document.getElementById('network');
         var data = { nodes: nodes, edges: edges };
         var options = {

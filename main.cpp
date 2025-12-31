@@ -46,7 +46,7 @@ void showASCIIMenu() {
     cout << thinLine << endl;
     cout << "  提示: 输入数字选择对应功能，按Enter键确认" << endl;
     cout << dashLine << endl;
-    cout << "  请选择操作 (0-11): ";
+    cout << "  请选择操作 (0-13): ";
 }
 
 // 显示操作标题
