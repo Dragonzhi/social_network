@@ -999,7 +999,159 @@ void SocialNetwork::displayGraphASCII() {
     cout << "\n" << LINE_THIN << "\n";
 }
 
+void SocialNetwork::exportToHTML(string filename) {
+    // 二进制写入+UTF8 BOM头 彻底解决中文乱码
+    ofstream file(filename, ios::out | ios::binary);
+    if (!file.is_open()) {
+        cout << "错误：无法打开文件 " << filename << " 进行写入！" << endl;
+        return;
+    }
+    const unsigned char utf8Bom[3] = { 0xEF, 0xBB, 0xBF };
+    file.write((const char*)utf8Bom, sizeof(utf8Bom));
 
+    // HTML头部+样式+ECharts引入
+    file << R"(<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SocialNetwork</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 20px; padding: 20px; 
+                 background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        #network { width: 100%; height: 600px; background: white; 
+                  border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SocialNetwork</h1>
+            <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
+        </div>
+        <div id="network"></div>
+    </div>
+    
+    <script>
+        var myChart = echarts.init(document.getElementById('network'));
+        var nodesData = [)";
+
+    // 遍历生成节点数据
+    for (int i = 0; i < vertList.size(); i++) {
+        file << (i > 0 ? "," : "") << "\n{"
+            << "id: " << i
+            << ", name: '" << vertList[i].getName() << "'"
+            << ", symbolSize: " << adjList[i].size() * 5 + 15
+            << "}";
+    }
+
+    file << R"(];
+        
+        var linksData = [)";
+
+    // 遍历生成边数据，额外给边绑定【亲密度数值】用于悬浮显示
+    set<pair<int, int>> addedEdges;
+    bool firstEdge = true;
+    for (int i = 0; i < vertList.size(); i++) {
+        for (auto& edge : adjList[i]) {
+            int j = edge.getTo();
+            int weight = edge.getWeight();
+            if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
+                file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
+                    << ", weight: " << weight  // 关键：把亲密度存入边的自定义属性，用于悬浮展示
+                    << ", lineStyle: {width: " << weight / 10.0 << "}}";
+                addedEdges.insert({ i, j });
+                firstEdge = false;
+            }
+        }
+    }
+
+    // ========== 核心修改：tooltip 差异化显示 节点/边 ==========
+    file << R"(];
+
+        var option = {
+            // 提示框核心配置：节点和边 显示完全不同的内容+样式
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove', // 鼠标悬浮即触发，无需点击
+                formatter: function(params) {
+                    // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
+                    if (params.dataType === 'node') {
+                        const friendCount = (params.data.symbolSize - 15)/5;
+                        return `<div style="padding:5px;">
+                                  <b style="color:#409EFF;">User Information</b><br/>
+                                  Username: ${params.data.name}<br/>
+                                  Friends: ${friendCount} 
+                                </div>`;
+                    }
+                    // 2. 鼠标悬浮到【连线/边】上 - 显示好友关系信息
+                    else if (params.dataType === 'edge') {
+                        const fromName = nodesData[params.data.source].name;
+                        const toName = nodesData[params.data.target].name;
+                        const intimacy = params.data.weight;
+                        return `<div style="padding:5px;">
+                                  <b style="color:#E6A23C;">Friendship</b><br/>
+                                  ${fromName} <-> ${toName}<br/>
+                                  Intimacy Weight: ${intimacy}
+                                </div>`;
+                    }
+                }
+            },
+            series: [{
+                type: 'graph',
+                layout: 'force',
+                data: nodesData,
+                links: linksData,
+                roam: true, // 拖拽+缩放保留
+                label: {
+                    show: true,
+                    position: 'right',
+                    fontSize: 12,
+                    color: '#333'
+                },
+                force: {
+                    repulsion: 2500,
+                    gravity: 0.1,
+                    edgeLength: 250,
+                    layoutAnimation: true
+                },
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.2,
+                    opacity: 0.7
+                },
+                // 关键配置：必须打开这个，才能让 边 支持悬浮触发tooltip
+                emphasis: {
+                    focus: 'adjacency',
+                    lineStyle: { width: 8 } // 鼠标悬浮到边上时，连线变粗高亮，超实用！
+                }
+            }]
+        };
+
+        myChart.setOption(option);
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    </script>
+</body>
+</html>)";
+
+    file.close();
+    cout << "HTML文件已生成: " << filename << endl;
+    // 自动打开HTML文件
+#ifdef _WIN32
+    string command = "start \"\" \"" + filename + "\"";
+#elif __APPLE__
+    string command = "open \"" + filename + "\"";
+#else
+    string command = "xdg-open \"" + filename + "\"";
+#endif
+    system(command.c_str());
+}
+/*
 void SocialNetwork::exportToHTML(string filename) {
     ofstream file(filename, ios::out | ios::binary);
 
@@ -1110,3 +1262,4 @@ void SocialNetwork::exportToHTML(string filename) {
     }
 }
 
+*/

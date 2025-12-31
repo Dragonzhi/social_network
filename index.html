@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>SocialNetwork</title>
-    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
@@ -12,114 +12,158 @@
                  background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         #network { width: 100%; height: 600px; background: white; 
                   border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .legend { margin-top: 20px; padding: 15px; background: white; 
-                 border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .legend-item { display: inline-block; margin-right: 20px; }
-        .node-sample { display: inline-block; width: 15px; height: 15px; 
-                      border-radius: 50%; margin-right: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>SocialNetwork</h1>
-            <p>Total number of people: 30 | Generation Time: Dec 31 2025</p>
+            <p>People: 25 | Time: Dec 31 2025</p>
         </div>
         <div id="network"></div>
     </div>
     
     <script>
-
-        var nodes = new vis.DataSet([
-{id: 0, label: 'Frank_Bailey', value: 1},
-{id: 1, label: 'Chris_E_Perez', value: 1},
-{id: 2, label: 'Yale_Murphy', value: 1},
-{id: 3, label: 'Yale_Nelson', value: 14},
-{id: 4, label: 'Victor_Evans292', value: 1},
-{id: 5, label: 'Hugo_Nelson971', value: 1},
-{id: 6, label: 'Ethan_Hernandez', value: 1},
-{id: 7, label: 'Xena_Evans29', value: 1},
-{id: 8, label: 'Evan_E_Martinez', value: 1},
-{id: 9, label: 'Zoe_Davis67', value: 1},
-{id: 10, label: 'Xena_Baker', value: 1},
-{id: 11, label: 'Derek_Young', value: 7},
-{id: 12, label: 'Fiona_Bennett', value: 1},
-{id: 13, label: 'Kyle_Murphy609', value: 1},
-{id: 14, label: 'Steve_Perez382', value: 1},
-{id: 15, label: 'Ben_Bell', value: 1},
-{id: 16, label: 'Hannah_Gonzalez', value: 1},
-{id: 17, label: 'Fiona_Perez', value: 1},
-{id: 18, label: 'Xavier_Brown353', value: 1},
-{id: 19, label: 'Mona_Carter', value: 12},
-{id: 20, label: 'Evan_D_Bailey', value: 1},
-{id: 21, label: 'Uma_Rogers', value: 1},
-{id: 22, label: 'Simon_Smith388', value: 1},
-{id: 23, label: 'Paula_Hall', value: 1},
-{id: 24, label: 'Noah_Sanchez', value: 1},
-{id: 25, label: 'Xavier_Perez', value: 1},
-{id: 26, label: 'Fiona_D_Edwards', value: 1},
-{id: 27, label: 'Yvonne_Taylor', value: 1},
-{id: 28, label: 'Nathan_Reed949', value: 1},
-{id: 29, label: 'Oscar_Turner844', value: 1}]);
+        var myChart = echarts.init(document.getElementById('network'));
+        var nodesData = [
+{id: 0, name: 'Hannah_Roberts', symbolSize: 40},
+{id: 1, name: 'Ethan_Smith', symbolSize: 70},
+{id: 2, name: 'Uma_Wilson807', symbolSize: 70},
+{id: 3, name: 'Olive_Brown', symbolSize: 55},
+{id: 4, name: 'Lily_Cook', symbolSize: 30},
+{id: 5, name: 'Nina_Q_Cooper', symbolSize: 45},
+{id: 6, name: 'Kevin_Hall', symbolSize: 25},
+{id: 7, name: 'Mike_Martin', symbolSize: 25},
+{id: 8, name: 'Clark_Harris', symbolSize: 25},
+{id: 9, name: 'George_Davis', symbolSize: 40},
+{id: 10, name: 'Mike_Hill', symbolSize: 30},
+{id: 11, name: 'Liam_Johnson', symbolSize: 25},
+{id: 12, name: 'Hugo_Jones737', symbolSize: 50},
+{id: 13, name: 'Liam_Baker515', symbolSize: 30},
+{id: 14, name: 'Fiona_Walker107', symbolSize: 25},
+{id: 15, name: 'Tina_Martinez', symbolSize: 35},
+{id: 16, name: 'Ethan_Davis', symbolSize: 25},
+{id: 17, name: 'Cindy_Thomas', symbolSize: 25},
+{id: 18, name: 'Lily_Wood', symbolSize: 25},
+{id: 19, name: 'Kate_Thompson353', symbolSize: 25},
+{id: 20, name: 'David_Flores', symbolSize: 25},
+{id: 21, name: 'Bella_Torres674', symbolSize: 25},
+{id: 22, name: 'Chris_R_Hall', symbolSize: 25},
+{id: 23, name: 'Simon_Bailey', symbolSize: 25},
+{id: 24, name: 'David_D_Green', symbolSize: 25}];
         
+        var linksData = [
+{source: 0, target: 1, weight: 41, lineStyle: {width: 4.1}},
+{source: 0, target: 2, weight: 55, lineStyle: {width: 5.5}},
+{source: 0, target: 3, weight: 28, lineStyle: {width: 2.8}},
+{source: 0, target: 8, weight: 39, lineStyle: {width: 3.9}},
+{source: 0, target: 23, weight: 7, lineStyle: {width: 0.7}},
+{source: 1, target: 2, weight: 58, lineStyle: {width: 5.8}},
+{source: 1, target: 4, weight: 39, lineStyle: {width: 3.9}},
+{source: 1, target: 6, weight: 83, lineStyle: {width: 8.3}},
+{source: 1, target: 7, weight: 61, lineStyle: {width: 6.1}},
+{source: 1, target: 13, weight: 16, lineStyle: {width: 1.6}},
+{source: 1, target: 15, weight: 57, lineStyle: {width: 5.7}},
+{source: 1, target: 16, weight: 91, lineStyle: {width: 9.1}},
+{source: 1, target: 20, weight: 55, lineStyle: {width: 5.5}},
+{source: 1, target: 21, weight: 91, lineStyle: {width: 9.1}},
+{source: 1, target: 23, weight: 21, lineStyle: {width: 2.1}},
+{source: 2, target: 3, weight: 97, lineStyle: {width: 9.7}},
+{source: 2, target: 4, weight: 100, lineStyle: {width: 10}},
+{source: 2, target: 5, weight: 81, lineStyle: {width: 8.1}},
+{source: 2, target: 7, weight: 60, lineStyle: {width: 6}},
+{source: 2, target: 8, weight: 64, lineStyle: {width: 6.4}},
+{source: 2, target: 12, weight: 35, lineStyle: {width: 3.5}},
+{source: 2, target: 14, weight: 25, lineStyle: {width: 2.5}},
+{source: 2, target: 15, weight: 81, lineStyle: {width: 8.1}},
+{source: 2, target: 17, weight: 34, lineStyle: {width: 3.4}},
+{source: 3, target: 5, weight: 90, lineStyle: {width: 9}},
+{source: 3, target: 6, weight: 45, lineStyle: {width: 4.5}},
+{source: 3, target: 10, weight: 39, lineStyle: {width: 3.9}},
+{source: 3, target: 11, weight: 66, lineStyle: {width: 6.6}},
+{source: 3, target: 16, weight: 19, lineStyle: {width: 1.9}},
+{source: 3, target: 17, weight: 21, lineStyle: {width: 2.1}},
+{source: 4, target: 9, weight: 91, lineStyle: {width: 9.1}},
+{source: 5, target: 9, weight: 95, lineStyle: {width: 9.5}},
+{source: 5, target: 10, weight: 56, lineStyle: {width: 5.6}},
+{source: 5, target: 13, weight: 99, lineStyle: {width: 9.9}},
+{source: 5, target: 19, weight: 46, lineStyle: {width: 4.6}},
+{source: 9, target: 12, weight: 90, lineStyle: {width: 9}},
+{source: 9, target: 18, weight: 95, lineStyle: {width: 9.5}},
+{source: 9, target: 22, weight: 72, lineStyle: {width: 7.2}},
+{source: 10, target: 11, weight: 74, lineStyle: {width: 7.4}},
+{source: 12, target: 18, weight: 69, lineStyle: {width: 6.9}},
+{source: 12, target: 20, weight: 75, lineStyle: {width: 7.5}},
+{source: 12, target: 21, weight: 71, lineStyle: {width: 7.1}},
+{source: 12, target: 22, weight: 91, lineStyle: {width: 9.1}},
+{source: 12, target: 24, weight: 76, lineStyle: {width: 7.6}},
+{source: 13, target: 14, weight: 96, lineStyle: {width: 9.6}},
+{source: 15, target: 19, weight: 33, lineStyle: {width: 3.3}},
+{source: 15, target: 24, weight: 5, lineStyle: {width: 0.5}}];
 
-        var edges = new vis.DataSet([
-{from: 0, to: 11, value: 56},
-{from: 1, to: 19, value: 57},
-{from: 2, to: 11, value: 81},
-{from: 3, to: 4, value: 96},
-{from: 3, to: 5, value: 75},
-{from: 3, to: 6, value: 39},
-{from: 3, to: 9, value: 37},
-{from: 3, to: 12, value: 77},
-{from: 3, to: 15, value: 27},
-{from: 3, to: 17, value: 98},
-{from: 3, to: 18, value: 1},
-{from: 3, to: 20, value: 50},
-{from: 3, to: 23, value: 75},
-{from: 3, to: 24, value: 99},
-{from: 3, to: 26, value: 43},
-{from: 3, to: 19, value: 30},
-{from: 3, to: 11, value: 68},
-{from: 7, to: 19, value: 92},
-{from: 8, to: 19, value: 56},
-{from: 10, to: 19, value: 6},
-{from: 11, to: 13, value: 10},
-{from: 11, to: 25, value: 20},
-{from: 11, to: 27, value: 86},
-{from: 11, to: 19, value: 46},
-{from: 14, to: 19, value: 34},
-{from: 16, to: 19, value: 74},
-{from: 19, to: 21, value: 10},
-{from: 19, to: 22, value: 98},
-{from: 19, to: 28, value: 97},
-{from: 19, to: 29, value: 76}]);
-
-        var container = document.getElementById('network');
-        var data = { nodes: nodes, edges: edges };
-        var options = {
-            nodes: {
-                shape: 'dot',
-                size: 20,
-                font: { size: 12 },
-                borderWidth: 2
-            },
-            edges: {
-                width: 1,
-                smooth: { type: 'continuous' }
-            },
-            physics: {
-                stabilization: true,
-                barnesHut: {
-                    gravitationalConstant: -8000,
-                    springConstant: 0.04,
-                    springLength: 95
+        var option = {
+            // 提示框核心配置：节点和边 显示完全不同的内容+样式
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove', // 鼠标悬浮即触发，无需点击
+                formatter: function(params) {
+                    // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
+                    if (params.dataType === 'node') {
+                        const friendCount = (params.data.symbolSize - 15)/5;
+                        return `<div style="padding:5px;">
+                                  <b style="color:#409EFF;">User Information</b><br/>
+                                  Username: ${params.data.name}<br/>
+                                  Friends: ${friendCount} 
+                                </div>`;
+                    }
+                    // 2. 鼠标悬浮到【连线/边】上 - 显示好友关系信息
+                    else if (params.dataType === 'edge') {
+                        const fromName = nodesData[params.data.source].name;
+                        const toName = nodesData[params.data.target].name;
+                        const intimacy = params.data.weight;
+                        return `<div style="padding:5px;">
+                                  <b style="color:#E6A23C;">Friendship</b><br/>
+                                  ${fromName} <-> ${toName}<br/>
+                                  Intimacy Weight: ${intimacy}
+                                </div>`;
+                    }
                 }
             },
-            interaction: { hover: true }
+            series: [{
+                type: 'graph',
+                layout: 'force',
+                data: nodesData,
+                links: linksData,
+                roam: true, // 拖拽+缩放保留
+                label: {
+                    show: true,
+                    position: 'right',
+                    fontSize: 12,
+                    color: '#333'
+                },
+                force: {
+                    repulsion: 2500,
+                    gravity: 0.1,
+                    edgeLength: 250,
+                    layoutAnimation: true
+                },
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.2,
+                    opacity: 0.7
+                },
+                // 关键配置：必须打开这个，才能让 边 支持悬浮触发tooltip
+                emphasis: {
+                    focus: 'adjacency',
+                    lineStyle: { width: 8 } // 鼠标悬浮到边上时，连线变粗高亮，超实用！
+                }
+            }]
         };
-        
-        var network = new vis.Network(container, data, options);
+
+        myChart.setOption(option);
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
     </script>
 </body>
 </html>
