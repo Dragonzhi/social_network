@@ -4,7 +4,60 @@
 #include "..\head\json.hpp" 
 #include <set>
 #include <sstream> 
+#include <windows.h>
+
 using json = nlohmann::json;
+
+// 将 GBK 编码的字符串转换为 UTF-8
+std::string gbk_to_utf8(const std::string& gbk_str) {
+    if (gbk_str.empty()) return std::string();
+
+    // GBK -> WideChar (UTF-16/UCS-2)
+    int wide_char_len = MultiByteToWideChar(CP_ACP, 0, gbk_str.c_str(), -1, NULL, 0);
+    if (wide_char_len == 0) {
+        // Handle error if needed
+        return gbk_str; // Fallback
+    }
+    std::vector<wchar_t> wide_str(wide_char_len);
+    MultiByteToWideChar(CP_ACP, 0, gbk_str.c_str(), -1, wide_str.data(), wide_char_len);
+
+    // WideChar -> UTF-8
+    int utf8_len = WideCharToMultiByte(CP_UTF8, 0, wide_str.data(), -1, NULL, 0, NULL, NULL);
+    if (utf8_len == 0) {
+        // Handle error if needed
+        return gbk_str; // Fallback
+    }
+    std::vector<char> utf8_str(utf8_len);
+    WideCharToMultiByte(CP_UTF8, 0, wide_str.data(), -1, utf8_str.data(), utf8_len, NULL, NULL);
+
+    return std::string(utf8_str.data(), utf8_len - 1); // -1 to remove null terminator
+}
+
+// 将 UTF-8 编码的字符串转换为 GBK (如果需要显示或与 GBK 环境交互)
+std::string utf8_to_gbk(const std::string& utf8_str) {
+    if (utf8_str.empty()) return std::string();
+
+    // UTF-8 -> WideChar (UTF-16/UCS-2)
+    int wide_char_len = MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, NULL, 0);
+    if (wide_char_len == 0) {
+        // Handle error if needed
+        return utf8_str; // Fallback
+    }
+    std::vector<wchar_t> wide_str(wide_char_len);
+    MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, wide_str.data(), wide_char_len);
+
+    // WideChar -> GBK
+    int gbk_len = WideCharToMultiByte(CP_ACP, 0, wide_str.data(), -1, NULL, 0, NULL, NULL);
+    if (gbk_len == 0) {
+        // Handle error if needed
+        return utf8_str; // Fallback
+    }
+    std::vector<char> gbk_str(gbk_len);
+    WideCharToMultiByte(CP_ACP, 0, wide_str.data(), -1, gbk_str.data(), gbk_len, NULL, NULL);
+
+    return std::string(gbk_str.data(), gbk_len - 1); // -1 to remove null terminator
+}
+
 SocialNetwork::SocialNetwork()
 {
     // 构造函数，初始化数据结构
@@ -213,9 +266,9 @@ void SocialNetwork::saveToFile(string filename) {
     // 1. 保存人员信息
     json persons = json::array();
     for (const auto& person : vertList) {
-        persons.push_back({
-            {"name", person.getName()}
-            });
+        // --- 修改点：转换姓名为 UTF-8 ---
+        string utf8_name = gbk_to_utf8(person.getName());
+        persons.push_back({ {"name", utf8_name} });
     }
     data["persons"] = persons;
 
@@ -223,18 +276,17 @@ void SocialNetwork::saveToFile(string filename) {
     json edges = json::array();
     // 使用一个集合来避免重复保存双向关系
     set<pair<int, int>> saved_edges;
-
     for (int i = 0; i < vertList.size(); i++) {
         for (const auto& edge : adjList[i]) {
             int to = edge.getTo();
             // 创建有序对，确保较小的索引在前
             pair<int, int> edge_pair = (i < to) ? make_pair(i, to) : make_pair(to, i);
-
             // 检查是否已经保存过这条边
             if (saved_edges.find(edge_pair) == saved_edges.end()) {
                 json edge_json;
-                edge_json["from"] = vertList[i].getName();
-                edge_json["to"] = vertList[to].getName();
+                // --- 修改点：转换关系人名为 UTF-8 ---
+                edge_json["from"] = gbk_to_utf8(vertList[i].getName());
+                edge_json["to"] = gbk_to_utf8(vertList[to].getName());
                 edge_json["weight"] = edge.getWeight();
                 edges.push_back(edge_json);
                 saved_edges.insert(edge_pair);
@@ -246,30 +298,39 @@ void SocialNetwork::saveToFile(string filename) {
     // 3. 保存元数据
     data["metadata"]["person_count"] = vertList.size();
     data["metadata"]["edge_count"] = edges.size();
-
     // 添加时间戳
     time_t now = time(0);
     tm* local_time = localtime(&now);
     char time_str[100];
     strftime(time_str, sizeof(time_str), "%Y-%m-%d %H:%M:%S", local_time);
     data["metadata"]["save_time"] = time_str;
-
     data["metadata"]["version"] = "1.0";
 
     // 4. 写入文件
     try {
-        std::ofstream file(filename);
+        std::ofstream file(filename); // 默认为 text mode
         if (!file.is_open()) {
             cout << "无法打开文件 " << filename << " 进行写入！\n";
             return;
         }
+        // 设置文件流为二进制模式写入，以确保 UTF-8 BOM 被正确写入
+        file.close(); // 先关闭
+        file.open(filename, std::ios::out | std::ios::binary); // 以二进制模式重新打开
+        if (!file.is_open()) {
+            cout << "无法以二进制模式打开文件 " << filename << " 进行写入！\n";
+            return;
+        }
 
-        file << data.dump(4);  // 缩进4个空格，使JSON更易读
+        // 写入 UTF-8 BOM (Byte Order Mark)
+        const unsigned char utf8_bom[] = { 0xEF, 0xBB, 0xBF };
+        file.write(reinterpret_cast<const char*>(utf8_bom), sizeof(utf8_bom));
+
+        // 写入 JSON 内容，nlohmann::json 库会生成 UTF-8 编码的字符串
+        file << data.dump(4); // 缩进4个空格，使JSON更易读
+
         file.close();
-
         cout << "数据已成功保存到文件: " << filename << endl;
-        cout << "保存了 " << vertList.size() << " 个联系人和 "
-            << edges.size() << " 条关系\n";
+        cout << "保存了 " << vertList.size() << " 个联系人和 " << edges.size() << " 条关系\n";
         cout << "保存时间: " << time_str << endl;
     }
     catch (const std::exception& e) {
@@ -290,7 +351,7 @@ void SocialNetwork::loadFromFile(string filename) {
 
     try {
         // 1. 打开文件并检查
-        std::ifstream file(filename);
+        std::ifstream file(filename, std::ios::binary); // 以二进制模式读取
         if (!file.is_open()) {
             cout << "无法打开文件 " << filename << "！\n";
             return;
@@ -307,22 +368,19 @@ void SocialNetwork::loadFromFile(string filename) {
         file.seekg(0, std::ios::beg);
 
         // 3. 读取整个文件内容
-        string content((std::istreambuf_iterator<char>(file)),
-            std::istreambuf_iterator<char>());
+        string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
         file.close();
 
         // 4. 去除 UTF-8 BOM 头（如果存在）
-        if (content.size() >= 3 &&
-            static_cast<unsigned char>(content[0]) == 0xEF &&
-            static_cast<unsigned char>(content[1]) == 0xBB &&
-            static_cast<unsigned char>(content[2]) == 0xBF) {
+        if (content.size() >= 3 && static_cast<unsigned char>(content[0]) == 0xEF && static_cast<unsigned char>(content[1]) == 0xBB && static_cast<unsigned char>(content[2]) == 0xBF) {
             content = content.substr(3);
+            cout << "检测并移除 UTF-8 BOM 头。\n"; // Optional: Inform user
         }
 
         // 5. 解析 JSON
         json data;
         try {
-            data = json::parse(content);
+            data = json::parse(content); // 此时 content 应该是有效的 UTF-8
         }
         catch (const json::parse_error& e) {
             cout << "JSON 解析错误: " << e.what() << endl;
@@ -340,18 +398,19 @@ void SocialNetwork::loadFromFile(string filename) {
         int loaded_persons = 0;
         for (const auto& person_json : data["persons"]) {
             if (person_json.contains("name") && person_json["name"].is_string()) {
-                string name = person_json["name"];
-                if (!name.empty()) {
+                string utf8_name = person_json["name"];
+                // --- 修改点：将读取的 UTF-8 名字转换为 GBK ---
+                string gbk_name = utf8_to_gbk(utf8_name);
+                if (!gbk_name.empty()) {
                     Person p;
-                    p.setName(name);
+                    p.setName(gbk_name); // 存入 Person 对象
                     vertList.push_back(p);
                     adjList.push_back(list<Edge>());
-                    nameToIndex[name] = vertList.size() - 1;
+                    nameToIndex[gbk_name] = vertList.size() - 1; // 使用转换后的名字
                     loaded_persons++;
                 }
             }
         }
-
         if (loaded_persons == 0) {
             cout << "警告: 文件中没有找到有效的人员信息！\n";
         }
@@ -360,12 +419,12 @@ void SocialNetwork::loadFromFile(string filename) {
         int loaded_edges = 0;
         if (data.contains("edges") && data["edges"].is_array()) {
             for (const auto& edge_json : data["edges"]) {
-                if (edge_json.contains("from") && edge_json.contains("to") &&
-                    edge_json.contains("weight") &&
-                    edge_json["weight"].is_number()) {
-
-                    string from_name = edge_json["from"];
-                    string to_name = edge_json["to"];
+                if (edge_json.contains("from") && edge_json.contains("to") && edge_json.contains("weight") && edge_json["weight"].is_number()) {
+                    string utf8_from_name = edge_json["from"];
+                    string utf8_to_name = edge_json["to"];
+                    // --- 修改点：将读取的关系人名转换为 GBK ---
+                    string gbk_from_name = utf8_to_gbk(utf8_from_name);
+                    string gbk_to_name = utf8_to_gbk(utf8_to_name);
                     int weight = edge_json["weight"];
 
                     // 验证权重范围
@@ -374,8 +433,9 @@ void SocialNetwork::loadFromFile(string filename) {
                         continue;
                     }
 
-                    int from_index = findIndex(from_name);
-                    int to_index = findIndex(to_name);
+                    // 使用转换后的 GBK 名字查找索引
+                    int from_index = findIndex(gbk_from_name);
+                    int to_index = findIndex(gbk_to_name);
 
                     if (from_index != -1 && to_index != -1 && from_index != to_index) {
                         // 检查关系是否已存在
@@ -386,22 +446,22 @@ void SocialNetwork::loadFromFile(string filename) {
                                 break;
                             }
                         }
-
                         if (!exists) {
                             Edge edge1, edge2;
                             edge1.setTo(to_index);
                             edge1.setWeight(weight);
                             edge2.setTo(from_index);
                             edge2.setWeight(weight);
-
                             adjList[from_index].push_back(edge1);
                             adjList[to_index].push_back(edge2);
                             loaded_edges++;
                         }
+                        else {
+                            cout << "警告: 关系 " << gbk_from_name << " -> " << gbk_to_name << " 已存在，跳过加载。\n";
+                        }
                     }
                     else {
-                        cout << "警告: 无法添加关系 " << from_name << " -> " << to_name
-                            << "，因为至少一人不存在或是同一个人\n";
+                        cout << "警告: 无法加载关系 " << gbk_from_name << " -> " << gbk_to_name << "，因为至少一人不存在或是同一个人\n";
                     }
                 }
             }
@@ -409,20 +469,19 @@ void SocialNetwork::loadFromFile(string filename) {
 
         // 9. 显示加载统计信息
         cout << "从文件 " << filename << " 加载成功！\n";
-        cout << "加载了 " << loaded_persons << " 个联系人和 "
-            << loaded_edges << " 条关系\n";
+        cout << "加载了 " << loaded_persons << " 个联系人和 " << loaded_edges << " 条关系\n";
 
         // 10. 显示元数据（如果存在）
         if (data.contains("metadata")) {
             auto& metadata = data["metadata"];
             if (metadata.contains("save_time")) {
+                // 时间戳通常由程序生成，应为 ASCII，无需转换
                 cout << "原保存时间: " << metadata["save_time"] << endl;
             }
             if (metadata.contains("version")) {
                 cout << "文件版本: " << metadata["version"] << endl;
             }
         }
-
     }
     catch (const std::exception& e) {
         cout << "加载文件时发生错误: " << e.what() << endl;

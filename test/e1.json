@@ -1,0 +1,44 @@
+{
+    "persons": [
+        {"name": "Alice"},
+        {"name": "Bob"},
+        {"name": "Charlie"},
+        {"name": "Diana"},
+        {"name": "Eve"},
+        {"name": "Frank"},
+        {"name": "Grace"},
+        {"name": "Henry"},
+        {"name": "Ivy"},
+        {"name": "Jack"},
+        {"name": "Kate"},
+        {"name": "Leo"}
+    ],
+    "edges": [
+        {"from": "Alice", "to": "Bob", "weight": 95},
+        {"from": "Alice", "to": "Charlie", "weight": 88},
+        {"from": "Alice", "to": "Diana", "weight": 90},
+        {"from": "Bob", "to": "Charlie", "weight": 92},
+        {"from": "Bob", "to": "Diana", "weight": 85},
+        {"from": "Charlie", "to": "Diana", "weight": 91},
+        {"from": "Eve", "to": "Frank", "weight": 89},
+        {"from": "Eve", "to": "Grace", "weight": 78},
+        {"from": "Frank", "to": "Grace", "weight": 84},
+        {"from": "Grace", "to": "Henry", "weight": 76},
+        {"from": "Henry", "to": "Ivy", "weight": 93},
+        {"from": "Ivy", "to": "Jack", "weight": 87},
+        {"from": "Jack", "to": "Kate", "weight": 82},
+        {"from": "Kate", "to": "Leo", "weight": 88},
+        {"from": "Leo", "to": "Eve", "weight": 79},
+        {"from": "Diana", "to": "Eve", "weight": 65},
+        {"from": "Grace", "to": "Ivy", "weight": 71},
+        {"from": "Alice", "to": "Grace", "weight": 60},
+        {"from": "Bob", "to": "Frank", "weight": 58}
+    ],
+    "metadata": {
+        "person_count": 12,
+        "edge_count": 19,
+        "save_time": "2025-02-20 14:15:30",
+        "version": "1.1",
+        "description": "社交网络示例：包含两个社区（Alice-Diana 组与 Eve-Leo 组），Diana 和 Grace 作为桥接节点，Alice 为中心节点"
+    }
+}

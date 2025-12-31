@@ -7,6 +7,9 @@
 #include <iostream>
 #include <algorithm>
 #include <fstream>
+#include <ctime> // For time functions
+#include <iomanip> // For setw, setfill, etc.
+#include <ios> // For stream state flags
 
 #include "Edge.h"
 #include "Person.h"
@@ -28,14 +31,14 @@ public:
 	~SocialNetwork();
 
 	// A side
-	void addPerson(string name);
+    void addPersons();
 	void deletePerson(string name);
 	void addEdge(string name1, string name2, int weight);
 	void deleteEdge(string name1, string name2);
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	void displayAll();
-    void addPersons();
+    
 	// B side
 	void sortFriends(string name, bool ascending);
 	int getBottleneckPath(string startName, string endName);		//路径亲密度下界最大值
