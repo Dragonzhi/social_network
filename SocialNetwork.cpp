@@ -3,6 +3,7 @@
 #include <fstream>
 #include "json.hpp" 
 #include <set>
+#include <sstream> 
 using json = nlohmann::json;
 SocialNetwork::SocialNetwork()
 {
@@ -15,23 +16,64 @@ SocialNetwork::~SocialNetwork()
 }
 
 // 添加联系人
-void SocialNetwork::addPerson(string name) {
-    if (name == "") {
-        cout << "联系人名字不能为空！\n";
-        return;
-    }
-    if (findIndex(name) != -1) {
-        cout << "联系人 " << name << " 已存在！\n";
+// 批量添加联系人
+void SocialNetwork::addPersons() {
+    string input;
+    cout << "请输入要添加的联系人名称，多个名称用空格分隔：\n";
+    getline(cin, input);
+
+    if (input.empty()) {
+        cout << "输入不能为空！\n";
         return;
     }
 
-    Person p;
-    p.setName(name);
-    vertList.push_back(p);
-    adjList.push_back(list<Edge>()); // 添加空的邻接表
-    nameToIndex[name] = vertList.size() - 1;
+    stringstream ss(input);
+    string name;
+    vector<string> names;
+    int addedCount = 0;
+    int existCount = 0;
 
-    cout << "联系人 " << name << " 添加成功！\n";
+    // 分割字符串
+    while (ss >> name) {
+        if (name.empty()) continue;
+        names.push_back(name);
+    }
+
+    if (names.empty()) {
+        cout << "未检测到有效姓名！\n";
+        return;
+    }
+
+    cout << "\n正在添加以下联系人：\n";
+    for (const auto& n : names) {
+        cout << n << " ";
+    }
+    cout << "\n\n";
+
+    // 逐一添加
+    for (const auto& n : names) {
+        if (n.empty()) continue;
+
+        if (findIndex(n) != -1) {
+            cout << "联系人 " << n << " 已存在，跳过添加。\n";
+            existCount++;
+            continue;
+        }
+
+        Person p;
+        p.setName(n);
+        vertList.push_back(p);
+        adjList.push_back(list<Edge>());
+        nameToIndex[n] = vertList.size() - 1;
+        addedCount++;
+        cout << "联系人 " << n << " 添加成功！\n";
+    }
+
+    cout << "\n批量添加完成：\n";
+    cout << "成功添加 " << addedCount << " 个联系人。\n";
+    if (existCount > 0) {
+        cout << "跳过 " << existCount << " 个已存在的联系人。\n";
+    }
 }
 
 // 删除联系人

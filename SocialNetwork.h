@@ -35,7 +35,7 @@ public:
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	void displayAll();
-
+    void addPersons();
 	// B side
 	void sortFriends(string name, bool ascending);
 	int getBottleneckPath(string startName, string endName);		//路径亲密度下界最大值

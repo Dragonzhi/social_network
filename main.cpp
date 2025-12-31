@@ -107,9 +107,8 @@ int main() {
         switch (choice) {
         case 1:
             showOperationTitle("添加联系人");
-            cout << "\n  请输入联系人姓名: ";
-            getline(cin, name1);
-            network.addPerson(name1);
+           
+            network.addPersons();
             waitForUser();
             break;
 
