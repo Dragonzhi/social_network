@@ -1142,9 +1142,11 @@ void SocialNetwork::exportToHTML(string filename) {
 
     // 遍历生成节点数据
     for (int i = 0; i < vertList.size(); i++) {
+        // --- 修改点：将人名转换为 UTF-8 再写入 JavaScript 字符串 ---
+        string utf8_name = gbk_to_utf8(vertList[i].getName());
         file << (i > 0 ? "," : "") << "\n{"
             << "id: " << i
-            << ", name: '" << vertList[i].getName() << "'"
+            << ", name: '" << utf8_name << "'" // 使用转换后的 UTF-8 名字
             << ", symbolSize: " << adjList[i].size() * 5 + 15
             << "}";
     }
@@ -1161,7 +1163,12 @@ void SocialNetwork::exportToHTML(string filename) {
             int j = edge.getTo();
             int weight = edge.getWeight();
             if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
+                // --- 修改点：将关系人名转换为 UTF-8 再写入 JavaScript 字符串 ---
+                string utf8_from_name = gbk_to_utf8(vertList[i].getName());
+                string utf8_to_name = gbk_to_utf8(vertList[j].getName());
                 file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
+                    << ", sourceName: '" << utf8_from_name << "'" // 可选：存储源名字用于 JS 显示
+                    << ", targetName: '" << utf8_to_name << "'" // 可选：存储目标名字用于 JS 显示
                     << ", weight: " << weight  // 关键：把亲密度存入边的自定义属性，用于悬浮展示
                     << ", lineStyle: {width: " << weight / 10.0 << "}}";
                 addedEdges.insert({ i, j });
@@ -1182,6 +1189,7 @@ void SocialNetwork::exportToHTML(string filename) {
                     // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
                     if (params.dataType === 'node') {
                         const friendCount = (params.data.symbolSize - 15)/5;
+                        // 由于 name 已经是 UTF-8 编码，JS 可以正确处理
                         return `<div style="padding:5px;">
                                   <b style="color:#409EFF;">User Information</b><br/>
                                   Username: ${params.data.name}<br/>
@@ -1190,6 +1198,10 @@ void SocialNetwork::exportToHTML(string filename) {
                     }
                     // 2. 鼠标悬浮到【连线/边】上 - 显示好友关系信息
                     else if (params.dataType === 'edge') {
+                        // 使用边数据中存储的 UTF-8 名字 (如果添加了 sourceName 和 targetName)
+                        // const fromName = params.data.sourceName || nodesData[params.data.source].name;
+                        // const toName = params.data.targetName || nodesData[params.data.target].name;
+                        // 或者直接从 nodesData 获取 (因为 nodesData 中的名字已经是 UTF-8)
                         const fromName = nodesData[params.data.source].name;
                         const toName = nodesData[params.data.target].name;
                         const intimacy = params.data.weight;
