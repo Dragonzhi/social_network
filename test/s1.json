@@ -1,0 +1,274 @@
+{
+    "persons": [
+        {
+            "name": "Frank_Bailey",
+            "id": 1
+        },
+        {
+            "name": "Chris_E_Perez",
+            "id": 2
+        },
+        {
+            "name": "Yale_Murphy",
+            "id": 3
+        },
+        {
+            "name": "Yale_Nelson"
+        },
+        {
+            "name": "Victor_Evans292",
+            "id": 5
+        },
+        {
+            "name": "Hugo_Nelson971"
+        },
+        {
+            "name": "Ethan_Hernandez",
+            "id": 7
+        },
+        {
+            "name": "Xena_Evans29"
+        },
+        {
+            "name": "Evan_E_Martinez"
+        },
+        {
+            "name": "Zoe_Davis67",
+            "id": 10
+        },
+        {
+            "name": "Xena_Baker"
+        },
+        {
+            "name": "Derek_Young"
+        },
+        {
+            "name": "Fiona_Bennett",
+            "id": 13
+        },
+        {
+            "name": "Kyle_Murphy609"
+        },
+        {
+            "name": "Steve_Perez382"
+        },
+        {
+            "name": "Ben_Bell",
+            "id": 16
+        },
+        {
+            "name": "Hannah_Gonzalez",
+            "id": 17
+        },
+        {
+            "name": "Fiona_Perez",
+            "id": 18
+        },
+        {
+            "name": "Xavier_Brown353"
+        },
+        {
+            "name": "Mona_Carter",
+            "id": 20
+        },
+        {
+            "name": "Evan_D_Bailey"
+        },
+        {
+            "name": "Uma_Rogers"
+        },
+        {
+            "name": "Simon_Smith388"
+        },
+        {
+            "name": "Paula_Hall"
+        },
+        {
+            "name": "Noah_Sanchez"
+        },
+        {
+            "name": "Xavier_Perez"
+        },
+        {
+            "name": "Fiona_D_Edwards"
+        },
+        {
+            "name": "Yvonne_Taylor"
+        },
+        {
+            "name": "Nathan_Reed949"
+        },
+        {
+            "name": "Oscar_Turner844",
+            "id": 30
+        }
+    ],
+    "edges": [
+        {
+            "from": "Frank_Bailey",
+            "to": "Derek_Young",
+            "weight": 56
+        },
+        {
+            "from": "Chris_E_Perez",
+            "to": "Mona_Carter",
+            "weight": 57
+        },
+        {
+            "from": "Yale_Murphy",
+            "to": "Derek_Young",
+            "weight": 81
+        },
+        {
+            "from": "Victor_Evans292",
+            "to": "Yale_Nelson",
+            "weight": 96
+        },
+        {
+            "from": "Hugo_Nelson971",
+            "to": "Yale_Nelson",
+            "weight": 75
+        },
+        {
+            "from": "Ethan_Hernandez",
+            "to": "Yale_Nelson",
+            "weight": 39
+        },
+        {
+            "from": "Xena_Evans29",
+            "to": "Mona_Carter",
+            "weight": 92
+        },
+        {
+            "from": "Evan_E_Martinez",
+            "to": "Mona_Carter",
+            "weight": 56
+        },
+        {
+            "from": "Zoe_Davis67",
+            "to": "Yale_Nelson",
+            "weight": 37
+        },
+        {
+            "from": "Xena_Baker",
+            "to": "Mona_Carter",
+            "weight": 6
+        },
+        {
+            "from": "Fiona_Bennett",
+            "to": "Yale_Nelson",
+            "weight": 77
+        },
+        {
+            "from": "Kyle_Murphy609",
+            "to": "Derek_Young",
+            "weight": 10
+        },
+        {
+            "from": "Steve_Perez382",
+            "to": "Mona_Carter",
+            "weight": 34
+        },
+        {
+            "from": "Ben_Bell",
+            "to": "Yale_Nelson",
+            "weight": 27
+        },
+        {
+            "from": "Hannah_Gonzalez",
+            "to": "Mona_Carter",
+            "weight": 74
+        },
+        {
+            "from": "Fiona_Perez",
+            "to": "Yale_Nelson",
+            "weight": 98
+        },
+        {
+            "from": "Xavier_Brown353",
+            "to": "Yale_Nelson",
+            "weight": 1
+        },
+        {
+            "from": "Evan_D_Bailey",
+            "to": "Yale_Nelson",
+            "weight": 50
+        },
+        {
+            "from": "Uma_Rogers",
+            "to": "Mona_Carter",
+            "weight": 10
+        },
+        {
+            "from": "Simon_Smith388",
+            "to": "Mona_Carter",
+            "weight": 98
+        },
+        {
+            "from": "Paula_Hall",
+            "to": "Yale_Nelson",
+            "weight": 75
+        },
+        {
+            "from": "Noah_Sanchez",
+            "to": "Yale_Nelson",
+            "weight": 99
+        },
+        {
+            "from": "Xavier_Perez",
+            "to": "Derek_Young",
+            "weight": 20
+        },
+        {
+            "from": "Fiona_D_Edwards",
+            "to": "Yale_Nelson",
+            "weight": 43
+        },
+        {
+            "from": "Yvonne_Taylor",
+            "to": "Derek_Young",
+            "weight": 86
+        },
+        {
+            "from": "Nathan_Reed949",
+            "to": "Mona_Carter",
+            "weight": 97
+        },
+        {
+            "from": "Oscar_Turner844",
+            "to": "Mona_Carter",
+            "weight": 76
+        },
+        {
+            "from": "Yale_Nelson",
+            "to": "Mona_Carter",
+            "weight": 30
+        },
+        {
+            "from": "Yale_Nelson",
+            "to": "Derek_Young",
+            "weight": 68
+        },
+        {
+            "from": "Mona_Carter",
+            "to": "Derek_Young",
+            "weight": 46
+        }
+    ],
+    "metadata": {
+        "person_count": 30,
+        "edge_count": 30,
+        "density": 0.06896551724137931,
+        "isolated_count": 0,
+        "isolated_percentage": 0.0,
+        "save_time": "2025-12-31 09:35:01",
+        "version": "2.0",
+        "generator": "EnhancedNetworkGenerator",
+        "network_type": "star",
+        "parameters": {
+            "person_count": 30,
+            "weight_range": "1-100",
+            "num_centers": 3
+        }
+    }
+}

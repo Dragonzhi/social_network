@@ -1,0 +1,710 @@
+{
+    "persons": [
+        {
+            "name": "Diana_Adams"
+        },
+        {
+            "name": "Jack_Mitchell"
+        },
+        {
+            "name": "Bella_Lee"
+        },
+        {
+            "name": "Wendy_Young"
+        },
+        {
+            "name": "Nina_Campbell"
+        },
+        {
+            "name": "Frank_Scott"
+        },
+        {
+            "name": "Sara_Perez"
+        },
+        {
+            "name": "Mona_Torres"
+        },
+        {
+            "name": "Cindy_Wright"
+        },
+        {
+            "name": "Bella_Brown"
+        },
+        {
+            "name": "David_Miller"
+        },
+        {
+            "name": "Jack_Smith"
+        },
+        {
+            "name": "Iris_Hall"
+        },
+        {
+            "name": "Alex_White"
+        },
+        {
+            "name": "Kate_Davis"
+        },
+        {
+            "name": "Nina_Thomas"
+        },
+        {
+            "name": "Henry_Gonzalez"
+        },
+        {
+            "name": "Henry_Baker"
+        },
+        {
+            "name": "Lily_Smith"
+        },
+        {
+            "name": "Tina_Martinez"
+        },
+        {
+            "name": "Diana_Anderson"
+        },
+        {
+            "name": "Diana_King"
+        },
+        {
+            "name": "Paula_Scott"
+        },
+        {
+            "name": "Ryan_Miller"
+        },
+        {
+            "name": "Mike_Walker"
+        },
+        {
+            "name": "Mona_Clark"
+        },
+        {
+            "name": "Chris_Robinson"
+        },
+        {
+            "name": "Mona_Garcia"
+        },
+        {
+            "name": "Tom_Williams"
+        },
+        {
+            "name": "Kevin_Thomas"
+        },
+        {
+            "name": "Diana_Davis"
+        },
+        {
+            "name": "George_Ramirez"
+        },
+        {
+            "name": "Julia_Lee"
+        },
+        {
+            "name": "George_Garcia"
+        },
+        {
+            "name": "Lily_Martinez"
+        },
+        {
+            "name": "Ethan_Campbell"
+        },
+        {
+            "name": "George_Miller"
+        },
+        {
+            "name": "Tina_Lewis"
+        },
+        {
+            "name": "Bella_Ramirez"
+        },
+        {
+            "name": "David_Rivera"
+        },
+        {
+            "name": "Peter_Hill"
+        },
+        {
+            "name": "Lily_King"
+        },
+        {
+            "name": "Quinn_Sanchez"
+        },
+        {
+            "name": "Noah_Walker"
+        },
+        {
+            "name": "Ben_Wright"
+        },
+        {
+            "name": "Ryan_Garcia"
+        },
+        {
+            "name": "Yvonne_Moore"
+        },
+        {
+            "name": "Bella_Hernandez"
+        },
+        {
+            "name": "Chris_Jackson"
+        },
+        {
+            "name": "George_Hall"
+        }
+    ],
+    "edges": [
+        {
+            "from": "Diana_Adams",
+            "to": "George_Ramirez",
+            "weight": 96
+        },
+        {
+            "from": "Jack_Mitchell",
+            "to": "George_Ramirez",
+            "weight": 65
+        },
+        {
+            "from": "Bella_Lee",
+            "to": "Quinn_Sanchez",
+            "weight": 98
+        },
+        {
+            "from": "Wendy_Young",
+            "to": "Julia_Lee",
+            "weight": 50
+        },
+        {
+            "from": "Nina_Campbell",
+            "to": "Frank_Scott",
+            "weight": 66
+        },
+        {
+            "from": "Sara_Perez",
+            "to": "Mike_Walker",
+            "weight": 43
+        },
+        {
+            "from": "Mona_Torres",
+            "to": "Chris_Robinson",
+            "weight": 68
+        },
+        {
+            "from": "Cindy_Wright",
+            "to": "Yvonne_Moore",
+            "weight": 76
+        },
+        {
+            "from": "Bella_Brown",
+            "to": "Ben_Wright",
+            "weight": 80
+        },
+        {
+            "from": "David_Miller",
+            "to": "Tina_Martinez",
+            "weight": 77
+        },
+        {
+            "from": "Jack_Smith",
+            "to": "George_Hall",
+            "weight": 79
+        },
+        {
+            "from": "Iris_Hall",
+            "to": "Frank_Scott",
+            "weight": 65
+        },
+        {
+            "from": "Alex_White",
+            "to": "George_Garcia",
+            "weight": 89
+        },
+        {
+            "from": "Kate_Davis",
+            "to": "Mona_Clark",
+            "weight": 47
+        },
+        {
+            "from": "Nina_Thomas",
+            "to": "Bella_Hernandez",
+            "weight": 32
+        },
+        {
+            "from": "Henry_Gonzalez",
+            "to": "Chris_Jackson",
+            "weight": 87
+        },
+        {
+            "from": "Henry_Baker",
+            "to": "Peter_Hill",
+            "weight": 98
+        },
+        {
+            "from": "Lily_Smith",
+            "to": "Diana_Adams",
+            "weight": 60
+        },
+        {
+            "from": "Diana_Anderson",
+            "to": "Paula_Scott",
+            "weight": 90
+        },
+        {
+            "from": "Diana_King",
+            "to": "George_Miller",
+            "weight": 81
+        },
+        {
+            "from": "Ryan_Miller",
+            "to": "Tom_Williams",
+            "weight": 17
+        },
+        {
+            "from": "Mona_Garcia",
+            "to": "Lily_Smith",
+            "weight": 81
+        },
+        {
+            "from": "Kevin_Thomas",
+            "to": "Chris_Jackson",
+            "weight": 98
+        },
+        {
+            "from": "Diana_Davis",
+            "to": "Noah_Walker",
+            "weight": 79
+        },
+        {
+            "from": "Lily_Martinez",
+            "to": "Ryan_Garcia",
+            "weight": 14
+        },
+        {
+            "from": "Ethan_Campbell",
+            "to": "Ryan_Garcia",
+            "weight": 78
+        },
+        {
+            "from": "Tina_Lewis",
+            "to": "Chris_Robinson",
+            "weight": 77
+        },
+        {
+            "from": "Bella_Ramirez",
+            "to": "George_Ramirez",
+            "weight": 1
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Ryan_Miller",
+            "weight": 34
+        },
+        {
+            "from": "Lily_King",
+            "to": "Cindy_Wright",
+            "weight": 6
+        },
+        {
+            "from": "Mona_Torres",
+            "to": "Lily_King",
+            "weight": 38
+        },
+        {
+            "from": "Mona_Torres",
+            "to": "Ryan_Garcia",
+            "weight": 7
+        },
+        {
+            "from": "Iris_Hall",
+            "to": "George_Miller",
+            "weight": 99
+        },
+        {
+            "from": "Frank_Scott",
+            "to": "Mona_Garcia",
+            "weight": 24
+        },
+        {
+            "from": "Peter_Hill",
+            "to": "Mona_Clark",
+            "weight": 53
+        },
+        {
+            "from": "Mona_Clark",
+            "to": "Henry_Gonzalez",
+            "weight": 69
+        },
+        {
+            "from": "George_Ramirez",
+            "to": "Kate_Davis",
+            "weight": 42
+        },
+        {
+            "from": "Peter_Hill",
+            "to": "Cindy_Wright",
+            "weight": 96
+        },
+        {
+            "from": "Julia_Lee",
+            "to": "Mona_Clark",
+            "weight": 51
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Ryan_Garcia",
+            "weight": 24
+        },
+        {
+            "from": "Lily_King",
+            "to": "Iris_Hall",
+            "weight": 74
+        },
+        {
+            "from": "Diana_Anderson",
+            "to": "Nina_Campbell",
+            "weight": 69
+        },
+        {
+            "from": "Chris_Jackson",
+            "to": "Diana_Adams",
+            "weight": 70
+        },
+        {
+            "from": "George_Hall",
+            "to": "George_Ramirez",
+            "weight": 69
+        },
+        {
+            "from": "Lily_Martinez",
+            "to": "Nina_Campbell",
+            "weight": 75
+        },
+        {
+            "from": "Bella_Hernandez",
+            "to": "Sara_Perez",
+            "weight": 2
+        },
+        {
+            "from": "Kevin_Thomas",
+            "to": "Diana_Adams",
+            "weight": 100
+        },
+        {
+            "from": "George_Garcia",
+            "to": "Mona_Clark",
+            "weight": 42
+        },
+        {
+            "from": "Mona_Garcia",
+            "to": "Peter_Hill",
+            "weight": 68
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "David_Miller",
+            "weight": 13
+        },
+        {
+            "from": "Diana_Davis",
+            "to": "David_Miller",
+            "weight": 46
+        },
+        {
+            "from": "Jack_Smith",
+            "to": "Ethan_Campbell",
+            "weight": 40
+        },
+        {
+            "from": "Mona_Torres",
+            "to": "Bella_Brown",
+            "weight": 73
+        },
+        {
+            "from": "David_Miller",
+            "to": "Quinn_Sanchez",
+            "weight": 97
+        },
+        {
+            "from": "Ryan_Miller",
+            "to": "Kate_Davis",
+            "weight": 12
+        },
+        {
+            "from": "Iris_Hall",
+            "to": "George_Hall",
+            "weight": 78
+        },
+        {
+            "from": "Mike_Walker",
+            "to": "Henry_Baker",
+            "weight": 40
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Tom_Williams",
+            "weight": 30
+        },
+        {
+            "from": "Jack_Mitchell",
+            "to": "Paula_Scott",
+            "weight": 37
+        },
+        {
+            "from": "Henry_Baker",
+            "to": "Quinn_Sanchez",
+            "weight": 63
+        },
+        {
+            "from": "Diana_Davis",
+            "to": "Diana_King",
+            "weight": 66
+        },
+        {
+            "from": "Bella_Hernandez",
+            "to": "Chris_Robinson",
+            "weight": 62
+        },
+        {
+            "from": "Mike_Walker",
+            "to": "Bella_Ramirez",
+            "weight": 17
+        },
+        {
+            "from": "Nina_Thomas",
+            "to": "Diana_King",
+            "weight": 92
+        },
+        {
+            "from": "Mike_Walker",
+            "to": "Ryan_Miller",
+            "weight": 59
+        },
+        {
+            "from": "Frank_Scott",
+            "to": "Bella_Hernandez",
+            "weight": 20
+        },
+        {
+            "from": "Bella_Hernandez",
+            "to": "Cindy_Wright",
+            "weight": 12
+        },
+        {
+            "from": "Julia_Lee",
+            "to": "Bella_Ramirez",
+            "weight": 40
+        },
+        {
+            "from": "Nina_Campbell",
+            "to": "Alex_White",
+            "weight": 51
+        },
+        {
+            "from": "Nina_Thomas",
+            "to": "Mona_Garcia",
+            "weight": 87
+        },
+        {
+            "from": "Peter_Hill",
+            "to": "Bella_Brown",
+            "weight": 82
+        },
+        {
+            "from": "Noah_Walker",
+            "to": "Wendy_Young",
+            "weight": 96
+        },
+        {
+            "from": "Mona_Torres",
+            "to": "Nina_Campbell",
+            "weight": 68
+        },
+        {
+            "from": "Jack_Smith",
+            "to": "Nina_Thomas",
+            "weight": 39
+        },
+        {
+            "from": "Julia_Lee",
+            "to": "Lily_Smith",
+            "weight": 3
+        },
+        {
+            "from": "Kevin_Thomas",
+            "to": "Peter_Hill",
+            "weight": 67
+        },
+        {
+            "from": "Ethan_Campbell",
+            "to": "Peter_Hill",
+            "weight": 84
+        },
+        {
+            "from": "Chris_Jackson",
+            "to": "Diana_King",
+            "weight": 82
+        },
+        {
+            "from": "Diana_Anderson",
+            "to": "Quinn_Sanchez",
+            "weight": 10
+        },
+        {
+            "from": "Jack_Smith",
+            "to": "Mona_Clark",
+            "weight": 60
+        },
+        {
+            "from": "David_Miller",
+            "to": "Ben_Wright",
+            "weight": 98
+        },
+        {
+            "from": "Nina_Campbell",
+            "to": "Henry_Gonzalez",
+            "weight": 27
+        },
+        {
+            "from": "Cindy_Wright",
+            "to": "Nina_Thomas",
+            "weight": 42
+        },
+        {
+            "from": "Kate_Davis",
+            "to": "Ethan_Campbell",
+            "weight": 50
+        },
+        {
+            "from": "Mona_Clark",
+            "to": "Ryan_Garcia",
+            "weight": 54
+        },
+        {
+            "from": "Lily_King",
+            "to": "George_Ramirez",
+            "weight": 100
+        },
+        {
+            "from": "Lily_Smith",
+            "to": "David_Rivera",
+            "weight": 49
+        },
+        {
+            "from": "George_Garcia",
+            "to": "Bella_Lee",
+            "weight": 83
+        },
+        {
+            "from": "Diana_Anderson",
+            "to": "Tom_Williams",
+            "weight": 61
+        },
+        {
+            "from": "Diana_Anderson",
+            "to": "Lily_King",
+            "weight": 18
+        },
+        {
+            "from": "Tom_Williams",
+            "to": "Ryan_Garcia",
+            "weight": 4
+        },
+        {
+            "from": "Quinn_Sanchez",
+            "to": "Ethan_Campbell",
+            "weight": 22
+        },
+        {
+            "from": "Nina_Thomas",
+            "to": "Lily_Martinez",
+            "weight": 10
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Kate_Davis",
+            "weight": 68
+        },
+        {
+            "from": "George_Garcia",
+            "to": "George_Ramirez",
+            "weight": 24
+        },
+        {
+            "from": "George_Hall",
+            "to": "Nina_Thomas",
+            "weight": 13
+        },
+        {
+            "from": "Lily_Smith",
+            "to": "Chris_Jackson",
+            "weight": 1
+        },
+        {
+            "from": "George_Miller",
+            "to": "Mona_Garcia",
+            "weight": 75
+        },
+        {
+            "from": "Diana_Davis",
+            "to": "Peter_Hill",
+            "weight": 56
+        },
+        {
+            "from": "Peter_Hill",
+            "to": "Bella_Lee",
+            "weight": 25
+        },
+        {
+            "from": "Mike_Walker",
+            "to": "Chris_Robinson",
+            "weight": 29
+        },
+        {
+            "from": "Henry_Baker",
+            "to": "David_Rivera",
+            "weight": 72
+        },
+        {
+            "from": "Noah_Walker",
+            "to": "Jack_Smith",
+            "weight": 47
+        },
+        {
+            "from": "George_Hall",
+            "to": "Ryan_Garcia",
+            "weight": 26
+        },
+        {
+            "from": "Julia_Lee",
+            "to": "David_Rivera",
+            "weight": 67
+        },
+        {
+            "from": "George_Miller",
+            "to": "Jack_Mitchell",
+            "weight": 77
+        },
+        {
+            "from": "Alex_White",
+            "to": "Mona_Clark",
+            "weight": 56
+        },
+        {
+            "from": "Chris_Robinson",
+            "to": "Cindy_Wright",
+            "weight": 60
+        }
+    ],
+    "metadata": {
+        "person_count": 50,
+        "edge_count": 108,
+        "density": 0.08816326530612245,
+        "save_time": "2025-12-31 09:04:36",
+        "version": "1.0",
+        "generator": "RandomNetworkGenerator",
+        "parameters": {
+            "person_count": 50,
+            "min_connections": 1,
+            "max_connections": 15,
+            "connection_probability": 0.15
+        }
+    }
+}

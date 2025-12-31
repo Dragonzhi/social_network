@@ -1,0 +1,385 @@
+{
+    "persons": [
+        {
+            "name": "Henry_Adams"
+        },
+        {
+            "name": "Leo_Wright"
+        },
+        {
+            "name": "Kevin_Lee"
+        },
+        {
+            "name": "Ian_King"
+        },
+        {
+            "name": "Oscar_Moore"
+        },
+        {
+            "name": "Chris_Torres"
+        },
+        {
+            "name": "Ethan_Rivera"
+        },
+        {
+            "name": "Paula_Scott"
+        },
+        {
+            "name": "David_Rivera"
+        },
+        {
+            "name": "Mike_Smith"
+        },
+        {
+            "name": "Alice_Campbell"
+        },
+        {
+            "name": "Tom_Johnson"
+        },
+        {
+            "name": "Cindy_Harris"
+        },
+        {
+            "name": "Emma_Taylor"
+        },
+        {
+            "name": "Emma_Williams"
+        },
+        {
+            "name": "Steve_Smith"
+        },
+        {
+            "name": "Peter_Lee"
+        },
+        {
+            "name": "Ryan_Thomas"
+        },
+        {
+            "name": "Grace_Mitchell"
+        },
+        {
+            "name": "Iris_Campbell"
+        }
+    ],
+    "edges": [
+        {
+            "from": "Henry_Adams",
+            "to": "Peter_Lee",
+            "weight": 74
+        },
+        {
+            "from": "Leo_Wright",
+            "to": "Grace_Mitchell",
+            "weight": 70
+        },
+        {
+            "from": "Kevin_Lee",
+            "to": "Tom_Johnson",
+            "weight": 53
+        },
+        {
+            "from": "Ian_King",
+            "to": "Alice_Campbell",
+            "weight": 26
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Ryan_Thomas",
+            "weight": 5
+        },
+        {
+            "from": "Chris_Torres",
+            "to": "Steve_Smith",
+            "weight": 26
+        },
+        {
+            "from": "Ethan_Rivera",
+            "to": "Ryan_Thomas",
+            "weight": 85
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Henry_Adams",
+            "weight": 3
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Emma_Taylor",
+            "weight": 45
+        },
+        {
+            "from": "Mike_Smith",
+            "to": "Paula_Scott",
+            "weight": 23
+        },
+        {
+            "from": "Cindy_Harris",
+            "to": "Ryan_Thomas",
+            "weight": 23
+        },
+        {
+            "from": "Emma_Williams",
+            "to": "Ian_King",
+            "weight": 77
+        },
+        {
+            "from": "Iris_Campbell",
+            "to": "Mike_Smith",
+            "weight": 24
+        },
+        {
+            "from": "Tom_Johnson",
+            "to": "Henry_Adams",
+            "weight": 95
+        },
+        {
+            "from": "Steve_Smith",
+            "to": "Iris_Campbell",
+            "weight": 5
+        },
+        {
+            "from": "Alice_Campbell",
+            "to": "Emma_Williams",
+            "weight": 2
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Tom_Johnson",
+            "weight": 94
+        },
+        {
+            "from": "Henry_Adams",
+            "to": "Iris_Campbell",
+            "weight": 12
+        },
+        {
+            "from": "Ethan_Rivera",
+            "to": "Steve_Smith",
+            "weight": 45
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Ryan_Thomas",
+            "weight": 84
+        },
+        {
+            "from": "Mike_Smith",
+            "to": "Steve_Smith",
+            "weight": 90
+        },
+        {
+            "from": "Alice_Campbell",
+            "to": "Leo_Wright",
+            "weight": 87
+        },
+        {
+            "from": "Grace_Mitchell",
+            "to": "Alice_Campbell",
+            "weight": 69
+        },
+        {
+            "from": "Ian_King",
+            "to": "Paula_Scott",
+            "weight": 8
+        },
+        {
+            "from": "Tom_Johnson",
+            "to": "Chris_Torres",
+            "weight": 44
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Alice_Campbell",
+            "weight": 55
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Emma_Williams",
+            "weight": 8
+        },
+        {
+            "from": "Emma_Williams",
+            "to": "Paula_Scott",
+            "weight": 79
+        },
+        {
+            "from": "Emma_Williams",
+            "to": "Iris_Campbell",
+            "weight": 57
+        },
+        {
+            "from": "Henry_Adams",
+            "to": "Alice_Campbell",
+            "weight": 67
+        },
+        {
+            "from": "Ethan_Rivera",
+            "to": "Leo_Wright",
+            "weight": 26
+        },
+        {
+            "from": "Paula_Scott",
+            "to": "Alice_Campbell",
+            "weight": 47
+        },
+        {
+            "from": "Ryan_Thomas",
+            "to": "Emma_Williams",
+            "weight": 26
+        },
+        {
+            "from": "Mike_Smith",
+            "to": "Emma_Williams",
+            "weight": 18
+        },
+        {
+            "from": "Grace_Mitchell",
+            "to": "David_Rivera",
+            "weight": 29
+        },
+        {
+            "from": "Emma_Taylor",
+            "to": "Henry_Adams",
+            "weight": 60
+        },
+        {
+            "from": "Ian_King",
+            "to": "Peter_Lee",
+            "weight": 17
+        },
+        {
+            "from": "Ethan_Rivera",
+            "to": "Emma_Taylor",
+            "weight": 51
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Paula_Scott",
+            "weight": 16
+        },
+        {
+            "from": "Ryan_Thomas",
+            "to": "Ian_King",
+            "weight": 81
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Ethan_Rivera",
+            "weight": 10
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Chris_Torres",
+            "weight": 38
+        },
+        {
+            "from": "Cindy_Harris",
+            "to": "Peter_Lee",
+            "weight": 98
+        },
+        {
+            "from": "Chris_Torres",
+            "to": "Iris_Campbell",
+            "weight": 92
+        },
+        {
+            "from": "Mike_Smith",
+            "to": "Ryan_Thomas",
+            "weight": 63
+        },
+        {
+            "from": "Leo_Wright",
+            "to": "Mike_Smith",
+            "weight": 78
+        },
+        {
+            "from": "Ryan_Thomas",
+            "to": "Grace_Mitchell",
+            "weight": 58
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Emma_Taylor",
+            "weight": 38
+        },
+        {
+            "from": "Peter_Lee",
+            "to": "Ethan_Rivera",
+            "weight": 91
+        },
+        {
+            "from": "Kevin_Lee",
+            "to": "Iris_Campbell",
+            "weight": 63
+        },
+        {
+            "from": "Emma_Taylor",
+            "to": "Kevin_Lee",
+            "weight": 67
+        },
+        {
+            "from": "Steve_Smith",
+            "to": "Henry_Adams",
+            "weight": 97
+        },
+        {
+            "from": "David_Rivera",
+            "to": "Tom_Johnson",
+            "weight": 21
+        },
+        {
+            "from": "Henry_Adams",
+            "to": "Emma_Williams",
+            "weight": 73
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Iris_Campbell",
+            "weight": 97
+        },
+        {
+            "from": "Grace_Mitchell",
+            "to": "Chris_Torres",
+            "weight": 34
+        },
+        {
+            "from": "Kevin_Lee",
+            "to": "Ian_King",
+            "weight": 38
+        },
+        {
+            "from": "Mike_Smith",
+            "to": "Kevin_Lee",
+            "weight": 7
+        },
+        {
+            "from": "Ian_King",
+            "to": "Ethan_Rivera",
+            "weight": 39
+        },
+        {
+            "from": "Oscar_Moore",
+            "to": "Peter_Lee",
+            "weight": 62
+        },
+        {
+            "from": "Ian_King",
+            "to": "Steve_Smith",
+            "weight": 61
+        }
+    ],
+    "metadata": {
+        "person_count": 20,
+        "edge_count": 61,
+        "density": 0.32105263157894737,
+        "save_time": "2025-12-31 09:03:57",
+        "version": "1.0",
+        "generator": "RandomNetworkGenerator",
+        "parameters": {
+            "person_count": 20,
+            "min_connections": 1,
+            "max_connections": 8,
+            "connection_probability": 0.4
+        }
+    }
+}

@@ -1,0 +1,338 @@
+{
+    "persons": [
+        {
+            "name": "Hannah_Roberts",
+            "id": 1
+        },
+        {
+            "name": "Ethan_Smith"
+        },
+        {
+            "name": "Uma_Wilson807",
+            "id": 3
+        },
+        {
+            "name": "Olive_Brown"
+        },
+        {
+            "name": "Lily_Cook"
+        },
+        {
+            "name": "Nina_Q_Cooper"
+        },
+        {
+            "name": "Kevin_Hall"
+        },
+        {
+            "name": "Mike_Martin",
+            "id": 8
+        },
+        {
+            "name": "Clark_Harris"
+        },
+        {
+            "name": "George_Davis"
+        },
+        {
+            "name": "Mike_Hill"
+        },
+        {
+            "name": "Liam_Johnson"
+        },
+        {
+            "name": "Hugo_Jones737"
+        },
+        {
+            "name": "Liam_Baker515",
+            "id": 14
+        },
+        {
+            "name": "Fiona_Walker107"
+        },
+        {
+            "name": "Tina_Martinez",
+            "id": 16
+        },
+        {
+            "name": "Ethan_Davis",
+            "id": 17
+        },
+        {
+            "name": "Cindy_Thomas"
+        },
+        {
+            "name": "Lily_Wood"
+        },
+        {
+            "name": "Kate_Thompson353"
+        },
+        {
+            "name": "David_Flores"
+        },
+        {
+            "name": "Bella_Torres674"
+        },
+        {
+            "name": "Chris_R_Hall"
+        },
+        {
+            "name": "Simon_Bailey"
+        },
+        {
+            "name": "David_D_Green"
+        }
+    ],
+    "edges": [
+        {
+            "from": "Hannah_Roberts",
+            "to": "Ethan_Smith",
+            "weight": 41
+        },
+        {
+            "from": "Uma_Wilson807",
+            "to": "Hannah_Roberts",
+            "weight": 55
+        },
+        {
+            "from": "Uma_Wilson807",
+            "to": "Ethan_Smith",
+            "weight": 58
+        },
+        {
+            "from": "Olive_Brown",
+            "to": "Hannah_Roberts",
+            "weight": 28
+        },
+        {
+            "from": "Olive_Brown",
+            "to": "Uma_Wilson807",
+            "weight": 97
+        },
+        {
+            "from": "Lily_Cook",
+            "to": "Uma_Wilson807",
+            "weight": 100
+        },
+        {
+            "from": "Lily_Cook",
+            "to": "Ethan_Smith",
+            "weight": 39
+        },
+        {
+            "from": "Nina_Q_Cooper",
+            "to": "Olive_Brown",
+            "weight": 90
+        },
+        {
+            "from": "Nina_Q_Cooper",
+            "to": "Uma_Wilson807",
+            "weight": 81
+        },
+        {
+            "from": "Kevin_Hall",
+            "to": "Olive_Brown",
+            "weight": 45
+        },
+        {
+            "from": "Kevin_Hall",
+            "to": "Ethan_Smith",
+            "weight": 83
+        },
+        {
+            "from": "Mike_Martin",
+            "to": "Uma_Wilson807",
+            "weight": 60
+        },
+        {
+            "from": "Mike_Martin",
+            "to": "Ethan_Smith",
+            "weight": 61
+        },
+        {
+            "from": "Clark_Harris",
+            "to": "Hannah_Roberts",
+            "weight": 39
+        },
+        {
+            "from": "Clark_Harris",
+            "to": "Uma_Wilson807",
+            "weight": 64
+        },
+        {
+            "from": "George_Davis",
+            "to": "Lily_Cook",
+            "weight": 91
+        },
+        {
+            "from": "George_Davis",
+            "to": "Nina_Q_Cooper",
+            "weight": 95
+        },
+        {
+            "from": "Mike_Hill",
+            "to": "Nina_Q_Cooper",
+            "weight": 56
+        },
+        {
+            "from": "Mike_Hill",
+            "to": "Olive_Brown",
+            "weight": 39
+        },
+        {
+            "from": "Liam_Johnson",
+            "to": "Mike_Hill",
+            "weight": 74
+        },
+        {
+            "from": "Liam_Johnson",
+            "to": "Olive_Brown",
+            "weight": 66
+        },
+        {
+            "from": "Hugo_Jones737",
+            "to": "George_Davis",
+            "weight": 90
+        },
+        {
+            "from": "Hugo_Jones737",
+            "to": "Uma_Wilson807",
+            "weight": 35
+        },
+        {
+            "from": "Liam_Baker515",
+            "to": "Ethan_Smith",
+            "weight": 16
+        },
+        {
+            "from": "Liam_Baker515",
+            "to": "Nina_Q_Cooper",
+            "weight": 99
+        },
+        {
+            "from": "Fiona_Walker107",
+            "to": "Uma_Wilson807",
+            "weight": 25
+        },
+        {
+            "from": "Fiona_Walker107",
+            "to": "Liam_Baker515",
+            "weight": 96
+        },
+        {
+            "from": "Tina_Martinez",
+            "to": "Ethan_Smith",
+            "weight": 57
+        },
+        {
+            "from": "Tina_Martinez",
+            "to": "Uma_Wilson807",
+            "weight": 81
+        },
+        {
+            "from": "Ethan_Davis",
+            "to": "Ethan_Smith",
+            "weight": 91
+        },
+        {
+            "from": "Ethan_Davis",
+            "to": "Olive_Brown",
+            "weight": 19
+        },
+        {
+            "from": "Cindy_Thomas",
+            "to": "Uma_Wilson807",
+            "weight": 34
+        },
+        {
+            "from": "Cindy_Thomas",
+            "to": "Olive_Brown",
+            "weight": 21
+        },
+        {
+            "from": "Lily_Wood",
+            "to": "Hugo_Jones737",
+            "weight": 69
+        },
+        {
+            "from": "Lily_Wood",
+            "to": "George_Davis",
+            "weight": 95
+        },
+        {
+            "from": "Kate_Thompson353",
+            "to": "Tina_Martinez",
+            "weight": 33
+        },
+        {
+            "from": "Kate_Thompson353",
+            "to": "Nina_Q_Cooper",
+            "weight": 46
+        },
+        {
+            "from": "David_Flores",
+            "to": "Hugo_Jones737",
+            "weight": 75
+        },
+        {
+            "from": "David_Flores",
+            "to": "Ethan_Smith",
+            "weight": 55
+        },
+        {
+            "from": "Bella_Torres674",
+            "to": "Hugo_Jones737",
+            "weight": 71
+        },
+        {
+            "from": "Bella_Torres674",
+            "to": "Ethan_Smith",
+            "weight": 91
+        },
+        {
+            "from": "Chris_R_Hall",
+            "to": "Hugo_Jones737",
+            "weight": 91
+        },
+        {
+            "from": "Chris_R_Hall",
+            "to": "George_Davis",
+            "weight": 72
+        },
+        {
+            "from": "Simon_Bailey",
+            "to": "Ethan_Smith",
+            "weight": 21
+        },
+        {
+            "from": "Simon_Bailey",
+            "to": "Hannah_Roberts",
+            "weight": 7
+        },
+        {
+            "from": "David_D_Green",
+            "to": "Hugo_Jones737",
+            "weight": 76
+        },
+        {
+            "from": "David_D_Green",
+            "to": "Tina_Martinez",
+            "weight": 5
+        }
+    ],
+    "metadata": {
+        "person_count": 25,
+        "edge_count": 47,
+        "density": 0.15666666666666668,
+        "isolated_count": 0,
+        "isolated_percentage": 0.0,
+        "save_time": "2025-12-31 09:30:00",
+        "version": "2.0",
+        "generator": "EnhancedNetworkGenerator",
+        "network_type": "scale_free",
+        "parameters": {
+            "person_count": 25,
+            "weight_range": "1-100",
+            "m": 2
+        }
+    }
+}

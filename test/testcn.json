@@ -1,0 +1,151 @@
+{
+    "persons": [
+        {
+            "name": "吴静"
+        },
+        {
+            "name": "陈伟"
+        },
+        {
+            "name": "刘娟"
+        },
+        {
+            "name": "张明"
+        },
+        {
+            "name": "赵洋"
+        },
+        {
+            "name": "杨娜"
+        },
+        {
+            "name": "张静"
+        },
+        {
+            "name": "王洋"
+        },
+        {
+            "name": "张平"
+        },
+        {
+            "name": "刘刚"
+        },
+        {
+            "name": "周明"
+        },
+        {
+            "name": "周芳"
+        }
+    ],
+    "edges": [
+        {
+            "from": "吴静",
+            "to": "杨娜",
+            "weight": 2
+        },
+        {
+            "from": "陈伟",
+            "to": "张平",
+            "weight": 11
+        },
+        {
+            "from": "刘娟",
+            "to": "王洋",
+            "weight": 95
+        },
+        {
+            "from": "张明",
+            "to": "刘娟",
+            "weight": 52
+        },
+        {
+            "from": "赵洋",
+            "to": "周芳",
+            "weight": 18
+        },
+        {
+            "from": "张静",
+            "to": "陈伟",
+            "weight": 1
+        },
+        {
+            "from": "刘刚",
+            "to": "赵洋",
+            "weight": 55
+        },
+        {
+            "from": "周明",
+            "to": "吴静",
+            "weight": 21
+        },
+        {
+            "from": "周明",
+            "to": "陈伟",
+            "weight": 20
+        },
+        {
+            "from": "周芳",
+            "to": "王洋",
+            "weight": 66
+        },
+        {
+            "from": "刘刚",
+            "to": "吴静",
+            "weight": 41
+        },
+        {
+            "from": "张静",
+            "to": "张平",
+            "weight": 26
+        },
+        {
+            "from": "刘刚",
+            "to": "张静",
+            "weight": 18
+        },
+        {
+            "from": "周明",
+            "to": "刘刚",
+            "weight": 44
+        },
+        {
+            "from": "赵洋",
+            "to": "周明",
+            "weight": 80
+        },
+        {
+            "from": "陈伟",
+            "to": "王洋",
+            "weight": 91
+        },
+        {
+            "from": "王洋",
+            "to": "张静",
+            "weight": 92
+        },
+        {
+            "from": "张静",
+            "to": "张明",
+            "weight": 10
+        },
+        {
+            "from": "张平",
+            "to": "吴静",
+            "weight": 95
+        }
+    ],
+    "metadata": {
+        "person_count": 12,
+        "edge_count": 19,
+        "density": 0.2878787878787879,
+        "save_time": "2025-12-31 09:13:13",
+        "version": "1.0",
+        "generator": "RandomNetworkGenerator",
+        "parameters": {
+            "person_count": 12,
+            "min_connections": 1,
+            "max_connections": 10,
+            "connection_probability": 0.3
+        }
+    }
+}

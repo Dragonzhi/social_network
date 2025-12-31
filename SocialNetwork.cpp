@@ -388,13 +388,6 @@ void SocialNetwork::loadFromFile(string filename) {
     }
 }
 
-
-
-
-
-
-
-
 // 显示所有联系人关系
 void SocialNetwork::displayAll() {
     displayAllBeautiful();

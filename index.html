@@ -23,17 +23,77 @@
     <div class="container">
         <div class="header">
             <h1>SocialNetwork</h1>
-            <p>Total number of people: 0 | Generation Time: Dec 31 2025</p>
+            <p>Total number of people: 30 | Generation Time: Dec 31 2025</p>
         </div>
         <div id="network"></div>
     </div>
     
     <script>
 
-        var nodes = new vis.DataSet([]);
+        var nodes = new vis.DataSet([
+{id: 0, label: 'Frank_Bailey', value: 1},
+{id: 1, label: 'Chris_E_Perez', value: 1},
+{id: 2, label: 'Yale_Murphy', value: 1},
+{id: 3, label: 'Yale_Nelson', value: 14},
+{id: 4, label: 'Victor_Evans292', value: 1},
+{id: 5, label: 'Hugo_Nelson971', value: 1},
+{id: 6, label: 'Ethan_Hernandez', value: 1},
+{id: 7, label: 'Xena_Evans29', value: 1},
+{id: 8, label: 'Evan_E_Martinez', value: 1},
+{id: 9, label: 'Zoe_Davis67', value: 1},
+{id: 10, label: 'Xena_Baker', value: 1},
+{id: 11, label: 'Derek_Young', value: 7},
+{id: 12, label: 'Fiona_Bennett', value: 1},
+{id: 13, label: 'Kyle_Murphy609', value: 1},
+{id: 14, label: 'Steve_Perez382', value: 1},
+{id: 15, label: 'Ben_Bell', value: 1},
+{id: 16, label: 'Hannah_Gonzalez', value: 1},
+{id: 17, label: 'Fiona_Perez', value: 1},
+{id: 18, label: 'Xavier_Brown353', value: 1},
+{id: 19, label: 'Mona_Carter', value: 12},
+{id: 20, label: 'Evan_D_Bailey', value: 1},
+{id: 21, label: 'Uma_Rogers', value: 1},
+{id: 22, label: 'Simon_Smith388', value: 1},
+{id: 23, label: 'Paula_Hall', value: 1},
+{id: 24, label: 'Noah_Sanchez', value: 1},
+{id: 25, label: 'Xavier_Perez', value: 1},
+{id: 26, label: 'Fiona_D_Edwards', value: 1},
+{id: 27, label: 'Yvonne_Taylor', value: 1},
+{id: 28, label: 'Nathan_Reed949', value: 1},
+{id: 29, label: 'Oscar_Turner844', value: 1}]);
         
 
-        var edges = new vis.DataSet([]);
+        var edges = new vis.DataSet([
+{from: 0, to: 11, value: 56},
+{from: 1, to: 19, value: 57},
+{from: 2, to: 11, value: 81},
+{from: 3, to: 4, value: 96},
+{from: 3, to: 5, value: 75},
+{from: 3, to: 6, value: 39},
+{from: 3, to: 9, value: 37},
+{from: 3, to: 12, value: 77},
+{from: 3, to: 15, value: 27},
+{from: 3, to: 17, value: 98},
+{from: 3, to: 18, value: 1},
+{from: 3, to: 20, value: 50},
+{from: 3, to: 23, value: 75},
+{from: 3, to: 24, value: 99},
+{from: 3, to: 26, value: 43},
+{from: 3, to: 19, value: 30},
+{from: 3, to: 11, value: 68},
+{from: 7, to: 19, value: 92},
+{from: 8, to: 19, value: 56},
+{from: 10, to: 19, value: 6},
+{from: 11, to: 13, value: 10},
+{from: 11, to: 25, value: 20},
+{from: 11, to: 27, value: 86},
+{from: 11, to: 19, value: 46},
+{from: 14, to: 19, value: 34},
+{from: 16, to: 19, value: 74},
+{from: 19, to: 21, value: 10},
+{from: 19, to: 22, value: 98},
+{from: 19, to: 28, value: 97},
+{from: 19, to: 29, value: 76}]);
 
         var container = document.getElementById('network');
         var data = { nodes: nodes, edges: edges };

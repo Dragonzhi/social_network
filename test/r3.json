@@ -1,0 +1,167 @@
+{
+    "persons": [
+        {
+            "name": "Diana_T_Allen"
+        },
+        {
+            "name": "Ivan_Robinson976",
+            "id": 2
+        },
+        {
+            "name": "Frank_Nguyen"
+        },
+        {
+            "name": "Uma_B_Bennett"
+        },
+        {
+            "name": "Peter_U_Morris",
+            "id": 5
+        },
+        {
+            "name": "Mike_Jones"
+        },
+        {
+            "name": "Nathan_Gonzalez"
+        },
+        {
+            "name": "Victor_Clark619"
+        },
+        {
+            "name": "Simon_Mitchell473"
+        },
+        {
+            "name": "Mike_White"
+        },
+        {
+            "name": "Aaron_Ramirez"
+        },
+        {
+            "name": "Ethan_Brooks",
+            "id": 12
+        },
+        {
+            "name": "Iris_Wood154",
+            "id": 13
+        },
+        {
+            "name": "Queenie_Young"
+        },
+        {
+            "name": "Toby_Allen",
+            "id": 15
+        },
+        {
+            "name": "Simon_Hernandez",
+            "id": 16
+        },
+        {
+            "name": "Peter_Ramirez"
+        },
+        {
+            "name": "Simon_Hill804"
+        }
+    ],
+    "edges": [
+        {
+            "from": "Ivan_Robinson976",
+            "to": "Diana_T_Allen",
+            "weight": 76
+        },
+        {
+            "from": "Frank_Nguyen",
+            "to": "Diana_T_Allen",
+            "weight": 44
+        },
+        {
+            "from": "Uma_B_Bennett",
+            "to": "Diana_T_Allen",
+            "weight": 73
+        },
+        {
+            "from": "Peter_U_Morris",
+            "to": "Diana_T_Allen",
+            "weight": 42
+        },
+        {
+            "from": "Mike_Jones",
+            "to": "Diana_T_Allen",
+            "weight": 45
+        },
+        {
+            "from": "Nathan_Gonzalez",
+            "to": "Diana_T_Allen",
+            "weight": 71
+        },
+        {
+            "from": "Victor_Clark619",
+            "to": "Diana_T_Allen",
+            "weight": 5
+        },
+        {
+            "from": "Simon_Mitchell473",
+            "to": "Diana_T_Allen",
+            "weight": 52
+        },
+        {
+            "from": "Mike_White",
+            "to": "Diana_T_Allen",
+            "weight": 29
+        },
+        {
+            "from": "Aaron_Ramirez",
+            "to": "Diana_T_Allen",
+            "weight": 22
+        },
+        {
+            "from": "Ethan_Brooks",
+            "to": "Diana_T_Allen",
+            "weight": 32
+        },
+        {
+            "from": "Iris_Wood154",
+            "to": "Diana_T_Allen",
+            "weight": 7
+        },
+        {
+            "from": "Queenie_Young",
+            "to": "Diana_T_Allen",
+            "weight": 57
+        },
+        {
+            "from": "Toby_Allen",
+            "to": "Diana_T_Allen",
+            "weight": 11
+        },
+        {
+            "from": "Simon_Hernandez",
+            "to": "Diana_T_Allen",
+            "weight": 73
+        },
+        {
+            "from": "Peter_Ramirez",
+            "to": "Diana_T_Allen",
+            "weight": 63
+        },
+        {
+            "from": "Simon_Hill804",
+            "to": "Diana_T_Allen",
+            "weight": 10
+        }
+    ],
+    "metadata": {
+        "person_count": 18,
+        "edge_count": 17,
+        "density": 0.1111111111111111,
+        "isolated_count": 0,
+        "isolated_percentage": 0.0,
+        "save_time": "2025-12-31 09:30:17",
+        "version": "2.0",
+        "generator": "EnhancedNetworkGenerator",
+        "network_type": "star",
+        "parameters": {
+            "person_count": 18,
+            "weight_range": "1-100",
+            "num_centers": 1
+        }
+    }
+}
