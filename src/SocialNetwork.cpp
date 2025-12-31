@@ -1,7 +1,7 @@
-﻿#include "SocialNetwork.h"
+﻿#include "..\head\SocialNetwork.h"
 #include <queue>
 #include <fstream>
-#include "json.hpp" 
+#include "..\head\json.hpp" 
 #include <set>
 #include <sstream> 
 using json = nlohmann::json;

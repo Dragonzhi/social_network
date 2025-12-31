@@ -1,4 +1,4 @@
-#include "SocialNetwork.h"
+#include "..\head\SocialNetwork.h"
 #include <iostream>
 #include <limits>
 #include <cstdlib>

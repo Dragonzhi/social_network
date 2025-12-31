@@ -18,7 +18,7 @@
     <div class="container">
         <div class="header">
             <h1>SocialNetwork</h1>
-            <p>People: 25 | Time: Dec 31 2025</p>
+            <p>People: 13 | Time: Dec 31 2025</p>
         </div>
         <div id="network"></div>
     </div>
@@ -26,80 +26,21 @@
     <script>
         var myChart = echarts.init(document.getElementById('network'));
         var nodesData = [
-{id: 0, name: 'Hannah_Roberts', symbolSize: 40},
-{id: 1, name: 'Ethan_Smith', symbolSize: 70},
-{id: 2, name: 'Uma_Wilson807', symbolSize: 70},
-{id: 3, name: 'Olive_Brown', symbolSize: 55},
-{id: 4, name: 'Lily_Cook', symbolSize: 30},
-{id: 5, name: 'Nina_Q_Cooper', symbolSize: 45},
-{id: 6, name: 'Kevin_Hall', symbolSize: 25},
-{id: 7, name: 'Mike_Martin', symbolSize: 25},
-{id: 8, name: 'Clark_Harris', symbolSize: 25},
-{id: 9, name: 'George_Davis', symbolSize: 40},
-{id: 10, name: 'Mike_Hill', symbolSize: 30},
-{id: 11, name: 'Liam_Johnson', symbolSize: 25},
-{id: 12, name: 'Hugo_Jones737', symbolSize: 50},
-{id: 13, name: 'Liam_Baker515', symbolSize: 30},
-{id: 14, name: 'Fiona_Walker107', symbolSize: 25},
-{id: 15, name: 'Tina_Martinez', symbolSize: 35},
-{id: 16, name: 'Ethan_Davis', symbolSize: 25},
-{id: 17, name: 'Cindy_Thomas', symbolSize: 25},
-{id: 18, name: 'Lily_Wood', symbolSize: 25},
-{id: 19, name: 'Kate_Thompson353', symbolSize: 25},
-{id: 20, name: 'David_Flores', symbolSize: 25},
-{id: 21, name: 'Bella_Torres674', symbolSize: 25},
-{id: 22, name: 'Chris_R_Hall', symbolSize: 25},
-{id: 23, name: 'Simon_Bailey', symbolSize: 25},
-{id: 24, name: 'David_D_Green', symbolSize: 25}];
+{id: 0, name: 'a', symbolSize: 15},
+{id: 1, name: 'd', symbolSize: 15},
+{id: 2, name: 'f', symbolSize: 15},
+{id: 3, name: 'g', symbolSize: 15},
+{id: 4, name: 'gh', symbolSize: 15},
+{id: 5, name: 'jh', symbolSize: 15},
+{id: 6, name: 'l', symbolSize: 15},
+{id: 7, name: 'k', symbolSize: 15},
+{id: 8, name: 'awd', symbolSize: 15},
+{id: 9, name: 'qw', symbolSize: 15},
+{id: 10, name: 'e', symbolSize: 15},
+{id: 11, name: '12', symbolSize: 15},
+{id: 12, name: 'as', symbolSize: 15}];
         
-        var linksData = [
-{source: 0, target: 1, weight: 41, lineStyle: {width: 4.1}},
-{source: 0, target: 2, weight: 55, lineStyle: {width: 5.5}},
-{source: 0, target: 3, weight: 28, lineStyle: {width: 2.8}},
-{source: 0, target: 8, weight: 39, lineStyle: {width: 3.9}},
-{source: 0, target: 23, weight: 7, lineStyle: {width: 0.7}},
-{source: 1, target: 2, weight: 58, lineStyle: {width: 5.8}},
-{source: 1, target: 4, weight: 39, lineStyle: {width: 3.9}},
-{source: 1, target: 6, weight: 83, lineStyle: {width: 8.3}},
-{source: 1, target: 7, weight: 61, lineStyle: {width: 6.1}},
-{source: 1, target: 13, weight: 16, lineStyle: {width: 1.6}},
-{source: 1, target: 15, weight: 57, lineStyle: {width: 5.7}},
-{source: 1, target: 16, weight: 91, lineStyle: {width: 9.1}},
-{source: 1, target: 20, weight: 55, lineStyle: {width: 5.5}},
-{source: 1, target: 21, weight: 91, lineStyle: {width: 9.1}},
-{source: 1, target: 23, weight: 21, lineStyle: {width: 2.1}},
-{source: 2, target: 3, weight: 97, lineStyle: {width: 9.7}},
-{source: 2, target: 4, weight: 100, lineStyle: {width: 10}},
-{source: 2, target: 5, weight: 81, lineStyle: {width: 8.1}},
-{source: 2, target: 7, weight: 60, lineStyle: {width: 6}},
-{source: 2, target: 8, weight: 64, lineStyle: {width: 6.4}},
-{source: 2, target: 12, weight: 35, lineStyle: {width: 3.5}},
-{source: 2, target: 14, weight: 25, lineStyle: {width: 2.5}},
-{source: 2, target: 15, weight: 81, lineStyle: {width: 8.1}},
-{source: 2, target: 17, weight: 34, lineStyle: {width: 3.4}},
-{source: 3, target: 5, weight: 90, lineStyle: {width: 9}},
-{source: 3, target: 6, weight: 45, lineStyle: {width: 4.5}},
-{source: 3, target: 10, weight: 39, lineStyle: {width: 3.9}},
-{source: 3, target: 11, weight: 66, lineStyle: {width: 6.6}},
-{source: 3, target: 16, weight: 19, lineStyle: {width: 1.9}},
-{source: 3, target: 17, weight: 21, lineStyle: {width: 2.1}},
-{source: 4, target: 9, weight: 91, lineStyle: {width: 9.1}},
-{source: 5, target: 9, weight: 95, lineStyle: {width: 9.5}},
-{source: 5, target: 10, weight: 56, lineStyle: {width: 5.6}},
-{source: 5, target: 13, weight: 99, lineStyle: {width: 9.9}},
-{source: 5, target: 19, weight: 46, lineStyle: {width: 4.6}},
-{source: 9, target: 12, weight: 90, lineStyle: {width: 9}},
-{source: 9, target: 18, weight: 95, lineStyle: {width: 9.5}},
-{source: 9, target: 22, weight: 72, lineStyle: {width: 7.2}},
-{source: 10, target: 11, weight: 74, lineStyle: {width: 7.4}},
-{source: 12, target: 18, weight: 69, lineStyle: {width: 6.9}},
-{source: 12, target: 20, weight: 75, lineStyle: {width: 7.5}},
-{source: 12, target: 21, weight: 71, lineStyle: {width: 7.1}},
-{source: 12, target: 22, weight: 91, lineStyle: {width: 9.1}},
-{source: 12, target: 24, weight: 76, lineStyle: {width: 7.6}},
-{source: 13, target: 14, weight: 96, lineStyle: {width: 9.6}},
-{source: 15, target: 19, weight: 33, lineStyle: {width: 3.3}},
-{source: 15, target: 24, weight: 5, lineStyle: {width: 0.5}}];
+        var linksData = [];
 
         var option = {
             // 提示框核心配置：节点和边 显示完全不同的内容+样式

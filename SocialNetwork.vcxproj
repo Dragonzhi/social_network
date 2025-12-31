@@ -120,14 +120,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Edge.h" />
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="Person.h" />
-    <ClInclude Include="SocialNetwork.h" />
+    <ClInclude Include="head\Edge.h" />
+    <ClInclude Include="head\json.hpp" />
+    <ClInclude Include="head\Person.h" />
+    <ClInclude Include="head\SocialNetwork.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SocialNetwork.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SocialNetwork.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
