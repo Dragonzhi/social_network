@@ -19,7 +19,7 @@ jobs:
     - name: 编译项目（Release 模式）
       run: |
         # 替换为你的解决方案文件实际路径（如 ./SocialNetwork.sln）
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release
+        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
 
     - name: 上传 EXE 到 Artifacts（临时存储）
       uses: actions/upload-artifact@v4
