@@ -3,7 +3,7 @@ name: 构建 Windows 可执行文件
 on:
   push:
     tags:
-      - 'v*.*.*'  # 匹配 v1.0.0、v2.1.3 等版本标签
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -18,10 +18,10 @@ jobs:
 
     - name: 编译项目（Release 模式）
       run: |
-        # 替换为你的解决方案文件实际路径（如 ./SocialNetwork.sln）
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
-
-    - name: 上传 EXE 到 Artifacts（临时存储）
+        # 设置 UTF-8 编码参数，确保正确编译中文字符
+        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:OutDir=./bin/Release /p:AdditionalOptions="/utf-8 /source-charset:utf-8 /execution-charset:utf-8"
+        
+    - name: 上传 EXE 到 Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: windows-exe
@@ -30,6 +30,6 @@ jobs:
     - name: 创建 GitHub Release 并上传 EXE
       uses: softprops/action-gh-release@v2
       with:
-        files: ./bin/Release/*.exe  # 上传编译好的 EXE
-        name: Release ${{ github.ref_name }}  # Release 名称为标签名（如 v1.0.0）
+        files: ./bin/Release/*.exe
+        name: Release ${{ github.ref_name }}
         body: 自动构建的版本 ${{ github.ref_name }}

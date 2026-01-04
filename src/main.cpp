@@ -82,6 +82,13 @@ void waitForUser() {
     cin.get();
 }
 
+void testEncoding() {
+    std::string test = "社交网络状态";
+    std::cout << "测试字符串: " << test << std::endl;
+    std::cout << "字符串长度: " << size_t(test.length()) << std::endl;
+    std::cout << "第一个字符: 0x" << std::hex << (int)(unsigned char)test[0] << std::endl;
+}
+
 int main() {
 
     // Windows下设置控制台编码
@@ -237,6 +244,11 @@ int main() {
             cout << "    - 数据持久化: JSON格式保存/加载" << endl;
             cout << "\n================================================================================" << endl;
             return 0;
+
+        case 114:
+            testEncoding();
+            waitForUser();
+            break;
 
         default:
             showErrorMsg("无效的选择，请输入 0-11 之间的数字！");
