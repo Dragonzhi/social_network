@@ -16,38 +16,18 @@ jobs:
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: 🔥 全局强制UTF-8编码（核心：解决代码页1252问题）
+    - name: 🔥 全局强制UTF-8编码（核心）
       run: |
-        # 1. 切换控制台代码页为UTF-8（65001）
+        # 切换控制台代码页为UTF-8
         chcp 65001 > nul
-        # 2. 设置系统默认编码为UTF-8（永久生效）
+        # 设置系统默认编码为UTF-8
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_ACP /t REG_SZ /d 65001 /f
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_OEMCP /t REG_SZ /d 65001 /f
-        # 3. 设置系统区域为中文
+        # 设置系统区域为中文
         reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d zh-CN /f
-        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\Language" /v Default /t REG_SZ /d 0804 /f
       shell: cmd
 
-    - name: 安装中文语言包（修正DISM功能名）
-      run: |
-        # 正确的简体中文基础语言包功能名
-        dism /online /enable-feature /featurename:Language.Basic~~~zh-CN~~~0.0.1.0 /all /quiet /norestart
-        # 安装中文输入法支持（可选，兜底）
-        dism /online /enable-feature /featurename:Language.Handwriting~~~zh-CN~~~0.0.1.0 /all /quiet /norestart
-        dism /online /enable-feature /featurename:Language.OCR~~~zh-CN~~~0.0.1.0 /all /quiet /norestart
-      shell: cmd
-      continue-on-error: true  # 语言包安装失败不阻断构建（核心是编码，非必须）
-
-    - name: 安装中文字体（替代choco，用系统自带/可靠源）
-      run: |
-        # 方案1：启用系统自带中文字体（Windows Server默认已包含，仅需解锁）
-        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts" /v "Microsoft YaHei & Microsoft YaHei UI (TrueType)" /t REG_SZ /d msyh.ttc /f
-        # 方案2：从可靠源安装字体（备用）
-        Invoke-WebRequest -Uri "https://github.com/miclle/fonts/raw/master/msyh.ttc" -OutFile "C:\Windows\Fonts\msyh.ttc"
-      shell: powershell
-      continue-on-error: true  # 字体安装失败不阻断构建
-
-    - name: 编译项目（强制UTF-8解析源码+Unicode字符集）
+    - name: 编译项目（修正MSBuild参数，仅给编译器传/utf-8）
       run: |
         chcp 65001
         msbuild ./SocialNetwork.sln ^
@@ -56,9 +36,9 @@ jobs:
           /p:OutDir=./bin/Release ^
           /p:PlatformToolset=v143 ^
           /p:CharacterSet=Unicode ^
-          /p:ForceUTF8=true ^
-          /utf-8 ^
-          /p:AdditionalOptions="/utf-8 %(AdditionalOptions)"
+          # 关键：仅给C++编译器传递/utf-8参数，而非MSBuild
+          /p:CLAdditionalOptions="/utf-8 %(CLAdditionalOptions)" ^
+          /p:ForceUTF8=true
       shell: cmd
 
     - name: 上传 EXE 到 Artifacts
