@@ -639,6 +639,7 @@ void SocialNetwork::displayAllBeautiful() {
     if (vertList.empty()) {
         cout << createSectionHeader("社交网络状态");
         cout << "\n" << ERROR_ICON << " 社交网络为空！暂时还没有任何联系人\n";
+
         return;
     }
 

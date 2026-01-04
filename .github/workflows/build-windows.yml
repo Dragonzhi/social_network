@@ -12,35 +12,39 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
-      with:
-        # 确保检出时使用正确的编码
-        fetch-depth: 0
 
-    - name: 修复文件编码
-      run: |
-        # 转换所有源文件为 UTF-8 with BOM
-        Get-ChildItem -Recurse -Filter *.cpp | ForEach-Object {
-          $content = Get-Content $_.FullName -Encoding UTF8
-          # 添加 UTF-8 BOM
-          [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
-        }
-        Get-ChildItem -Recurse -Filter *.h | ForEach-Object {
-          $content = Get-Content $_.FullName -Encoding UTF8
-          [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
-        }
-        
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: 编译项目（Release 模式）
+    - name: 🔥 全局强制UTF-8编码（关键：解决代码页1252问题）
       run: |
-        # 使用 PowerShell 设置环境变量
-        $env:PYTHONUTF8 = "1"
-        $env:PYTHONIOENCODING = "utf-8"
-        
-        # 编译时强制使用 UTF-8，并禁用所有字符集警告
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143 /p:AdditionalOptions="/utf-8 /wd4566 /wd4819 /source-charset:utf-8 /execution-charset:utf-8 /validate-charset-"
-        
+        # 1. 切换控制台代码页为UTF-8（65001）
+        chcp 65001 > nul
+        # 2. 设置系统默认编码为UTF-8（永久生效）
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_ACP /t REG_SZ /d 65001 /f
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_OEMCP /t REG_SZ /d 65001 /f
+        # 3. 设置系统区域为中文（避免语言包缺失）
+        reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d zh-CN /f
+        reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\Language" /v Default /t REG_SZ /d 0804 /f
+
+    - name: 安装中文语言包和字体（兜底UI显示）
+      run: |
+        dism /online /enable-feature /featurename:LanguageFeatures-Chinese-Simplified /all /quiet /norestart
+        choco install -y chinese-simplified-fonts --no-progress --limit-output
+
+    - name: 编译项目（强制UTF-8解析源码+Unicode字符集）
+      run: |
+        # 核心参数：/utf-8 让MSVC以UTF-8解析所有源码（无需改中文代码）
+        msbuild ./SocialNetwork.sln `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:OutDir=./bin/Release `
+          /p:PlatformToolset=v143 `
+          /p:CharacterSet=Unicode `          # 强制Unicode字符集
+          /p:ForceUTF8=true `                # 兜底：强制UTF-8
+          /utf-8 `                           # MSBuild以UTF-8读取项目文件
+          /p:AdditionalOptions="/utf-8 %(AdditionalOptions)"  # 编译器以UTF-8解析源码
+
     - name: 上传 EXE 到 Artifacts
       uses: actions/upload-artifact@v4
       with:

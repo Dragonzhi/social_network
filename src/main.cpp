@@ -90,11 +90,11 @@ void testEncoding() {
 }
 
 int main() {
-
     // Windows下设置控制台编码
 #ifdef _WIN32
     // 使用系统默认编码（中文Windows通常是GBK/CP936）
     // 而不是UTF-8
+    //system("chcp 65001 > nul");
     SetConsoleOutputCP(CP_ACP);  // 使用ANSI代码页
     SetConsoleCP(CP_ACP);        // 使用ANSI代码页
 #endif
