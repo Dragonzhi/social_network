@@ -1,7 +1,10 @@
+#define NOMINMAX  // 禁用 min/max 宏
 #include "..\head\SocialNetwork.h"
 #include <iostream>
 #include <limits>
 #include <cstdlib>
+#include <windows.h>
+#include <locale>
 using namespace std;
 
 // ASCII艺术标题
@@ -80,6 +83,16 @@ void waitForUser() {
 }
 
 int main() {
+
+    // Windows下设置控制台编码
+#ifdef _WIN32
+    // 使用系统默认编码（中文Windows通常是GBK/CP936）
+    // 而不是UTF-8
+    SetConsoleOutputCP(CP_ACP);  // 使用ANSI代码页
+    SetConsoleCP(CP_ACP);        // 使用ANSI代码页
+#endif
+
+
     SocialNetwork network;
     int choice;
     string name1, name2, filename;
