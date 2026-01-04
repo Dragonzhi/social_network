@@ -3,43 +3,47 @@ name: 构建 Windows 可执行文件
 on:
   push:
     tags:
-      - 'v*.*.*'  # 匹配 v1.0.0、v2.1.3 等版本标签
+      - 'v*.*.*'
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: 拉取代码
+    - name: 拉取代码（含完整历史）
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # 拉取所有历史提交，用于生成更新日志
+        fetch-depth: 0
 
-    - name: 配置 MSBuild
+    - name: 配置 MSBuild（确保加载 VS2022 工具）
       uses: microsoft/setup-msbuild@v2
+      with:
+        vs-version: '2022'  # 明确指定使用 VS2022
 
-    - name: 编译项目（Release 模式 + 兼容工具集）
+    - name: 编译项目（Release + x64 + v143 工具集）
       run: |
-        # 核心修改：添加 /p:PlatformToolset=v143 强制使用 VS2022 工具集
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
+        # 路径改为仓库根目录的 sln，参数明确指定工具集和输出目录
+        msbuild "SocialNetwork.sln" `
+          /t:Build `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:PlatformToolset=v143 `
+          /p:WindowsTargetPlatformVersion=10.0.22621.0 `
+          /p:OutDir="./bin/Release/"
 
     - name: 生成更新日志
       id: generate_changelog
       run: |
-        last_tag=$(git describe --abbrev=0 --tags HEAD^ 2>/dev/null || echo "")
-        if [ -z "$last_tag" ]; then
-          changelog=$(git log --pretty=format:"- %s" HEAD)
-        else
-          changelog=$(git log $last_tag..HEAD --pretty=format:"- %s")
-        fi
-        if [ -z "$changelog" ]; then
-          changelog="无显著更新"
-        fi
-        echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-        echo "$changelog" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+        $lastTag = git describe --abbrev=0 --tags HEAD^ 2>$null
+        if (-not $lastTag) {
+          $changelog = git log --pretty=format:"- %s" HEAD
+        } else {
+          $changelog = git log "$lastTag..HEAD" --pretty=format:"- %s"
+        }
+        if (-not $changelog) { $changelog = "无显著更新" }
+        echo "CHANGELOG=$changelog" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
-    - name: 创建 GitHub Release 并上传 EXE
+    - name: 上传 EXE 到 Release
       uses: softprops/action-gh-release@v2
       with:
         files: ./bin/Release/*.exe
