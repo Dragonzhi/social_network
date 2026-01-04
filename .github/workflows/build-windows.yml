@@ -18,27 +18,28 @@ jobs:
 
     - name: 🔥 全局强制UTF-8编码（核心）
       run: |
-        rem 切换控制台代码页为UTF-8（CMD注释用rem）
-        chcp 65001
-        rem 设置系统默认编码为UTF-8
+        # 切换控制台代码页为UTF-8
+        chcp 65001 > nul
+        # 设置系统默认编码为UTF-8
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_ACP /t REG_SZ /d 65001 /f
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_OEMCP /t REG_SZ /d 65001 /f
-        rem 设置系统区域为中文
+        # 设置系统区域为中文
         reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d zh-CN /f
         echo "CL=/utf-8" >> $GITHUB_ENV
       shell: cmd
 
-    - name: 编译项目（彻底修复参数语法）
+    - name: 编译项目（修正MSBuild参数，仅给编译器传/utf-8）
       run: |
         chcp 65001
         msbuild ./SocialNetwork.sln ^
-        /p:Configuration=Release ^
-        /p:Platform=x64 ^
-        /p:OutDir=./bin/Release ^
-        /p:PlatformToolset=v143 ^
-        /p:CharacterSet=Unicode ^
-        /p:CLAdditionalOptions="/utf-8 %(CLAdditionalOptions)" ^
-        /p:ForceUTF8=true
+          /p:Configuration=Release ^
+          /p:Platform=x64 ^
+          /p:OutDir=./bin/Release ^
+          /p:PlatformToolset=v143 ^
+          /p:CharacterSet=Unicode ^
+          # 关键：仅给C++编译器传递/utf-8参数，而非MSBuild
+          /p:CLAdditionalOptions="/utf-8 %(CLAdditionalOptions)" ^
+          /p:ForceUTF8=true
       shell: cmd
 
     - name: 上传 EXE 到 Artifacts
