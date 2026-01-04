@@ -12,24 +12,40 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 拉取所有历史提交，用于生成更新日志
 
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: 编译项目（Release 模式）
+    - name: 编译项目（Release 模式 + 兼容工具集）
       run: |
-        # 替换为你的解决方案文件实际路径（如 ./SocialNetwork.sln）
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release
+        # 核心修改：添加 /p:PlatformToolset=v143 强制使用 VS2022 工具集
+        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
 
-    - name: 上传 EXE 到 Artifacts（临时存储）
-      uses: actions/upload-artifact@v4
-      with:
-        name: windows-exe
-        path: ./bin/Release/*.exe
+    - name: 生成更新日志
+      id: generate_changelog
+      run: |
+        last_tag=$(git describe --abbrev=0 --tags HEAD^ 2>/dev/null || echo "")
+        if [ -z "$last_tag" ]; then
+          changelog=$(git log --pretty=format:"- %s" HEAD)
+        else
+          changelog=$(git log $last_tag..HEAD --pretty=format:"- %s")
+        fi
+        if [ -z "$changelog" ]; then
+          changelog="无显著更新"
+        fi
+        echo "CHANGELOG<<EOF" >> $GITHUB_ENV
+        echo "$changelog" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
 
     - name: 创建 GitHub Release 并上传 EXE
       uses: softprops/action-gh-release@v2
       with:
-        files: ./bin/Release/*.exe  # 上传编译好的 EXE
-        name: Release ${{ github.ref_name }}  # Release 名称为标签名（如 v1.0.0）
-        body: 自动构建的版本 ${{ github.ref_name }}
+        files: ./bin/Release/*.exe
+        name: Release ${{ github.ref_name }}
+        body: |
+          ## 更新日志
+          ${{ env.CHANGELOG }}
+          
+          自动构建版本：${{ github.ref_name }}
