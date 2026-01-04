@@ -13,13 +13,21 @@ jobs:
     - name: 拉取代码
       uses: actions/checkout@v4
 
+    - name: 设置系统区域为中文
+      run: |
+        # 设置系统代码页为中文简体（CP936）
+        chcp 936
+        # 设置系统区域为中国
+        reg add "HKCU\Control Panel\International" /v Locale /t REG_SZ /d "00000804" /f
+        reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d "zh-CN" /f
+        
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: 编译项目（Release 模式）
       run: |
-        # 设置 UTF-8 编码参数，确保正确编译中文字符
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:OutDir=./bin/Release /p:AdditionalOptions="/utf-8 /source-charset:utf-8 /execution-charset:utf-8"
+        # 使用系统代码页（现在是936），而不是UTF-8
+        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
         
     - name: 上传 EXE 到 Artifacts
       uses: actions/upload-artifact@v4
