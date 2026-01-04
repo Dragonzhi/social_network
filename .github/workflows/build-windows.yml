@@ -19,12 +19,13 @@ jobs:
     - name: 🔥 全局强制UTF-8编码（核心）
       run: |
         rem 切换控制台代码页为UTF-8（CMD注释用rem）
-        chcp 65001 > nul
+        chcp 65001
         rem 设置系统默认编码为UTF-8
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_ACP /t REG_SZ /d 65001 /f
         reg add "HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage" /v CP_OEMCP /t REG_SZ /d 65001 /f
         rem 设置系统区域为中文
         reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d zh-CN /f
+        echo "CL=/utf-8" >> $GITHUB_ENV
       shell: cmd
 
     - name: 编译项目（彻底修复参数语法）
