@@ -1,18 +1,19 @@
-#define NOMINMAX  // ½ûÓÃ min/max ºê
+#define NOMINMAX  // ç¦ç”¨ min/max å®
 #include "..\head\SocialNetwork.h"
 #include <iostream>
+#include <string>
 #include <limits>
 #include <cstdlib>
 #include <windows.h>
 #include <locale>
 using namespace std;
 
-// ASCIIÒÕÊõ±êÌâ
+// ASCIIè‰ºæœ¯æ ‡é¢˜
 void showASCIITitle() {
     cout << "\n";
     cout << "  _______  _______  _______  _______  ___   _______  _______ " << endl;
     cout << " (  ____ \\(  ___  )(  ____ )(  ___  )/ __) (  ___  )(  ____ )" << endl;
-    cout << " | (    \\/| (   ) || (    )|| (   ) |\\__ \\ | (   ) || (    )|" << endl;
+    cout << " | (    \\/| (   ) || (    )|| (   ) |\\__ \ | (   ) || (    )|" << endl;
     cout << " | (_____ | (___) || (____)|| |   | |(__) )| |   | || (____)|" << endl;
     cout << " (_____  )|  ___  ||     __)| |   | |   | || |   | ||     __)" << endl;
     cout << "       ) || (   ) || (\\ (   | |   | |   | || |   | || (\\ (   " << endl;
@@ -20,13 +21,13 @@ void showASCIITitle() {
     cout << " \\_______)|/     \\||/   \\__/(_______)   )_)(_______)|/   \\__/" << endl;
     cout << "\n";
     cout << "================================================================================" << endl;
-    cout << "                   ¼òÒ×Éç½»¹ØÏµÍøÏµÍ³ v1.0.15" << endl;
+    cout << "                   ç®€æ˜“ç¤¾äº¤å…³ç³»ç½‘ç³»ç»Ÿ v1.0.15" << endl;
     cout << "================================================================================" << endl;
-    cout << " ¹¦ÄÜ: ÁªÏµÈË¹ÜÀí | ¹ØÏµ·ÖÎö | Éç½»ÍøÂç¿ÉÊÓ»¯ | Êı¾İ³Ö¾Ã»¯" << endl;
+    cout << " åŠŸèƒ½: è”ç³»äººç®¡ç† | å…³ç³»åˆ†æ | ç¤¾äº¤ç½‘ç»œå¯è§†åŒ– | æ•°æ®æŒä¹…åŒ–" << endl;
     cout << "================================================================================" << endl;
 }
 
-// ASCII²Ëµ¥ÏµÍ³
+// ASCIIèœå•ç³»ç»Ÿ
 void showASCIIMenu() {
     system("cls");
 
@@ -35,23 +36,23 @@ void showASCIIMenu() {
     string dashLine(80, '.');
 
     cout << line << endl;
-    cout << "                              Ö÷²Ëµ¥                              " << endl;
+    cout << "                              ä¸»èœå•                              " << endl;
     cout << thinLine << endl;
 
-    cout << "  [1]  Ìí¼ÓÁªÏµÈË           [2]  É¾³ıÁªÏµÈË" << endl;
-    cout << "  [3]  Ìí¼Ó¹ØÏµ(Ç×ÃÜ¶È)     [4]  É¾³ı¹ØÏµ" << endl;
-    cout << "  [5]  ÏÔÊ¾ËùÓĞÁªÏµÈË¹ØÏµ   [6]  °´Ç×ÃÜ³Ì¶ÈÅÅĞòºÃÓÑ" << endl;
-    cout << "  [7]  ²éÑ¯Á½ÈËÇ×ÃÜ¶È       [8]  ÏÔÊ¾Éç½»´óÅ£(Top10)" << endl;
-    cout << "  [9]  ±£´æµ½ÎÄ¼ş          [10]  ´ÓÎÄ¼ş¼ÓÔØ" << endl;
-    cout << "  [11] µ¼³öHTML¿ÉÊÓ»¯       [0]  ÍË³öÏµÍ³" << endl;
+    cout << "  [1]  æ·»åŠ è”ç³»äºº           [2]  åˆ é™¤è”ç³»äºº" << endl;
+    cout << "  [3]  æ·»åŠ å…³ç³»(äº²å¯†åº¦)     [4]  åˆ é™¤å…³ç³»" << endl;
+    cout << "  [5]  æ˜¾ç¤ºæ‰€æœ‰è”ç³»äººå…³ç³»   [6]  æŒ‰äº²å¯†ç¨‹åº¦æ’åºå¥½å‹" << endl;
+    cout << "  [7]  æŸ¥è¯¢ä¸¤äººäº²å¯†åº¦       [8]  æ˜¾ç¤ºç¤¾äº¤è¾¾äºº(Top10)" << endl;
+    cout << "  [9]  ä¿å­˜åˆ°æ–‡ä»¶          [10]  ä»æ–‡ä»¶åŠ è½½" << endl;
+    cout << "  [11] å¯¼å‡ºHTMLå¯è§†åŒ–       [0]  é€€å‡ºç³»ç»Ÿ" << endl;
 
     cout << thinLine << endl;
-    cout << "  ÌáÊ¾: ÊäÈëÊı×ÖÑ¡Ôñ¶ÔÓ¦¹¦ÄÜ£¬°´Enter¼üÈ·ÈÏ" << endl;
+    cout << "  æç¤º: è¾“å…¥æ•°å­—é€‰æ‹©å¯¹åº”åŠŸèƒ½ï¼ŒæŒ‰Enteré”®ç¡®è®¤" << endl;
     cout << dashLine << endl;
-    cout << "  ÇëÑ¡Ôñ²Ù×÷ (0-11): ";
+    cout << "  è¯·é€‰æ‹©æ“ä½œ (0-11): ";
 }
 
-// ÏÔÊ¾²Ù×÷±êÌâ
+// æ˜¾ç¤ºæ“ä½œæ ‡é¢˜
 void showOperationTitle(const string& operation) {
     system("cls");
     string line(80, '=');
@@ -60,43 +61,40 @@ void showOperationTitle(const string& operation) {
     cout << line << endl;
 }
 
-// ÏÔÊ¾³É¹¦ÏûÏ¢
+// æ˜¾ç¤ºæˆåŠŸä¿¡æ¯
 void showSuccessMsg(const string& msg) {
     cout << "\n  [+] " << msg << endl;
 }
 
-// ÏÔÊ¾´íÎóÏûÏ¢
+// æ˜¾ç¤ºé”™è¯¯ä¿¡æ¯
 void showErrorMsg(const string& msg) {
     cout << "\n  [!] " << msg << endl;
 }
 
-// ÏÔÊ¾ĞÅÏ¢ÏûÏ¢
+// æ˜¾ç¤ºä¿¡æ¯æ¶ˆæ¯
 void showInfoMsg(const string& msg) {
     cout << "\n  [i] " << msg << endl;
 }
 
-// µÈ´ıÓÃ»§°´¼ü
+// ç­‰å¾…ç”¨æˆ·æŒ‰é”®
 void waitForUser() {
-    cout << "\n °´Enter¼ü¼ÌĞø...";
+    cout << "\n æŒ‰Enteré”®ç»§ç»­...";
     //cin.ignore();
     cin.get();
 }
 
 void testEncoding() {
-    std::string test = "Éç½»ÍøÂç×´Ì¬";
-    std::cout << "²âÊÔ×Ö·û´®: " << test << std::endl;
-    std::cout << "×Ö·û´®³¤¶È: " << size_t(test.length()) << std::endl;
-    std::cout << "µÚÒ»¸ö×Ö·û: 0x" << std::hex << (int)(unsigned char)test[0] << std::endl;
+    std::string test = "ç¤¾äº¤ç½‘ç»œçŠ¶æ€";
+    std::cout << "æµ‹è¯•å­—ç¬¦ä¸²: " << test << std::endl;
+    std::cout << "å­—ç¬¦ä¸²é•¿åº¦: " << size_t(test.length()) << std::endl;
+    std::cout << "ç¬¬ä¸€ä¸ªå­—ç¬¦: 0x" << std::hex << (int)(unsigned char)test[0] << std::endl;
 }
 
 int main() {
-    // WindowsÏÂÉèÖÃ¿ØÖÆÌ¨±àÂë
+    // Windowsä¸‹è®¾ç½®æ§åˆ¶å°ç¼–ç ä¸ºUTF-8
 #ifdef _WIN32
-    // Ê¹ÓÃÏµÍ³Ä¬ÈÏ±àÂë£¨ÖĞÎÄWindowsÍ¨³£ÊÇGBK/CP936£©
-    // ¶ø²»ÊÇUTF-8
-    //system("chcp 65001 > nul");
-    SetConsoleOutputCP(CP_ACP);  // Ê¹ÓÃANSI´úÂëÒ³
-    SetConsoleCP(CP_ACP);        // Ê¹ÓÃANSI´úÂëÒ³
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
 #endif
 
 
@@ -106,9 +104,9 @@ int main() {
     int weight;
     bool ascending;
 
-    // ÏÔÊ¾±êÌâ
+    // æ˜¾ç¤ºæ ‡é¢˜
     showASCIITitle();
-    cout << "\n °´Enter¼ü¿ªÊ¼Ê¹ÓÃÏµÍ³...";
+    cout << "\n æŒ‰Enteré”®å¼€å§‹ä½¿ç”¨ç³»ç»Ÿ...";
     cin.get();
 
     while (true) {
@@ -117,7 +115,7 @@ int main() {
         if (!(cin >> choice)) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            showErrorMsg("ÇëÊäÈëÓĞĞ§µÄÊı×Ö£¡");
+            showErrorMsg("è¯·è¾“å…¥æœ‰æ•ˆçš„æ•°å­—ï¼");
             waitForUser();
             continue;
         }
@@ -126,27 +124,27 @@ int main() {
 
         switch (choice) {
         case 1:
-            showOperationTitle("Ìí¼ÓÁªÏµÈË");
+            showOperationTitle("æ·»åŠ è”ç³»äºº");
            
             network.addPersons();
             waitForUser();
             break;
 
         case 2:
-            showOperationTitle("É¾³ıÁªÏµÈË");
-            cout << "\n  ÇëÊäÈëÒªÉ¾³ıµÄÁªÏµÈËĞÕÃû: ";
+            showOperationTitle("åˆ é™¤è”ç³»äºº");
+            cout << "\n  è¯·è¾“å…¥è¦åˆ é™¤çš„è”ç³»äººå§“å: ";
             getline(cin, name1);
             network.deletePerson(name1);
             waitForUser();
             break;
 
         case 3:
-            showOperationTitle("Ìí¼Ó¹ØÏµ");
-            cout << "\n  ÇëÊäÈëµÚÒ»¸öÈËĞÕÃû: ";
+            showOperationTitle("æ·»åŠ å…³ç³»");
+            cout << "\n  è¯·è¾“å…¥ç¬¬ä¸€ä¸ªäººå§“å: ";
             getline(cin, name1);
-            cout << "  ÇëÊäÈëµÚ¶ş¸öÈËĞÕÃû: ";
+            cout << "  è¯·è¾“å…¥ç¬¬äºŒä¸ªäººå§“å: ";
             getline(cin, name2);
-            cout << "  ÇëÊäÈëÇ×ÃÜ¶È (1-100): ";
+            cout << "  è¯·è¾“å…¥äº²å¯†åº¦ (1-100): ";
             cin >> weight;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             network.addEdge(name1, name2, weight);
@@ -154,26 +152,26 @@ int main() {
             break;
 
         case 4:
-            showOperationTitle("É¾³ı¹ØÏµ");
-            cout << "\n  ÇëÊäÈëµÚÒ»¸öÈËĞÕÃû: ";
+            showOperationTitle("åˆ é™¤å…³ç³»");
+            cout << "\n  è¯·è¾“å…¥ç¬¬ä¸€ä¸ªäººå§“å: ";
             getline(cin, name1);
-            cout << "  ÇëÊäÈëµÚ¶ş¸öÈËĞÕÃû: ";
+            cout << "  è¯·è¾“å…¥ç¬¬äºŒä¸ªäººå§“å: ";
             getline(cin, name2);
             network.deleteEdge(name1, name2);
             waitForUser();
             break;
 
         case 5:
-            showOperationTitle("ËùÓĞÁªÏµÈË¹ØÏµ");
+            showOperationTitle("æ‰€æœ‰è”ç³»äººå…³ç³»");
             network.displayAll();
             waitForUser();
             break;
 
         case 6:
-            showOperationTitle("°´Ç×ÃÜ³Ì¶ÈÅÅĞòºÃÓÑ");
-            cout << "\n  ÇëÊäÈëÒªÅÅĞòµÄÁªÏµÈËĞÕÃû: ";
+            showOperationTitle("æŒ‰äº²å¯†ç¨‹åº¦æ’åºå¥½å‹");
+            cout << "\n  è¯·è¾“å…¥è¦æ’åºçš„è”ç³»äººå§“å: ";
             getline(cin, name1);
-            cout << "  ÅÅĞòË³Ğò (0=½µĞò, 1=ÉıĞò): ";
+            cout << "  æ’åºé¡ºåº (0=é™åº, 1=å‡åº): ";
             cin >> ascending;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             network.sortFriends(name1, ascending);
@@ -181,51 +179,40 @@ int main() {
             break;
 
         case 7:
-            showOperationTitle("²éÑ¯Á½ÈËÇ×ÃÜ¶È");
-            cout << "\n  ÇëÊäÈëµÚÒ»¸öÈËĞÕÃû: ";
+            showOperationTitle("æŸ¥è¯¢ä¸¤äººäº²å¯†åº¦");
+            cout << "\n  è¯·è¾“å…¥ç¬¬ä¸€ä¸ªäººå§“å: ";
             getline(cin, name1);
-            cout << "  ÇëÊäÈëµÚ¶ş¸öÈËĞÕÃû: ";
+            cout << "  è¯·è¾“å…¥ç¬¬äºŒä¸ªäººå§“å: ";
             getline(cin, name2);
-            {
-                int closeness = network.getBottleneckPath(name1, name2);
-                if (closeness == -1) {
-                    showErrorMsg(name1 + " ºÍ " + name2 + " Ö®¼äÃ»ÓĞÂ·¾¶¿É´ï");
-                }
-                else if (closeness == 0) {
-                    showInfoMsg(name1 + " ºÍ " + name2 + " ÊÇÍ¬Ò»ÈË");
-                }
-                else {
-                    showSuccessMsg(name1 + " ºÍ " + name2 + " µÄÇ×ÃÜ¶ÈÎª: " + to_string(closeness));
-                }
-            }
+            network.displayBottleneckBeautiful(name1, name2);
             waitForUser();
             break;
 
         case 8:
-            showOperationTitle("Éç½»´óÅ£ÅÅĞĞ°ñ");
+            showOperationTitle("ç¤¾äº¤è¾¾äººæ’è¡Œæ¦œ");
             network.displayTop10();
             waitForUser();
             break;
 
         case 9:
-            showOperationTitle("±£´æµ½ÎÄ¼ş");
-            cout << "\n  ÇëÊäÈë±£´æÎÄ¼şÃû (ÀıÈç: network.json): ";
+            showOperationTitle("ä¿å­˜åˆ°æ–‡ä»¶");
+            cout << "\n  è¯·è¾“å…¥ä¿å­˜æ–‡ä»¶å (ä¾‹å¦‚: network.json): ";
             getline(cin, filename);
             network.saveToFile(filename);
             waitForUser();
             break;
 
         case 10:
-            showOperationTitle("´ÓÎÄ¼ş¼ÓÔØ");
-            cout << "\n  ÇëÊäÈë¼ÓÔØÎÄ¼şÃû (ÀıÈç: network.json): ";
+            showOperationTitle("ä»æ–‡ä»¶åŠ è½½");
+            cout << "\n  è¯·è¾“å…¥åŠ è½½æ–‡ä»¶å (ä¾‹å¦‚: network.json): ";
             getline(cin, filename);
             network.loadFromFile(filename);
             waitForUser();
             break;
 
         case 11:
-            showOperationTitle("µ¼³öHTML¿ÉÊÓ»¯");
-            cout << "\n  ÇëÊäÈëHTMLÎÄ¼şÃû (ÀıÈç: network.html): ";
+            showOperationTitle("å¯¼å‡ºHTMLå¯è§†åŒ–");
+            cout << "\n  è¯·è¾“å…¥HTMLæ–‡ä»¶å (ä¾‹å¦‚: network.html): ";
             getline(cin, filename);
             network.exportToHTML(filename);
             waitForUser();
@@ -234,14 +221,14 @@ int main() {
         case 0:
             system("cls");
             cout << "\n================================================================================" << endl;
-            cout << "                          ¸ĞĞ»Ê¹ÓÃÉç½»ÍøÂçÏµÍ³£¡" << endl;
+            cout << "                          æ„Ÿè°¢ä½¿ç”¨ç¤¾äº¤ç½‘ç»œç³»ç»Ÿï¼" << endl;
             cout << "================================================================================" << endl;
-            cout << "\n  ÔÙ¼û£¡Ï£ÍûÕâ¸öÏµÍ³ÄÜ°ïÖúÄã¸üºÃµØ¹ÜÀíÉç½»¹ØÏµ£¡" << endl;
-            cout << "\n  ÏµÍ³¹¦ÄÜ×Ü½á:" << endl;
-            cout << "    - ÁªÏµÈË¹ÜÀí: Ìí¼Ó¡¢É¾³ı¡¢²éÑ¯" << endl;
-            cout << "    - ¹ØÏµ·ÖÎö: Ç×ÃÜ¶È¼ÆËã¡¢Â·¾¶·ÖÎö" << endl;
-            cout << "    - Éç½»ÍøÂç: ¿ÉÊÓ»¯ÏÔÊ¾¡¢ÅÅĞĞ°ñ" << endl;
-            cout << "    - Êı¾İ³Ö¾Ã»¯: JSON¸ñÊ½±£´æ/¼ÓÔØ" << endl;
+            cout << "\n  å†è§ï¼å¸Œæœ›è¿™ä¸ªç³»ç»Ÿèƒ½å¸®åŠ©ä½ æ›´å¥½åœ°ç®¡ç†ç¤¾äº¤å…³ç³»ã€‚" << endl;
+            cout << "\n  ç³»ç»ŸåŠŸèƒ½æ€»ç»“:" << endl;
+            cout << "    - è”ç³»äººç®¡ç†: æ·»åŠ ã€åˆ é™¤ã€æŸ¥è¯¢" << endl;
+            cout << "    - å…³ç³»åˆ†æ: äº²å¯†åº¦è®¡ç®—ã€è·¯å¾„åˆ†æ" << endl;
+            cout << "    - ç¤¾äº¤ç½‘ç»œ: å¯è§†åŒ–æ˜¾ç¤ºã€æ’è¡Œæ¦œ" << endl;
+            cout << "    - æ•°æ®æŒä¹…åŒ–: JSONæ ¼å¼ä¿å­˜/åŠ è½½" << endl;
             cout << "\n================================================================================" << endl;
             return 0;
 
@@ -251,7 +238,7 @@ int main() {
             break;
 
         default:
-            showErrorMsg("ÎŞĞ§µÄÑ¡Ôñ£¬ÇëÊäÈë 0-11 Ö®¼äµÄÊı×Ö£¡");
+            showErrorMsg("æ— æ•ˆçš„é€‰æ‹©ï¼Œè¯·è¾“å…¥ 0-11 ä¹‹é—´çš„æ•°å­—ï¼");
             waitForUser();
         }
     }

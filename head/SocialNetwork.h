@@ -14,7 +14,7 @@
 #include "Edge.h"
 #include "Person.h"
 
-// ÓÃÓÚÅÅĞò±È½Ï
+// ç”¨äºæ’åºæ¯”è¾ƒ
 struct FriendInfo {
 	string name;
 	int weight;
@@ -41,11 +41,11 @@ public:
     
 	// B side
 	void sortFriends(string name, bool ascending);
-	int getBottleneckPath(string startName, string endName);		//Â·¾¶Ç×ÃÜ¶ÈÏÂ½ç×î´óÖµ
+	int getBottleneckPath(string startName, string endName);		//è·¯å¾„äº²å¯†åº¦ä¸‹ç•Œæœ€å¤§å€¼
 	void displayTop10();
 	int findIndex(string name);
 
-    // ÃÀ»¯ÏÔÊ¾º¯Êı
+    // ç¾åŒ–æ˜¾ç¤ºå‡½æ•°
     void displayAllBeautiful();
     void displayTop10Beautiful();
     void displaySortFriendsBeautiful(string name, bool ascending);
@@ -57,13 +57,13 @@ private:
 	vector<list<Edge>> adjList;
 	map<string, int> nameToIndex;
 
-	// ÃÀ»¯²¿·Ö
-    // ASCII×°ÊÎ×Ö·û
+	// ç¾åŒ–éƒ¨åˆ†
+    // ASCIIè£…é¥°å­—ç¬¦
     const string LINE_HORIZ = "================================================================================";
     const string LINE_THIN = "--------------------------------------------------------------------------------";
     const string LINE_DASH = "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -";
 
-    // ASCIIÒÕÊõ·ûºÅ
+    // ASCIIè‰ºæœ¯ç¬¦å·
     const string HEART_ICON = "<3";
     const string STAR_ICON = "(*)";
     const string CROWN_ICON = "[C]";
@@ -84,13 +84,13 @@ private:
     const string SUCCESS_ICON = "[+]";
     const string INFO_ICON = "[i]";
 
-    // ½ø¶ÈÌõ×Ö·û
+    // è¿›åº¦æ¡å­—ç¬¦
     const string BAR_FULL = "#";
     const string BAR_MID = "=";
     const string BAR_LOW = "-";
     const string BAR_EMPTY = ".";
 
-    // ±í¸ñ×Ö·û
+    // è¡¨æ ¼å­—ç¬¦
     const string TABLE_CROSS = "+";
     const string TABLE_HORIZ = "-";
     const string TABLE_VERT = "|";
@@ -99,7 +99,7 @@ private:
     const string TABLE_T_TOP = "+";
     const string TABLE_T_BOTTOM = "+";
 
-    // ÃÀ»¯ÏÔÊ¾¸¨Öúº¯Êı
+    // ç¾åŒ–æ˜¾ç¤ºè¾…åŠ©å‡½æ•°
     string createBoxedText(const string& text, int width = 70);
     string createSectionHeader(const string& title);
     string createProgressBar(float percentage, int length = 20);
@@ -107,4 +107,3 @@ private:
     string centerText(const string& text, int width);
 
 };
-

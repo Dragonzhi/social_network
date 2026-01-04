@@ -8,55 +8,7 @@
 
 using json = nlohmann::json;
 
-// 将 GBK 编码的字符串转换为 UTF-8
-std::string gbk_to_utf8(const std::string& gbk_str) {
-    if (gbk_str.empty()) return std::string();
 
-    // GBK -> WideChar (UTF-16/UCS-2)
-    int wide_char_len = MultiByteToWideChar(CP_ACP, 0, gbk_str.c_str(), -1, NULL, 0);
-    if (wide_char_len == 0) {
-        // Handle error if needed
-        return gbk_str; // Fallback
-    }
-    std::vector<wchar_t> wide_str(wide_char_len);
-    MultiByteToWideChar(CP_ACP, 0, gbk_str.c_str(), -1, wide_str.data(), wide_char_len);
-
-    // WideChar -> UTF-8
-    int utf8_len = WideCharToMultiByte(CP_UTF8, 0, wide_str.data(), -1, NULL, 0, NULL, NULL);
-    if (utf8_len == 0) {
-        // Handle error if needed
-        return gbk_str; // Fallback
-    }
-    std::vector<char> utf8_str(utf8_len);
-    WideCharToMultiByte(CP_UTF8, 0, wide_str.data(), -1, utf8_str.data(), utf8_len, NULL, NULL);
-
-    return std::string(utf8_str.data(), utf8_len - 1); // -1 to remove null terminator
-}
-
-// 将 UTF-8 编码的字符串转换为 GBK (如果需要显示或与 GBK 环境交互)
-std::string utf8_to_gbk(const std::string& utf8_str) {
-    if (utf8_str.empty()) return std::string();
-
-    // UTF-8 -> WideChar (UTF-16/UCS-2)
-    int wide_char_len = MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, NULL, 0);
-    if (wide_char_len == 0) {
-        // Handle error if needed
-        return utf8_str; // Fallback
-    }
-    std::vector<wchar_t> wide_str(wide_char_len);
-    MultiByteToWideChar(CP_UTF8, 0, utf8_str.c_str(), -1, wide_str.data(), wide_char_len);
-
-    // WideChar -> GBK
-    int gbk_len = WideCharToMultiByte(CP_ACP, 0, wide_str.data(), -1, NULL, 0, NULL, NULL);
-    if (gbk_len == 0) {
-        // Handle error if needed
-        return utf8_str; // Fallback
-    }
-    std::vector<char> gbk_str(gbk_len);
-    WideCharToMultiByte(CP_ACP, 0, wide_str.data(), -1, gbk_str.data(), gbk_len, NULL, NULL);
-
-    return std::string(gbk_str.data(), gbk_len - 1); // -1 to remove null terminator
-}
 
 SocialNetwork::SocialNetwork()
 {
@@ -266,9 +218,7 @@ void SocialNetwork::saveToFile(string filename) {
     // 1. 保存人员信息
     json persons = json::array();
     for (const auto& person : vertList) {
-        // --- 修改点：转换姓名为 UTF-8 ---
-        string utf8_name = gbk_to_utf8(person.getName());
-        persons.push_back({ {"name", utf8_name} });
+        persons.push_back({ {"name", person.getName()} });
     }
     data["persons"] = persons;
 
@@ -284,9 +234,8 @@ void SocialNetwork::saveToFile(string filename) {
             // 检查是否已经保存过这条边
             if (saved_edges.find(edge_pair) == saved_edges.end()) {
                 json edge_json;
-                // --- 修改点：转换关系人名为 UTF-8 ---
-                edge_json["from"] = gbk_to_utf8(vertList[i].getName());
-                edge_json["to"] = gbk_to_utf8(vertList[to].getName());
+                edge_json["from"] = vertList[i].getName();
+                edge_json["to"] = vertList[to].getName();
                 edge_json["weight"] = edge.getWeight();
                 edges.push_back(edge_json);
                 saved_edges.insert(edge_pair);
@@ -308,16 +257,10 @@ void SocialNetwork::saveToFile(string filename) {
 
     // 4. 写入文件
     try {
-        std::ofstream file(filename); // 默认为 text mode
+        // 以二进制模式并带BOM的方式写入UTF-8，确保兼容性
+        std::ofstream file(filename, std::ios::out | std::ios::binary); 
         if (!file.is_open()) {
             cout << "无法打开文件 " << filename << " 进行写入！\n";
-            return;
-        }
-        // 设置文件流为二进制模式写入，以确保 UTF-8 BOM 被正确写入
-        file.close(); // 先关闭
-        file.open(filename, std::ios::out | std::ios::binary); // 以二进制模式重新打开
-        if (!file.is_open()) {
-            cout << "无法以二进制模式打开文件 " << filename << " 进行写入！\n";
             return;
         }
 
@@ -325,7 +268,7 @@ void SocialNetwork::saveToFile(string filename) {
         const unsigned char utf8_bom[] = { 0xEF, 0xBB, 0xBF };
         file.write(reinterpret_cast<const char*>(utf8_bom), sizeof(utf8_bom));
 
-        // 写入 JSON 内容，nlohmann::json 库会生成 UTF-8 编码的字符串
+        // nlohmann::json 库会生成 UTF-8 编码的字符串
         file << data.dump(4); // 缩进4个空格，使JSON更易读
 
         file.close();
@@ -359,54 +302,35 @@ void SocialNetwork::loadFromFile(string filename) {
 
         // 2. 检查文件是否为空
         file.seekg(0, std::ios::end);
-        size_t size = file.tellg();
-        if (size == 0) {
+        if (file.tellg() == 0) {
             cout << "文件为空！\n";
             file.close();
             return;
         }
         file.seekg(0, std::ios::beg);
 
-        // 3. 读取整个文件内容
-        string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+        // 3. 解析JSON (nlohmann::json handles BOM and UTF-8 automatically)
+        json data;
+        file >> data;
         file.close();
 
-        // 4. 去除 UTF-8 BOM 头（如果存在）
-        if (content.size() >= 3 && static_cast<unsigned char>(content[0]) == 0xEF && static_cast<unsigned char>(content[1]) == 0xBB && static_cast<unsigned char>(content[2]) == 0xBF) {
-            content = content.substr(3);
-            cout << "检测并移除 UTF-8 BOM 头。\n"; // Optional: Inform user
-        }
-
-        // 5. 解析 JSON
-        json data;
-        try {
-            data = json::parse(content); // 此时 content 应该是有效的 UTF-8
-        }
-        catch (const json::parse_error& e) {
-            cout << "JSON 解析错误: " << e.what() << endl;
-            cout << "请确保文件是有效的 JSON 格式！\n";
-            return;
-        }
-
-        // 6. 验证必需字段
+        // 4. 验证必需字段
         if (!data.contains("persons") || !data["persons"].is_array()) {
             cout << "错误: JSON 文件中缺少 'persons' 数组！\n";
             return;
         }
 
-        // 7. 加载人员信息
+        // 5. 加载人员信息
         int loaded_persons = 0;
         for (const auto& person_json : data["persons"]) {
             if (person_json.contains("name") && person_json["name"].is_string()) {
-                string utf8_name = person_json["name"];
-                // --- 修改点：将读取的 UTF-8 名字转换为 GBK ---
-                string gbk_name = utf8_to_gbk(utf8_name);
-                if (!gbk_name.empty()) {
+                string person_name = person_json["name"];
+                if (!person_name.empty()) {
                     Person p;
-                    p.setName(gbk_name); // 存入 Person 对象
+                    p.setName(person_name);
                     vertList.push_back(p);
                     adjList.push_back(list<Edge>());
-                    nameToIndex[gbk_name] = vertList.size() - 1; // 使用转换后的名字
+                    nameToIndex[person_name] = vertList.size() - 1;
                     loaded_persons++;
                 }
             }
@@ -415,30 +339,24 @@ void SocialNetwork::loadFromFile(string filename) {
             cout << "警告: 文件中没有找到有效的人员信息！\n";
         }
 
-        // 8. 加载关系信息（如果存在）
+        // 6. 加载关系信息（如果存在）
         int loaded_edges = 0;
         if (data.contains("edges") && data["edges"].is_array()) {
             for (const auto& edge_json : data["edges"]) {
                 if (edge_json.contains("from") && edge_json.contains("to") && edge_json.contains("weight") && edge_json["weight"].is_number()) {
-                    string utf8_from_name = edge_json["from"];
-                    string utf8_to_name = edge_json["to"];
-                    // --- 修改点：将读取的关系人名转换为 GBK ---
-                    string gbk_from_name = utf8_to_gbk(utf8_from_name);
-                    string gbk_to_name = utf8_to_gbk(utf8_to_name);
+                    string from_name = edge_json["from"];
+                    string to_name = edge_json["to"];
                     int weight = edge_json["weight"];
 
-                    // 验证权重范围
                     if (weight < 1 || weight > 100) {
                         cout << "警告: 关系权重 " << weight << " 不在有效范围(1-100)内，将被忽略\n";
                         continue;
                     }
 
-                    // 使用转换后的 GBK 名字查找索引
-                    int from_index = findIndex(gbk_from_name);
-                    int to_index = findIndex(gbk_to_name);
+                    int from_index = findIndex(from_name);
+                    int to_index = findIndex(to_name);
 
                     if (from_index != -1 && to_index != -1 && from_index != to_index) {
-                        // 检查关系是否已存在
                         bool exists = false;
                         for (const auto& edge : adjList[from_index]) {
                             if (edge.getTo() == to_index) {
@@ -457,25 +375,23 @@ void SocialNetwork::loadFromFile(string filename) {
                             loaded_edges++;
                         }
                         else {
-                            cout << "警告: 关系 " << gbk_from_name << " -> " << gbk_to_name << " 已存在，跳过加载。\n";
+                            cout << "警告: 关系 " << from_name << " -> " << to_name << " 已存在，跳过加载。\n";
                         }
                     }
                     else {
-                        cout << "警告: 无法加载关系 " << gbk_from_name << " -> " << gbk_to_name << "，因为至少一人不存在或是同一个人\n";
+                        cout << "警告: 无法加载关系 " << from_name << " -> " << to_name << "，因为至少一人不存在或是同一个人\n";
                     }
                 }
             }
         }
 
-        // 9. 显示加载统计信息
+        // 7. 显示加载统计信息
         cout << "从文件 " << filename << " 加载成功！\n";
         cout << "加载了 " << loaded_persons << " 个联系人和 " << loaded_edges << " 条关系\n";
 
-        // 10. 显示元数据（如果存在）
         if (data.contains("metadata")) {
             auto& metadata = data["metadata"];
             if (metadata.contains("save_time")) {
-                // 时间戳通常由程序生成，应为 ASCII，无需转换
                 cout << "原保存时间: " << metadata["save_time"] << endl;
             }
             if (metadata.contains("version")) {
@@ -483,8 +399,12 @@ void SocialNetwork::loadFromFile(string filename) {
             }
         }
     }
+    catch (const json::parse_error& e) {
+        cout << "JSON 解析错误: " << e.what() << endl;
+        cout << "请确保文件是有效的 JSON 格式，且为 UTF-8 编码！\n";
+    }
     catch (const std::exception& e) {
-        cout << "加载文件时发生错误: " << e.what() << endl;
+        cout << "加载文件时发生未知错误: " << e.what() << endl;
         cout << "请确保文件存在且格式正确！\n";
     }
 }
@@ -500,46 +420,35 @@ void SocialNetwork::sortFriends(string name, bool ascending) {
 }
 //路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
-    // 先计算结果
     int start = findIndex(startName);
     int end = findIndex(endName);
 
-    if (start == -1 || end == -1) return -1;
-    if (start == end) return 0;
+    if (start == -1 || end == -1) return -1; // Person not found
+    if (start == end) return 0; // Same person
 
-    // 检查是否是直接好友
-    for (auto& e : adjList[start]) {
-        if (e.getTo() == end) {
-            displayBottleneckBeautiful(startName, endName);
-            return e.getWeight();
-        }
-    }
-
-    // 计算最大瓶颈路径
     int personCount = vertList.size();
     vector<int> maxBottleNeck(personCount, 0);
-    vector<bool> visited(personCount, false);
+    vector<bool> visited(personCount, false); // Keep track of visited nodes
     priority_queue<pair<int, int>> pq;
 
-    maxBottleNeck[start] = INT_MAX;
+    maxBottleNeck[start] = INT_MAX; // Initialize start with "infinite" capacity
     pq.push({ INT_MAX, start });
 
     while (!pq.empty()) {
-        auto current = pq.top();  // 先获取顶部元素
-        int currentBottleneck = current.first;
+        auto current = pq.top();
         int u = current.second;
         pq.pop();
 
-        if (visited[u]) continue;
+        if (visited[u]) continue; // If already visited, skip.
         visited[u] = true;
 
-        if (u == end) break;
+        if (u == end) break; // Found the best path to the end node.
 
         for (auto& e : adjList[u]) {
             int v = e.getTo();
             int weight = e.getWeight();
 
-            if (!visited[v]) {
+            if (!visited[v]) { // Only consider unvisited neighbors
                 int newBottleneck = min(maxBottleNeck[u], weight);
                 if (newBottleneck > maxBottleNeck[v]) {
                     maxBottleNeck[v] = newBottleneck;
@@ -549,13 +458,9 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
         }
     }
 
-    if (maxBottleNeck[end] == 0) {
-        displayBottleneckBeautiful(startName, endName);
-        return -1;
-    }
-
-    displayBottleneckBeautiful(startName, endName);
-    return maxBottleNeck[end];
+    // If we finish the loop and maxBottleNeck[end] is still 0, there is no path.
+    // Return -1 for "no path" (consistent with "person not found" error)
+    return (maxBottleNeck[end] == 0) ? -1 : maxBottleNeck[end];
 }
 	
 void SocialNetwork::displayTop10() {
@@ -918,7 +823,7 @@ void SocialNetwork::displayBottleneckBeautiful(string startName, string endName)
         return;
     }
 
-    // 检查是否是直接好友
+    // 检查是否是直接好友以优化用户体验信息
     for (auto& e : adjList[start]) {
         if (e.getTo() == end) {
             cout << createSectionHeader("直接好友关系检测");
@@ -934,44 +839,13 @@ void SocialNetwork::displayBottleneckBeautiful(string startName, string endName)
         }
     }
 
-    // 如果不是直接好友，计算最大瓶颈路径
-    int personCount = vertList.size();
-    vector<int> maxBottleNeck(personCount, 0);
-    vector<bool> visited(personCount, false);
-    priority_queue<pair<int, int>> pq;
+    // 如果不是直接好友，调用 getBottleneckPath 计算间接路径
+    int bottleneckValue = getBottleneckPath(startName, endName);
 
-    maxBottleNeck[start] = INT_MAX;
-    pq.push({ INT_MAX, start });
-
-    while (!pq.empty()) {
-        auto current = pq.top();  // 先获取顶部元素
-        int currentBottleneck = current.first;
-        int u = current.second;
-        pq.pop();
-
-        if (visited[u]) continue;
-        visited[u] = true;
-
-        if (u == end) break;
-
-        for (auto& e : adjList[u]) {
-            int v = e.getTo();
-            int weight = e.getWeight();
-
-            if (!visited[v]) {
-                int newBottleneck = min(maxBottleNeck[u], weight);
-                if (newBottleneck > maxBottleNeck[v]) {
-                    maxBottleNeck[v] = newBottleneck;
-                    pq.push({ newBottleneck, v });
-                }
-            }
-        }
-    }
-
-    if (maxBottleNeck[end] == 0) {
+    if (bottleneckValue <= 0) { // Covers -1 for no path
         cout << createSectionHeader("亲密度路径分析");
         cout << "\n" << ERROR_ICON << " " << startName << " 和 " << endName << " 之间没有可达路径！\n";
-        cout << "\n   分析结果: 两人之间没有直接的社交联系\n";
+        cout << "\n   分析结果: 两人之间没有直接或间接的社交联系\n";
         cout << "   建议: 通过共同好友建立联系\n";
         cout << LINE_THIN << "\n";
         return;
@@ -980,17 +854,17 @@ void SocialNetwork::displayBottleneckBeautiful(string startName, string endName)
     cout << createSectionHeader("亲密度路径分析");
     cout << "\n" << INFO_ICON << " 查询: " << startName << " -> " << endName << "\n";
     cout << LINE_THIN << "\n";
-    cout << "   最大亲密度下限: " << createProgressBar(maxBottleNeck[end], 20) << "\n";
+    cout << "   最大亲密度下限: " << createProgressBar(bottleneckValue, 20) << "\n";
 
     string relationship;
-    if (maxBottleNeck[end] >= 80) relationship = "强社交关系 (可以通过亲密朋友联系)";
-    else if (maxBottleNeck[end] >= 60) relationship = "中等社交关系 (可以通过普通朋友联系)";
-    else if (maxBottleNeck[end] >= 40) relationship = "弱社交关系 (可以通过熟人联系)";
+    if (bottleneckValue >= 80) relationship = "强社交关系 (可以通过亲密朋友联系)";
+    else if (bottleneckValue >= 60) relationship = "中等社交关系 (可以通过普通朋友联系)";
+    else if (bottleneckValue >= 40) relationship = "弱社交关系 (可以通过熟人联系)";
     else relationship = "微弱社交关系 (联系较弱)";
 
     cout << "   关系强度: " << relationship << "\n";
     cout << "   说明: 这是所有可达路径中的最高亲密度下限\n";
-    cout << "         表示两人联系的最亲密程度\n";
+    cout << "         表示两人联系的最紧密程度\n";
     cout << LINE_THIN << "\n";
 }
 
@@ -1143,11 +1017,9 @@ void SocialNetwork::exportToHTML(string filename) {
 
     // 遍历生成节点数据
     for (int i = 0; i < vertList.size(); i++) {
-        // --- 修改点：将人名转换为 UTF-8 再写入 JavaScript 字符串 ---
-        string utf8_name = gbk_to_utf8(vertList[i].getName());
         file << (i > 0 ? "," : "") << "\n{"
             << "id: " << i
-            << ", name: '" << utf8_name << "'" // 使用转换后的 UTF-8 名字
+            << ", name: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
             << ", symbolSize: " << adjList[i].size() * 5 + 15
             << "}";
     }
@@ -1164,12 +1036,9 @@ void SocialNetwork::exportToHTML(string filename) {
             int j = edge.getTo();
             int weight = edge.getWeight();
             if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
-                // --- 修改点：将关系人名转换为 UTF-8 再写入 JavaScript 字符串 ---
-                string utf8_from_name = gbk_to_utf8(vertList[i].getName());
-                string utf8_to_name = gbk_to_utf8(vertList[j].getName());
                 file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
-                    << ", sourceName: '" << utf8_from_name << "'" // 可选：存储源名字用于 JS 显示
-                    << ", targetName: '" << utf8_to_name << "'" // 可选：存储目标名字用于 JS 显示
+                    << ", sourceName: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
+                    << ", targetName: '" << vertList[j].getName() << "'" // 直接使用UTF-8名字
                     << ", weight: " << weight  // 关键：把亲密度存入边的自定义属性，用于悬浮展示
                     << ", lineStyle: {width: " << weight / 10.0 << "}}";
                 addedEdges.insert({ i, j });
@@ -1190,7 +1059,6 @@ void SocialNetwork::exportToHTML(string filename) {
                     // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
                     if (params.dataType === 'node') {
                         const friendCount = (params.data.symbolSize - 15)/5;
-                        // 由于 name 已经是 UTF-8 编码，JS 可以正确处理
                         return `<div style="padding:5px;">
                                   <b style="color:#409EFF;">User Information</b><br/>
                                   Username: ${params.data.name}<br/>
@@ -1199,10 +1067,6 @@ void SocialNetwork::exportToHTML(string filename) {
                     }
                     // 2. 鼠标悬浮到【连线/边】上 - 显示好友关系信息
                     else if (params.dataType === 'edge') {
-                        // 使用边数据中存储的 UTF-8 名字 (如果添加了 sourceName 和 targetName)
-                        // const fromName = params.data.sourceName || nodesData[params.data.source].name;
-                        // const toName = params.data.targetName || nodesData[params.data.target].name;
-                        // 或者直接从 nodesData 获取 (因为 nodesData 中的名字已经是 UTF-8)
                         const fromName = nodesData[params.data.source].name;
                         const toName = nodesData[params.data.target].name;
                         const intimacy = params.data.weight;
