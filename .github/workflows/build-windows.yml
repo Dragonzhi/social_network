@@ -3,53 +3,77 @@ name: 构建 Windows 可执行文件
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  # 匹配 v1.0.0、v2.1.3 等版本标签
 
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
-    - name: 拉取代码（含完整历史）
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: 拉取代码（含完整历史）
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: 配置 MSBuild（确保加载 VS2022 工具）
-      uses: microsoft/setup-msbuild@v2
-      with:
-        vs-version: '2022'  # 明确指定使用 VS2022
+      - name: 安装 VS2022 构建工具（含 MSBuild + v143 工具集 + SDK）
+        run: |
+          # 安装 Chocolatey（若未安装）
+          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          }
+          # 安装 VS2022 构建工具核心组件（含 MSBuild、v143 工具集、Windows SDK）
+          choco install visualstudio2022buildtools --yes --no-progress `
+            --package-parameters "--add Microsoft.VisualStudio.Component.MSBuild `
+                                --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+                                --add Microsoft.VisualStudio.Component.VC.143.BuildTools `
+                                --add Microsoft.VisualStudio.Component.Windows10SDK.22621 `
+                                --installPath C:\VS2022BuildTools"
 
-    - name: 编译项目（Release + x64 + v143 工具集）
-      run: |
-        # 路径改为仓库根目录的 sln，参数明确指定工具集和输出目录
-        msbuild "SocialNetwork.sln" `
-          /t:Build `
-          /p:Configuration=Release `
-          /p:Platform=x64 `
-          /p:PlatformToolset=v143 `
-          /p:WindowsTargetPlatformVersion=10.0.22621.0 `
-          /p:OutDir="./bin/Release/"
+      - name: 配置 MSBuild 路径
+        run: |
+          # 定位 MSBuild 可执行文件
+          $msbuildPath = "C:\VS2022BuildTools\MSBuild\Current\Bin\MSBuild.exe"
+          # 将 MSBuild 路径加入环境变量
+          echo "MSBUILD_PATH=$msbuildPath" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          # 验证 MSBuild 是否存在
+          if (Test-Path $msbuildPath) {
+            Write-Host "MSBuild 路径：$msbuildPath"
+            & $msbuildPath -version
+          } else {
+            Write-Error "MSBuild 未找到！"
+            exit 1
+          }
 
-    - name: 生成更新日志
-      id: generate_changelog
-      run: |
-        $lastTag = git describe --abbrev=0 --tags HEAD^ 2>$null
-        if (-not $lastTag) {
-          $changelog = git log --pretty=format:"- %s" HEAD
-        } else {
-          $changelog = git log "$lastTag..HEAD" --pretty=format:"- %s"
-        }
-        if (-not $changelog) { $changelog = "无显著更新" }
-        echo "CHANGELOG=$changelog" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+      - name: 编译项目（Release + x64 + v143 工具集）
+        run: |
+          # 使用显式路径的 MSBuild 编译
+          & $env:MSBUILD_PATH "SocialNetwork.sln" `
+            /t:Build `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:PlatformToolset=v143 `
+            /p:WindowsTargetPlatformVersion=10.0.22621.0 `
+            /p:OutDir="./bin/Release/" `
+            /verbosity:minimal
 
-    - name: 上传 EXE 到 Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: ./bin/Release/*.exe
-        name: Release ${{ github.ref_name }}
-        body: |
-          ## 更新日志
-          ${{ env.CHANGELOG }}
-          
-          自动构建版本：${{ github.ref_name }}
+      - name: 生成更新日志
+        id: generate_changelog
+        run: |
+          $lastTag = git describe --abbrev=0 --tags HEAD^ 2>$null
+          if (-not $lastTag) {
+            $changelog = git log --pretty=format:"- %s" HEAD
+          } else {
+            $changelog = git log "$lastTag..HEAD" --pretty=format:"- %s"
+          }
+          if (-not $changelog) { $changelog = "无显著更新" }
+          echo "CHANGELOG=$changelog" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: 创建 GitHub Release 并上传 EXE
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ./bin/Release/*.exe
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 更新日志
+            ${{ env.CHANGELOG }}
+            
+            自动构建版本：${{ github.ref_name }}
