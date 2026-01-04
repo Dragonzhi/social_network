@@ -261,7 +261,7 @@ void SocialNetwork::saveToFile(string filename) {
     }
 
     // 创建 JSON 对象
-    json data;
+    json data = json::object();
 
     // 1. 保存人员信息
     json persons = json::array();
@@ -551,7 +551,7 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
 
     if (maxBottleNeck[end] == 0) {
         displayBottleneckBeautiful(startName, endName);
-        return 0;
+        return -1;
     }
 
     displayBottleneckBeautiful(startName, endName);
