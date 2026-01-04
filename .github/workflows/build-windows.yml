@@ -12,22 +12,34 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
+      with:
+        # 确保检出时使用正确的编码
+        fetch-depth: 0
 
-    - name: 设置系统区域为中文
+    - name: 修复文件编码
       run: |
-        # 设置系统代码页为中文简体（CP936）
-        chcp 936
-        # 设置系统区域为中国
-        reg add "HKCU\Control Panel\International" /v Locale /t REG_SZ /d "00000804" /f
-        reg add "HKCU\Control Panel\International" /v LocaleName /t REG_SZ /d "zh-CN" /f
+        # 转换所有源文件为 UTF-8 with BOM
+        Get-ChildItem -Recurse -Filter *.cpp | ForEach-Object {
+          $content = Get-Content $_.FullName -Encoding UTF8
+          # 添加 UTF-8 BOM
+          [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
+        }
+        Get-ChildItem -Recurse -Filter *.h | ForEach-Object {
+          $content = Get-Content $_.FullName -Encoding UTF8
+          [System.IO.File]::WriteAllText($_.FullName, $content, [System.Text.Encoding]::UTF8)
+        }
         
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: 编译项目（Release 模式）
       run: |
-        # 使用系统代码页（现在是936），而不是UTF-8
-        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
+        # 使用 PowerShell 设置环境变量
+        $env:PYTHONUTF8 = "1"
+        $env:PYTHONIOENCODING = "utf-8"
+        
+        # 编译时强制使用 UTF-8，并禁用所有字符集警告
+        msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143 /p:AdditionalOptions="/utf-8 /wd4566 /wd4819 /source-charset:utf-8 /execution-charset:utf-8 /validate-charset-"
         
     - name: 上传 EXE 到 Artifacts
       uses: actions/upload-artifact@v4
