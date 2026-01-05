@@ -4,12 +4,6 @@
 #include <list>
 #include <map>
 #include <string>
-#include <iostream>
-#include <algorithm>
-#include <fstream>
-#include <ctime> // For time functions
-#include <iomanip> // For setw, setfill, etc.
-#include <ios> // For stream state flags
 
 #include "Edge.h"
 #include "Person.h"
@@ -31,27 +25,27 @@ public:
 	~SocialNetwork();
 
 	// A side
-    void addPersons();
+	void addPersons();
 	void deletePerson();
 	void addEdge();
 	void deleteEdge();
-	void saveToFile(string filename);
-	void loadFromFile(string filename);
+	void saveToFile();
+	void loadFromFile();
 	void displayAll();
     
 	// B side
-	void sortFriends(string name, bool ascending);
-	int getBottleneckPath(string startName, string endName);		//路径亲密度下界最大值
+	void sortFriends();
+	int getBottleneckPath(string startName, string endName);		//路径亲密程度下界最大值
 	void displayTop10();
 	int findIndex(string name);
 
     // 美化显示函数
     void displayAllBeautiful();
     void displayTop10Beautiful();
-    void displaySortFriendsBeautiful(string name, bool ascending);
-    void displayBottleneckBeautiful(string startName, string endName);
+    void displaySortFriendsBeautiful();
+    void displayBottleneckBeautiful();
     void displayGraphASCII();
-    void exportToHTML(string filename);
+    void exportToHTML();
 private:
 	vector<Person> vertList;
 	vector<list<Edge>> adjList;

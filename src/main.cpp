@@ -94,9 +94,6 @@ int main() {
 
     SocialNetwork network;
     int choice;
-    string name1, name2, filename;
-    int weight;
-    bool ascending;
 
     // 显示标题
     showASCIITitle();
@@ -150,22 +147,13 @@ int main() {
 
         case 6:
             showOperationTitle("按亲密程度排序好友");
-            cout << "\n  请输入要排序的联系人姓名: ";
-            getline(cin, name1);
-            cout << "  排序顺序 (0=降序, 1=升序): ";
-            cin >> ascending;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            network.sortFriends(name1, ascending);
+            network.sortFriends();
             waitForUser();
             break;
 
         case 7:
             showOperationTitle("查询两人亲密度");
-            cout << "\n  请输入第一个人姓名: ";
-            getline(cin, name1);
-            cout << "  请输入第二个人姓名: ";
-            getline(cin, name2);
-            network.displayBottleneckBeautiful(name1, name2);
+            network.displayBottleneckBeautiful();
             waitForUser();
             break;
 
@@ -177,25 +165,19 @@ int main() {
 
         case 9:
             showOperationTitle("保存到文件");
-            cout << "\n  请输入保存文件名 (例如: network.json): ";
-            getline(cin, filename);
-            network.saveToFile(filename);
+            network.saveToFile();
             waitForUser();
             break;
 
         case 10:
             showOperationTitle("从文件加载");
-            cout << "\n  请输入加载文件名 (例如: network.json): ";
-            getline(cin, filename);
-            network.loadFromFile(filename);
+            network.loadFromFile();
             waitForUser();
             break;
 
         case 11:
             showOperationTitle("导出HTML可视化");
-            cout << "\n  请输入HTML文件名 (例如: network.html): ";
-            getline(cin, filename);
-            network.exportToHTML(filename);
+            network.exportToHTML();
             waitForUser();
             break;
 

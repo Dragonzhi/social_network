@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <locale>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -627,7 +626,23 @@ void SocialNetwork::deleteEdge() {  // 移除参数
 
 
 
-void SocialNetwork::saveToFile(string filename) {
+void SocialNetwork::saveToFile() {
+#ifdef _WIN32
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    std::wstring wfilename;
+    std::wcout << L"\n  请输入保存文件名 (例如: network.json): ";
+    std::wcin >> wfilename;
+    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::string filename = wideToUtf8(wfilename);
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string filename;
+    std::cout << "\n  请输入保存文件名 (例如: network.json): ";
+    std::cin >> filename;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#endif
     if (filename.empty()) {
         cout << "文件名不能为空！\n";
         return;
@@ -702,7 +717,23 @@ void SocialNetwork::saveToFile(string filename) {
     }
 }
 
-void SocialNetwork::loadFromFile(string filename) {
+void SocialNetwork::loadFromFile() {
+#ifdef _WIN32
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    std::wstring wfilename;
+    std::wcout << L"\n  请输入加载文件名 (例如: network.json): ";
+    std::wcin >> wfilename;
+    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::string filename = wideToUtf8(wfilename);
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string filename;
+    std::cout << "\n  请输入加载文件名 (例如: network.json): ";
+    std::cin >> filename;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#endif
     if (filename.empty()) {
         cout << "文件名不能为空！\n";
         return;
@@ -836,8 +867,8 @@ void SocialNetwork::displayAll() {
 }
 
 // 按亲密程度排序好友
-void SocialNetwork::sortFriends(string name, bool ascending) {
-    displaySortFriendsBeautiful(name, ascending);
+void SocialNetwork::sortFriends() {
+    displaySortFriendsBeautiful();
 }
 //路径亲密度下界最大值
 int SocialNetwork::getBottleneckPath(string startName, string endName) {
@@ -1048,7 +1079,49 @@ void SocialNetwork::displayAllBeautiful() {
 }
 
 // 美化显示排序好友
-void SocialNetwork::displaySortFriendsBeautiful(string name, bool ascending) {
+void SocialNetwork::displaySortFriendsBeautiful() {
+#ifdef _WIN32
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring wname;
+    bool ascending;
+
+    std::wcout << L"\n  请输入要排序的联系人姓名: ";
+    std::getline(std::wcin, wname);
+    std::wcout << L"  排序顺序 (0=降序, 1=升序): ";
+    std::wcin >> ascending;
+    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 清除换行符
+
+    std::string name = wideToUtf8(wname);
+    ltrim(name); rtrim(name);
+    replaceFullWidthSpaces(name);
+
+    if (name.empty()) {
+        std::wcout << L"未检测到有效姓名！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string name;
+    bool ascending;
+    std::cout << "\n  请输入要排序的联系人姓名: ";
+    std::getline(std::cin, name);
+    std::cout << "  排序顺序 (0=降序, 1=升序): ";
+    std::cin >> ascending;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    ltrim(name); rtrim(name);
+    replaceFullWidthSpaces(name);
+    if (name.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+#endif
+
     int index = findIndex(name);
     if (index == -1) {
         cout << ERROR_ICON << " 联系人 " << name << " 不存在！\n";
@@ -1230,7 +1303,48 @@ void SocialNetwork::displayTop10Beautiful() {
 }
 
 // 美化显示亲密度查询
-void SocialNetwork::displayBottleneckBeautiful(string startName, string endName) {
+void SocialNetwork::displayBottleneckBeautiful() {
+#ifdef _WIN32
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring wname1, wname2;
+    std::wcout << L"\n  请输入第一个人姓名: ";
+    std::getline(std::wcin, wname1);
+    std::wcout << L"  请输入第二个人姓名: ";
+    std::getline(std::wcin, wname2);
+
+    std::string startName = wideToUtf8(wname1);
+    std::string endName = wideToUtf8(wname2);
+    ltrim(startName); rtrim(startName);
+    ltrim(endName); rtrim(endName);
+    replaceFullWidthSpaces(startName);
+    replaceFullWidthSpaces(endName);
+
+    if (startName.empty() || endName.empty()) {
+        std::wcout << L"未检测到有效姓名！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string startName, endName;
+    std::cout << "\n  请输入第一个人姓名: ";
+    std::getline(std::cin, startName);
+    std::cout << "  请输入第二个人姓名: ";
+    std::getline(std::cin, endName);
+    ltrim(startName); rtrim(startName);
+    ltrim(endName); rtrim(endName);
+    replaceFullWidthSpaces(startName);
+    replaceFullWidthSpaces(endName);
+    if (startName.empty() || endName.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+#endif
+
     int start = findIndex(startName);
     int end = findIndex(endName);
 
@@ -1396,7 +1510,24 @@ void SocialNetwork::displayGraphASCII() {
     cout << "\n" << LINE_THIN << "\n";
 }
 
-void SocialNetwork::exportToHTML(string filename) {
+void SocialNetwork::exportToHTML() {
+#ifdef _WIN32
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+    std::wstring wfilename;
+    std::wcout << L"\n  请输入HTML文件名 (例如: network.html): ";
+    std::wcin >> wfilename;
+    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::string filename = wideToUtf8(wfilename);
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string filename;
+    std::cout << "\n  请输入HTML文件名 (例如: network.html): ";
+    std::cin >> filename;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#endif
+
     // 二进制写入+UTF8 BOM头 彻底解决中文乱码
     ofstream file(filename, ios::out | ios::binary);
     if (!file.is_open()) {
@@ -1588,115 +1719,3 @@ void SocialNetwork::exportToHTML(string filename) {
 #endif
     system(command.c_str());
 }
-/*
-void SocialNetwork::exportToHTML(string filename) {
-    ofstream file(filename, ios::out | ios::binary);
-
-
-    const unsigned char utf8Bom[3] = { 0xEF, 0xBB, 0xBF };
-    file.write((const char*)utf8Bom, sizeof(utf8Bom));
-
-    file << R"(<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>SocialNetwork</title>
-    <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 20px; padding: 20px; 
-                 background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        #network { width: 100%; height: 600px; background: white; 
-                  border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .legend { margin-top: 20px; padding: 15px; background: white; 
-                 border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .legend-item { display: inline-block; margin-right: 20px; }
-        .node-sample { display: inline-block; width: 15px; height: 15px; 
-                      border-radius: 50%; margin-right: 5px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>SocialNetwork</h1>
-            <p>Total number of people: )" << vertList.size() << R"( | Generation Time: )" << __DATE__ << R"(</p>
-        </div>
-        <div id="network"></div>
-    </div>
-    
-    <script>
-
-        var nodes = new vis.DataSet([)";
-
-    for (int i = 0; i < vertList.size(); i++) {
-        file << (i > 0 ? "," : "") << "\n{id: " << i
-            << ", label: '" << vertList[i].getName()
-            << "', value: " << adjList[i].size() << "}";
-    }
-
-    file << R"(]);
-        
-
-        var edges = new vis.DataSet([)";
-
-    set<pair<int, int>> addedEdges;
-    bool firstEdge = true;
-    for (int i = 0; i < vertList.size(); i++) {
-        for (auto& edge : adjList[i]) {
-            int j = edge.getTo();
-            if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
-                file << (firstEdge ? "\n" : ",\n") << "{from: " << i << ", to: " << j
-                    << ", value: " << edge.getWeight() << "}";
-                addedEdges.insert({ i, j });
-                firstEdge = false;
-            }
-        }
-    }
-
-    file << R"(]);
-
-        var container = document.getElementById('network');
-        var data = { nodes: nodes, edges: edges };
-        var options = {
-            nodes: {
-                shape: 'dot',
-                size: 20,
-                font: { size: 12 },
-                borderWidth: 2
-            },
-            edges: {
-                width: 1,
-                smooth: { type: 'continuous' }
-            },
-            physics: {
-                stabilization: true,
-                barnesHut: {
-                    gravitationalConstant: -8000,
-                    springConstant: 0.04,
-                    springLength: 95
-                }
-            },
-            interaction: { hover: true }
-        };
-        
-        var network = new vis.Network(container, data, options);
-    </script>
-</body>
-</html>)";
-
-    file.close();
-    cout << "HTML文件已生成: " << filename << endl;
-
-    std::string command = "start \"\" \"" + filename + "\"";
-    int result = system(command.c_str());
-    if (result != 0) {
-        std::cout << "无法打开HTML文件: " << filename << std::endl;
-    }
-    else {
-        std::cout << "已自动打开HTML文件: " << filename << std::endl;
-    }
-}
-
-*/
