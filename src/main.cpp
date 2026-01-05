@@ -21,7 +21,7 @@ void showASCIITitle() {
     cout << " \\_______)|/     \\||/   \\__/(_______)   )_)(_______)|/   \\__/" << endl;
     cout << "\n";
     cout << "================================================================================" << endl;
-    cout << "                   简易社交关系网系统 v1.0.16" << endl;
+    cout << "                   简易社交关系网系统 v1.0.17" << endl;
     cout << "================================================================================" << endl;
     cout << " 功能: 联系人管理 | 关系分析 | 社交网络可视化 | 数据持久化" << endl;
     cout << "================================================================================" << endl;
@@ -79,8 +79,8 @@ void showInfoMsg(const string& msg) {
 // 等待用户按键
 void waitForUser() {
     cout << "\n 按Enter键继续...";
-    //cin.ignore();
-    cin.get();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    //cin.get();
 }
 
 void testEncoding() {
@@ -91,12 +91,13 @@ void testEncoding() {
 }
 
 int main() {
-    // Windows下设置控制台编码为UTF-8
-#ifdef _WIN32
-    SetConsoleOutputCP(65001);
-    SetConsoleCP(65001);
-#endif
+    // Windows下完整的UTF-8设置
+    #ifdef _WIN32
+    // 设置控制台编码为UTF-8
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
 
+    #endif
 
     SocialNetwork network;
     int choice;

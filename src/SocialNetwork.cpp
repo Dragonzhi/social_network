@@ -1,11 +1,21 @@
-﻿#include "..\headc\SocialNetwork.h"
+﻿#define NOMINMAX  // 禁用 min/max 宏
+#include "..\headc\SocialNetwork.h"
 #include <queue>
 #include <fstream>
 #include "..\headc\json.hpp" 
 #include <set>
 #include <sstream> 
-#include <windows.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <locale>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#endif
 using json = nlohmann::json;
 
 
@@ -20,64 +30,143 @@ SocialNetwork::~SocialNetwork()
     // 析构函数，清理资源
 }
 
-// 添加联系人
-// 批量添加联系人
-void SocialNetwork::addPersons() {
-    string input;
-    cout << "请输入要添加的联系人名称，多个名称用空格分隔：\n";
-    getline(cin, input);
+// 替换全角空格 U+3000 -> ASCII space
+static void replaceFullWidthSpaces(std::string& s) {
+    const std::string fullWidth = "\xE3\x80\x80";
+    size_t pos = 0;
+    while ((pos = s.find(fullWidth, pos)) != std::string::npos) {
+        s.replace(pos, fullWidth.size(), " ");
+        pos += 1;
+    }
+}
 
-    if (input.empty()) {
-        cout << "输入不能为空！\n";
+static void ltrim(std::string& s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+}
+static void rtrim(std::string& s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+}
+
+#ifdef _WIN32
+// 将 UTF-16 wide string 转成 UTF-8 std::string
+static std::string wideToUtf8(const std::wstring& ws) {
+    if (ws.empty()) return {};
+    int len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), NULL, 0, NULL, NULL);
+    if (len <= 0) return {};
+    std::string out(len, '\0');
+    WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), &out[0], len, NULL, NULL);
+    return out;
+}
+#endif
+
+// 可选调试：打印字节十六进制
+static void debug_print_hex(const std::string& s, const char* label = nullptr) {
+#ifdef DEBUG
+    if (label) std::cout << label;
+    std::cout << "DEBUG: raw bytes (len=" << s.size() << "): ";
+    std::cout << std::hex << std::setfill('0');
+    for (unsigned char c : s) {
+        std::cout << std::setw(2) << (int)c << " ";
+    }
+    std::cout << std::dec << "\n";
+#endif
+}
+
+void SocialNetwork::addPersons() {
+#ifdef _WIN32
+    // 切换 stdin/stdout 到 UTF-16 模式，使得 std::wcin/std::wcout 能正确读取/写入控制台（Windows 控制台）
+    // 注意：若输入被重定向（例如文件或管道），_setmode 可能不适用。通常对交互式控制台有效。
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring winput;
+    std::wcout << L"请输入要添加的联系人名称，多个名称用空格分隔：\n";
+    std::getline(std::wcin, winput);
+
+    if (winput.empty()) {
+        std::wcout << L"输入不能为空！\n";
+        // 可将模式恢复为默认（可选）
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
-    stringstream ss(input);
-    string name;
-    vector<string> names;
+    // 将宽字符串转换为 UTF-8 std::string，后续逻辑以 UTF-8 字符串处理
+    std::string input = wideToUtf8(winput);
+
+    // 可选：恢复到窄模式（如果你的程序中后续大量使用 std::cout，建议恢复）
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string input;
+    std::cout << "请输入要添加的联系人名称，多个名称用空格分隔：\n";
+    std::getline(std::cin, input);
+    if (input.empty()) {
+        std::cout << "输入不能为空！\n";
+        return;
+    }
+#endif
+
+    // DEBUG（若需要看转换后的字节，定义 DEBUG 宏再编译）
+    // debug_print_hex(input, "After read/convert: ");
+
+    // 归一化：把全角空格替换为普通空格（防止无法分割）
+    replaceFullWidthSpaces(input);
+
+    // 去掉前后空白
+    ltrim(input);
+    rtrim(input);
+
+    if (input.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+
+    // 按 ASCII 空白分割
+    std::stringstream ss(input);
+    std::string name;
+    std::vector<std::string> names;
     int addedCount = 0;
     int existCount = 0;
 
-    // 分割字符串
     while (ss >> name) {
         if (name.empty()) continue;
         names.push_back(name);
     }
 
     if (names.empty()) {
-        cout << "未检测到有效姓名！\n";
+        std::cout << "未检测到有效姓名！\n";
         return;
     }
 
-    cout << "\n正在添加以下联系人：\n";
+    std::cout << "\n正在添加以下联系人：\n";
     for (const auto& n : names) {
-        cout << n << " ";
+        std::cout << n << " ";
     }
-    cout << "\n\n";
+    std::cout << "\n\n";
 
-    // 逐一添加
     for (const auto& n : names) {
         if (n.empty()) continue;
 
         if (findIndex(n) != -1) {
-            cout << "联系人 " << n << " 已存在，跳过添加。\n";
+            std::cout << "联系人 " << n << " 已存在，跳过添加。\n";
             existCount++;
             continue;
         }
 
         Person p;
-        p.setName(n);
+        p.setName(n); // 假设 setName 接受 UTF-8 std::string
         vertList.push_back(p);
-        adjList.push_back(list<Edge>());
-        nameToIndex[n] = vertList.size() - 1;
+        adjList.push_back(std::list<Edge>());
+        nameToIndex[n] = static_cast<int>(vertList.size()) - 1;
         addedCount++;
-        cout << "联系人 " << n << " 添加成功！\n";
+        std::cout << "联系人 " << n << " 添加成功！\n";
     }
 
-    cout << "\n批量添加完成：\n";
-    cout << "成功添加 " << addedCount << " 个联系人。\n";
+    std::cout << "\n批量添加完成：\n";
+    std::cout << "成功添加 " << addedCount << " 个联系人。\n";
     if (existCount > 0) {
-        cout << "跳过 " << existCount << " 个已存在的联系人。\n";
+        std::cout << "跳过 " << existCount << " 个已存在的联系人。\n";
     }
 }
 
