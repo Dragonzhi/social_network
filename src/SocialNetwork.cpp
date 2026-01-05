@@ -1537,6 +1537,12 @@ void SocialNetwork::exportToHTML() {
     const unsigned char utf8Bom[3] = { 0xEF, 0xBB, 0xBF };
     file.write((const char*)utf8Bom, sizeof(utf8Bom));
 
+    // 根据节点数量计算动态布局参数
+    int nodeCount = vertList.size();
+    long long repulsion = (long long)nodeCount * 50 * (1 + (double)nodeCount / 200.0);
+    int edgeLength = nodeCount * 3 + 100;
+
+
     // HTML头部+样式+ECharts引入
     file << R"(<!DOCTYPE html>
 <html>
@@ -1608,7 +1614,7 @@ void SocialNetwork::exportToHTML() {
         file << (i > 0 ? "," : "") << "\n{"
             << "id: " << i
             << ", name: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
-            << ", symbolSize: " << adjList[i].size() * 5 + 15
+            << ", symbolSize: " << adjList[i].size()
             << "}";
     }
 
@@ -1628,7 +1634,7 @@ void SocialNetwork::exportToHTML() {
                     << ", sourceName: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
                     << ", targetName: '" << vertList[j].getName() << "'" // 直接使用UTF-8名字
                     << ", weight: " << weight  // 关键：把亲密度存入边的自定义属性，用于悬浮展示
-                    << ", lineStyle: {width: " << weight / 10.0 << "}}";
+                    << ", lineStyle: {width: " << weight / 30.0 + 0.5 << "}}";
                 addedEdges.insert({ i, j });
                 firstEdge = false;
             }
@@ -1646,7 +1652,7 @@ void SocialNetwork::exportToHTML() {
                 formatter: function(params) {
                     // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
                     if (params.dataType === 'node') {
-                        const friendCount = (params.data.symbolSize - 15)/5;
+                        const friendCount = params.data.symbolSize;
                         return `<div style="padding:5px;">
                                   <b style="color:#409EFF;">User Information</b><br/>
                                   Username: ${params.data.name}<br/>
@@ -1679,9 +1685,9 @@ void SocialNetwork::exportToHTML() {
                     color: '#333'
                 },
                 force: {
-                    repulsion: 2500,
+                    repulsion: )" << repulsion << R"(,
                     gravity: 0.1,
-                    edgeLength: 250,
+                    edgeLength: )" << edgeLength << R"(,
                     layoutAnimation: true
                 },
                 lineStyle: {
@@ -1692,7 +1698,15 @@ void SocialNetwork::exportToHTML() {
                 // 关键配置：必须打开这个，才能让 边 支持悬浮触发tooltip
                 emphasis: {
                     focus: 'adjacency',
-                    lineStyle: { width: 8 } // 鼠标悬浮到边上时，连线变粗高亮，超实用！
+                    lineStyle: { width: 8 }, // 鼠标悬浮到边上时，连线变粗高亮，超实用！
+                    blur: {
+                        itemStyle: {
+                            opacity: 0.1
+                        },
+                        lineStyle: {
+                            opacity: 0.1
+                        }
+                    }
                 }
             }]
         };
