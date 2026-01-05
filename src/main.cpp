@@ -13,6 +13,7 @@ void showASCIITitle() {
     cout << "  _______  _______  _______  _______  ___   _______  _______ " << endl;
     cout << " (  ____ \\(  ___  )(  ____ )(  ___  )/ __) (  ___  )(  ____ )" << endl;
     cout << " | (    \\/| (   ) || (    )|| (   ) |\\__ \ | (   ) || (    )|" << endl;
+
     cout << " | (_____ | (___) || (____)|| |   | |(__) )| |   | || (____)|" << endl;
     cout << " (_____  )|  ___  ||     __)| |   | |   | || |   | ||     __)" << endl;
     cout << "       ) || (   ) || (\\ (   | |   | |   | || |   | || (\\ (   " << endl;
@@ -125,32 +126,19 @@ int main() {
 
         case 2:
             showOperationTitle("删除联系人");
-            cout << "\n  请输入要删除的联系人姓名: ";
-            getline(cin, name1);
-            network.deletePerson(name1);
+            network.deletePerson();
             waitForUser();
             break;
 
         case 3:
             showOperationTitle("添加关系");
-            cout << "\n  请输入第一个人姓名: ";
-            getline(cin, name1);
-            cout << "  请输入第二个人姓名: ";
-            getline(cin, name2);
-            cout << "  请输入亲密度 (1-100): ";
-            cin >> weight;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            network.addEdge(name1, name2, weight);
+            network.addEdge();
             waitForUser();
             break;
 
         case 4:
             showOperationTitle("删除关系");
-            cout << "\n  请输入第一个人姓名: ";
-            getline(cin, name1);
-            cout << "  请输入第二个人姓名: ";
-            getline(cin, name2);
-            network.deleteEdge(name1, name2);
+            network.deleteEdge();
             waitForUser();
             break;
 

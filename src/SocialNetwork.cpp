@@ -18,7 +18,19 @@
 #endif
 using json = nlohmann::json;
 
-
+// 在类中添加一个辅助函数
+static std::wstring utf8ToWide(const std::string& utf8) {
+#ifdef _WIN32
+    int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), NULL, 0);
+    if (wlen <= 0) return L"";
+    std::wstring ws(wlen, L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), &ws[0], wlen);
+    return ws;
+#else
+    // 在非Windows平台上，简单转换（假设系统使用UTF-8）
+    return std::wstring(utf8.begin(), utf8.end());
+#endif
+}
 
 SocialNetwork::SocialNetwork()
 {
@@ -59,7 +71,7 @@ static std::string wideToUtf8(const std::wstring& ws) {
 }
 #endif
 
-// 可选调试：打印字节十六进制
+// 调试：打印字节十六进制
 static void debug_print_hex(const std::string& s, const char* label = nullptr) {
 #ifdef DEBUG
     if (label) std::cout << label;
@@ -107,7 +119,7 @@ void SocialNetwork::addPersons() {
     }
 #endif
 
-    // DEBUG（若需要看转换后的字节，定义 DEBUG 宏再编译）
+    // DEBUG（若需要看转换后的字节）
     // debug_print_hex(input, "After read/convert: ");
 
     // 归一化：把全角空格替换为普通空格（防止无法分割）
@@ -155,7 +167,7 @@ void SocialNetwork::addPersons() {
         }
 
         Person p;
-        p.setName(n); // 假设 setName 接受 UTF-8 std::string
+        p.setName(n); // setName 接受 UTF-8 std::string
         vertList.push_back(p);
         adjList.push_back(std::list<Edge>());
         nameToIndex[n] = static_cast<int>(vertList.size()) - 1;
@@ -169,9 +181,105 @@ void SocialNetwork::addPersons() {
         std::cout << "跳过 " << existCount << " 个已存在的联系人。\n";
     }
 }
-
 // 删除联系人
-void SocialNetwork::deletePerson(string name) {
+void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控制台读取
+#ifdef _WIN32
+    // 切换 stdin/stdout 到 UTF-16 模式
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring winput;
+    std::wcout << L"请输入要删除的联系人姓名: ";
+    std::getline(std::wcin, winput);
+
+    if (winput.empty()) {
+        std::wcout << L"输入不能为空！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    // 将宽字符串转换为 UTF-8 std::string
+    std::string name = wideToUtf8(winput);
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name);
+
+    // 去掉前后空白
+    ltrim(name);
+    rtrim(name);
+
+    if (name.empty()) {
+        std::wcout << L"未检测到有效姓名！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    int index = findIndex(name);
+    if (index == -1) {
+        std::wstring wname = utf8ToWide(name);
+        std::wcout << L"联系人 " << wname << L" 不存在！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    // 1. 删除该人的所有关系（从其他人的邻接表中删除）
+    for (int i = 0; i < adjList.size(); i++) {
+        if (i == index) continue;
+
+        auto& friends = adjList[i];
+        for (auto it = friends.begin(); it != friends.end();) {
+            if (it->getTo() == index) {
+                it = friends.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+
+    // 2. 删除该人的邻接表
+    adjList.erase(adjList.begin() + index);
+
+    // 3. 删除该人
+    vertList.erase(vertList.begin() + index);
+
+    // 4. 更新nameToIndex映射
+    nameToIndex.erase(name);
+    for (auto& pair : nameToIndex) {
+        if (pair.second > index) {
+            pair.second--;
+        }
+    }
+
+    std::wstring wname = utf8ToWide(name);
+    std::wcout << L"联系人 " << wname << L" 删除成功！\n";
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string name;
+    std::cout << "请输入要删除的联系人姓名: ";
+    std::getline(std::cin, name);
+
+    if (name.empty()) {
+        std::cout << "输入不能为空！\n";
+        return;
+    }
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name);
+
+    // 去掉前后空白
+    ltrim(name);
+    rtrim(name);
+
+    if (name.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+
     int index = findIndex(name);
     if (index == -1) {
         cout << "联系人 " << name << " 不存在！\n";
@@ -208,10 +316,125 @@ void SocialNetwork::deletePerson(string name) {
     }
 
     cout << "联系人 " << name << " 删除成功！\n";
+#endif
 }
 
-// 添加关系
-void SocialNetwork::addEdge(string name1, string name2, int weight) {
+// 添加关系 - 同样需要修改为从控制台读取
+void SocialNetwork::addEdge() {  // 移除参数
+#ifdef _WIN32
+    // 切换 stdin/stdout 到 UTF-16 模式
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring wname1, wname2;
+    int weight;
+
+    std::wcout << L"请输入第一个人名: ";
+    std::getline(std::wcin, wname1);
+    std::wcout << L"请输入第二个人名: ";
+    std::getline(std::wcin, wname2);
+    std::wcout << L"请输入亲密度 (整数): ";
+    std::wcin >> weight;
+    std::wcin.ignore(); // 清除换行符
+
+    if (wname1.empty() || wname2.empty()) {
+        std::wcout << L"输入不能为空！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    // 将宽字符串转换为 UTF-8 std::string
+    std::string name1 = wideToUtf8(wname1);
+    std::string name2 = wideToUtf8(wname2);
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name1);
+    replaceFullWidthSpaces(name2);
+
+    // 去掉前后空白
+    ltrim(name1); rtrim(name1);
+    ltrim(name2); rtrim(name2);
+
+    if (name1.empty() || name2.empty()) {
+        std::wcout << L"未检测到有效姓名！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    int index1 = findIndex(name1);
+    int index2 = findIndex(name2);
+
+    if (index1 == -1 || index2 == -1) {
+        std::wcout << L"输入的人员不存在！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    if (index1 == index2) {
+        std::wcout << L"不能与自己建立关系！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    // 检查关系是否已存在
+    auto& friends1 = adjList[index1];
+    for (auto& edge : friends1) {
+        if (edge.getTo() == index2) {
+            std::wcout << wname1 << L" 和 " << wname2 << L" 的关系已存在，亲密度为: "
+                << edge.getWeight() << L"\n";
+            _setmode(_fileno(stdin), _O_TEXT);
+            _setmode(_fileno(stdout), _O_TEXT);
+            return;
+        }
+    }
+
+    // 添加双向关系（无向图）
+    Edge edge1, edge2;
+    edge1.setTo(index2);
+    edge1.setWeight(weight);
+    edge2.setTo(index1);
+    edge2.setWeight(weight);
+
+    adjList[index1].push_back(edge1);
+    adjList[index2].push_back(edge2);
+
+    std::wcout << L"已建立 " << wname1 << L" 和 " << wname2 << L" 的关系，亲密度: " << weight << L"\n";
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string name1, name2;
+    int weight;
+
+    std::cout << "请输入第一个人名: ";
+    std::getline(std::cin, name1);
+    std::cout << "请输入第二个人名: ";
+    std::getline(std::cin, name2);
+    std::cout << "请输入亲密度 (整数): ";
+    std::cin >> weight;
+    std::cin.ignore(); // 清除换行符
+
+    if (name1.empty() || name2.empty()) {
+        std::cout << "输入不能为空！\n";
+        return;
+    }
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name1);
+    replaceFullWidthSpaces(name2);
+
+    // 去掉前后空白
+    ltrim(name1); rtrim(name1);
+    ltrim(name2); rtrim(name2);
+
+    if (name1.empty() || name2.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+
     int index1 = findIndex(name1);
     int index2 = findIndex(name2);
 
@@ -246,10 +469,119 @@ void SocialNetwork::addEdge(string name1, string name2, int weight) {
     adjList[index2].push_back(edge2);
 
     cout << "已建立 " << name1 << " 和 " << name2 << " 的关系，亲密度: " << weight << "\n";
+#endif
 }
 
-// 删除关系
-void SocialNetwork::deleteEdge(string name1, string name2) {
+// 删除关系 - 同样需要修改
+void SocialNetwork::deleteEdge() {  // 移除参数
+#ifdef _WIN32
+    // 切换 stdin/stdout 到 UTF-16 模式
+    _setmode(_fileno(stdin), _O_U16TEXT);
+    _setmode(_fileno(stdout), _O_U16TEXT);
+
+    std::wstring wname1, wname2;
+
+    std::wcout << L"请输入第一个人名: ";
+    std::getline(std::wcin, wname1);
+    std::wcout << L"请输入第二个人名: ";
+    std::getline(std::wcin, wname2);
+
+    if (wname1.empty() || wname2.empty()) {
+        std::wcout << L"输入不能为空！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    // 将宽字符串转换为 UTF-8 std::string
+    std::string name1 = wideToUtf8(wname1);
+    std::string name2 = wideToUtf8(wname2);
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name1);
+    replaceFullWidthSpaces(name2);
+
+    // 去掉前后空白
+    ltrim(name1); rtrim(name1);
+    ltrim(name2); rtrim(name2);
+
+    if (name1.empty() || name2.empty()) {
+        std::wcout << L"未检测到有效姓名！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    int index1 = findIndex(name1);
+    int index2 = findIndex(name2);
+
+    if (index1 == -1 || index2 == -1) {
+        std::wcout << L"输入的人员不存在！\n";
+        _setmode(_fileno(stdin), _O_TEXT);
+        _setmode(_fileno(stdout), _O_TEXT);
+        return;
+    }
+
+    bool found = false;
+
+    // 删除name1的邻接表中的关系
+    auto& friends1 = adjList[index1];
+    for (auto it = friends1.begin(); it != friends1.end();) {
+        if (it->getTo() == index2) {
+            it = friends1.erase(it);
+            found = true;
+        }
+        else {
+            ++it;
+        }
+    }
+
+    // 删除name2的邻接表中的关系
+    auto& friends2 = adjList[index2];
+    for (auto it = friends2.begin(); it != friends2.end();) {
+        if (it->getTo() == index1) {
+            it = friends2.erase(it);
+            found = true;
+        }
+        else {
+            ++it;
+        }
+    }
+
+    if (found) {
+        std::wcout << L"已删除 " << wname1 << L" 和 " << wname2 << L" 的关系\n";
+    }
+    else {
+        std::wcout << wname1 << L" 和 " << wname2 << L" 之间没有关系\n";
+    }
+    _setmode(_fileno(stdin), _O_TEXT);
+    _setmode(_fileno(stdout), _O_TEXT);
+#else
+    std::string name1, name2;
+
+    std::cout << "请输入第一个人名: ";
+    std::getline(std::cin, name1);
+    std::cout << "请输入第二个人名: ";
+    std::getline(std::cin, name2);
+
+    if (name1.empty() || name2.empty()) {
+        std::cout << "输入不能为空！\n";
+        return;
+    }
+
+    // 归一化：把全角空格替换为普通空格
+    replaceFullWidthSpaces(name1);
+    replaceFullWidthSpaces(name2);
+
+    // 去掉前后空白
+    ltrim(name1); rtrim(name1);
+    ltrim(name2); rtrim(name2);
+
+    if (name1.empty() || name2.empty()) {
+        std::cout << "未检测到有效姓名！\n";
+        return;
+    }
+
     int index1 = findIndex(name1);
     int index2 = findIndex(name2);
 
@@ -290,8 +622,8 @@ void SocialNetwork::deleteEdge(string name1, string name2) {
     else {
         cout << name1 << " 和 " << name2 << " 之间没有关系\n";
     }
+#endif
 }
-
 
 
 

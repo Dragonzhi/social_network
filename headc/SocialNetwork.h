@@ -32,9 +32,9 @@ public:
 
 	// A side
     void addPersons();
-	void deletePerson(string name);
-	void addEdge(string name1, string name2, int weight);
-	void deleteEdge(string name1, string name2);
+	void deletePerson();
+	void addEdge();
+	void deleteEdge();
 	void saveToFile(string filename);
 	void loadFromFile(string filename);
 	void displayAll();
