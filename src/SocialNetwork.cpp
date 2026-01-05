@@ -1,7 +1,7 @@
-﻿#include "..\head\SocialNetwork.h"
+﻿#include "..\headc\SocialNetwork.h"
 #include <queue>
 #include <fstream>
-#include "..\head\json.hpp" 
+#include "..\headc\json.hpp" 
 #include <set>
 #include <sstream> 
 #include <windows.h>

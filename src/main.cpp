@@ -1,5 +1,5 @@
 #define NOMINMAX  // 禁用 min/max 宏
-#include "..\head\SocialNetwork.h"
+#include "..\headc\SocialNetwork.h"
 #include <iostream>
 #include <string>
 #include <limits>
