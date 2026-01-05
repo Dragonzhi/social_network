@@ -991,7 +991,7 @@ void SocialNetwork::exportToHTML(string filename) {
 <head>
     <meta charset="UTF-8">
     <title>SocialNetwork</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js" defer id="echarts-cdn"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
@@ -1001,17 +1001,53 @@ void SocialNetwork::exportToHTML(string filename) {
         #network { width: 100%; height: 600px; background: white; 
                   border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     </style>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof echarts === 'undefined') {
+                console.warn('CDN版ECharts加载失败，切换到本地版本');
+                const localScript = document.createElement('script');
+                localScript.src = './js/echarts.min.js'; 
+                localScript.onload = function() {
+                    console.log('本地版ECharts加载成功');
+                };
+                localScript.onerror = function() {
+                    alert('本地ECharts文件也加载失败，请检查文件路径！');
+                };
+                document.body.appendChild(localScript);
+            }
+        });
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>SocialNetwork</h1>
+            <h1>社交网络关系图</h1>
             <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
         </div>
         <div id="network"></div>
     </div>
     
     <script>
+        function initECharts() {
+            if (typeof echarts === 'undefined') {
+                let retryCount = 0;
+                const retryTimer = setInterval(() => {
+                    if (typeof echarts !== 'undefined' || retryCount >= 5) {
+                        clearInterval(retryTimer);
+                        if (typeof echarts !== 'undefined') {
+                            doInit();
+                        } else {
+                            alert('ECharts加载超时，请检查网络或本地文件！');
+                        }
+                    }
+                    retryCount++;
+                }, 100);
+            } else {
+                doInit();
+            }
+        }
+
+        function doInit() {
         var myChart = echarts.init(document.getElementById('network'));
         var nodesData = [)";
 
@@ -1113,6 +1149,8 @@ void SocialNetwork::exportToHTML(string filename) {
         window.addEventListener('resize', function() {
             myChart.resize();
         });
+        }
+        document.addEventListener('DOMContentLoaded', initECharts);
     </script>
 </body>
 </html>)";
