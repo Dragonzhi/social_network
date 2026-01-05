@@ -1645,12 +1645,10 @@ void SocialNetwork::exportToHTML() {
     file << R"(];
 
         var option = {
-            // 提示框核心配置：节点和边 显示完全不同的内容+样式
             tooltip: {
                 trigger: 'item',
-                triggerOn: 'mousemove', // 鼠标悬浮即触发，无需点击
+                triggerOn: 'mousemove', 
                 formatter: function(params) {
-                    // 1. 鼠标悬浮到【节点】上 - 显示用户个人信息
                     if (params.dataType === 'node') {
                         const friendCount = params.data.symbolSize;
                         return `<div style="padding:5px;">
@@ -1659,7 +1657,6 @@ void SocialNetwork::exportToHTML() {
                                   Friends: ${friendCount} 
                                 </div>`;
                     }
-                    // 2. 鼠标悬浮到【连线/边】上 - 显示好友关系信息
                     else if (params.dataType === 'edge') {
                         const fromName = nodesData[params.data.source].name;
                         const toName = nodesData[params.data.target].name;
@@ -1677,7 +1674,7 @@ void SocialNetwork::exportToHTML() {
                 layout: 'force',
                 data: nodesData,
                 links: linksData,
-                roam: true, // 拖拽+缩放保留
+                roam: true, 
                 label: {
                     show: true,
                     position: 'right',
@@ -1695,10 +1692,9 @@ void SocialNetwork::exportToHTML() {
                     curveness: 0.2,
                     opacity: 0.7
                 },
-                // 关键配置：必须打开这个，才能让 边 支持悬浮触发tooltip
                 emphasis: {
                     focus: 'adjacency',
-                    lineStyle: { width: 8 }, // 鼠标悬浮到边上时，连线变粗高亮，超实用！
+                    lineStyle: { width: 8 },
                     blur: {
                         itemStyle: {
                             opacity: 0.1

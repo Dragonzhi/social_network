@@ -1,0 +1,57 @@
+﻿{
+    "edges": [
+        {
+            "from": "张三",
+            "to": "李四",
+            "weight": 23
+        },
+        {
+            "from": "张三",
+            "to": "勾三",
+            "weight": 33
+        },
+        {
+            "from": "张三",
+            "to": "股四",
+            "weight": 34
+        },
+        {
+            "from": "李四",
+            "to": "股四",
+            "weight": 44
+        },
+        {
+            "from": "勾三",
+            "to": "股四",
+            "weight": 50
+        },
+        {
+            "from": "勾三",
+            "to": "弦五",
+            "weight": 35
+        }
+    ],
+    "metadata": {
+        "edge_count": 6,
+        "person_count": 5,
+        "save_time": "2026-01-05 14:58:58",
+        "version": "1.0"
+    },
+    "persons": [
+        {
+            "name": "张三"
+        },
+        {
+            "name": "李四"
+        },
+        {
+            "name": "勾三"
+        },
+        {
+            "name": "股四"
+        },
+        {
+            "name": "弦五"
+        }
+    ]
+}
