@@ -1435,14 +1435,11 @@ void SocialNetwork::exportToHTML() {
     long long repulsion = (long long)nodeCount * 50 * (1 + (double)nodeCount / 200.0);
     int edgeLength = nodeCount * 3 + 100;
 
-
-    // HTML头部+样式+ECharts引入
     file << R"(<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>SocialNetwork</title>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js" defer id="echarts-cdn"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
@@ -1453,32 +1450,41 @@ void SocialNetwork::exportToHTML() {
                   border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     </style>
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            if (typeof echarts === 'undefined') {
-                console.warn('CDN版ECharts加载失败，切换到本地版本');
-                const localScript = document.createElement('script');
-                localScript.src = './js/echarts.min.js'; 
-                localScript.onload = function() {
-                    console.log('本地版ECharts加载成功');
-                };
-                localScript.onerror = function() {
-                    alert('本地ECharts文件也加载失败，请检查文件路径！');
-                };
-                document.body.appendChild(localScript);
+        // 方案三核心：多CDN源列表（优先级从高到低）
+        const echartsCdnList = [
+            'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
+            'https://unpkg.com/echarts@5.4.3/dist/echarts.min.js',
+            'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'
+        ];
+
+        // 递归加载ECharts CDN
+        function loadEcharts(cdnList) {
+            if (cdnList.length === 0) {
+                alert('所有ECharts CDN加载失败！请手动下载并引入：\nhttps://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js');
+                return false;
             }
-        });
-    </script>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>社交网络关系图</h1>
-            <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
-        </div>
-        <div id="network"></div>
-    </div>
-    
-    <script>
+            const currentCdn = cdnList[0];
+            const script = document.createElement('script');
+            script.src = currentCdn;
+            script.defer = true;
+
+            // CDN加载成功
+            script.onload = function() {
+                console.log(`ECharts加载成功（来源：${currentCdn}）`);
+                initECharts(); // 加载成功后初始化图表
+            };
+
+            // 当前CDN失败，尝试下一个
+            script.onerror = function() {
+                console.warn(`ECharts CDN加载失败：${currentCdn}，尝试下一个源`);
+                loadEcharts(cdnList.slice(1));
+            };
+
+            document.head.appendChild(script);
+            return true;
+        }
+
+        // 原有初始化逻辑适配
         function initECharts() {
             if (typeof echarts === 'undefined') {
                 let retryCount = 0;
@@ -1488,7 +1494,7 @@ void SocialNetwork::exportToHTML() {
                         if (typeof echarts !== 'undefined') {
                             doInit();
                         } else {
-                            alert('ECharts加载超时，请检查网络或本地文件！');
+                            alert('ECharts加载超时，请检查网络！');
                         }
                     }
                     retryCount++;
@@ -1502,20 +1508,20 @@ void SocialNetwork::exportToHTML() {
         var myChart = echarts.init(document.getElementById('network'));
         var nodesData = [)";
 
-    // 遍历生成节点数据
+    // 遍历生成节点数据（保留原有逻辑）
     for (int i = 0; i < vertList.size(); i++) {
         file << (i > 0 ? "," : "") << "\n{"
             << "id: " << i
             << ", name: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
-            << ", symbolSize: " << (adjList[i].size() * 3) + 12 
+            << ", symbolSize: " << (adjList[i].size() * 3) + 12
             << "}";
     }
 
     file << R"(];
-        
+    
         var linksData = [)";
 
-    // 遍历生成边数据，额外给边绑定【亲密度数值】用于悬浮显示
+    // 遍历生成边数据（保留原有逻辑，绑定亲密度）
     set<pair<int, int>> addedEdges;
     bool firstEdge = true;
     for (int i = 0; i < vertList.size(); i++) {
@@ -1526,7 +1532,7 @@ void SocialNetwork::exportToHTML() {
                 file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
                     << ", sourceName: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
                     << ", targetName: '" << vertList[j].getName() << "'" // 直接使用UTF-8名字
-                    << ", weight: " << weight  // 把亲密度存入边的自定义属性，用于悬浮展示
+                    << ", weight: " << weight  // 把亲密度存入边的自定义属性
                     << ", lineStyle: {width: " << weight / 20.0 + 0.5 << "}}";
                 addedEdges.insert({ i, j });
                 firstEdge = false;
@@ -1534,7 +1540,7 @@ void SocialNetwork::exportToHTML() {
         }
     }
 
-    // ========== 核心修改：tooltip 差异化显示 节点/边 ==========
+    // 保留原有tooltip差异化显示逻辑
     file << R"(];
 
         var option = {
@@ -1605,8 +1611,21 @@ void SocialNetwork::exportToHTML() {
             myChart.resize();
         });
         }
-        document.addEventListener('DOMContentLoaded', initECharts);
+
+        // 页面加载完成后启动多CDN加载流程
+        window.addEventListener('DOMContentLoaded', function() {
+            loadEcharts(echartsCdnList);
+        });
     </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>社交网络关系图</h1>
+            <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
+        </div>
+        <div id="network"></div>
+    </div>
 </body>
 </html>)";
 
