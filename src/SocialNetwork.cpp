@@ -1593,14 +1593,14 @@ void SocialNetwork::exportToHTML() {
                 },
                 emphasis: {
                     focus: 'adjacency',
-                    lineStyle: { width: 5 },
-                    blur: {
-                        itemStyle: {
-                            opacity: 0.1
-                        },
-                        lineStyle: {
-                            opacity: 0.1
-                        }
+                    lineStyle: { width: 5 }
+                },
+                blur: {
+                    itemStyle: {
+                        opacity: 0.1
+                    },
+                    lineStyle: {
+                        opacity: 0.1
                     }
                 }
             }]
