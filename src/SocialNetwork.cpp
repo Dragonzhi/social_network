@@ -1403,113 +1403,6 @@ void SocialNetwork::displayBottleneckBeautiful() {
     cout << LINE_THIN << "\n";
 }
 
-void SocialNetwork::displayGraphASCII() {
-    if (vertList.empty()) {
-        cout << "社交网络为空！\n";
-        return;
-    }
-
-    cout << createSectionHeader("社交网络图");
-
-    // 简单布局算法 - 将人员放置在一个圆形上
-    const int RADIUS = 15;
-    const int CENTER_X = 25;
-    const int CENTER_Y = 10;
-    const int CANVAS_WIDTH = 50;
-    const int CANVAS_HEIGHT = 25;
-
-    // 创建画布
-    vector<vector<char>> canvas(CANVAS_HEIGHT, vector<char>(CANVAS_WIDTH, ' '));
-
-    // 计算每个人的位置（圆形布局）
-    vector<pair<int, int>> positions;
-    int n = vertList.size();
-    for (int i = 0; i < n; i++) {
-        double angle = 2 * 3.14159 * i / n;
-        int x = CENTER_X + RADIUS * cos(angle);
-        int y = CENTER_Y + RADIUS * sin(angle);
-        positions.push_back({ x, y });
-
-        // 在画布上放置人员（用字母表示）
-        if (y >= 0 && y < CANVAS_HEIGHT && x >= 0 && x < CANVAS_WIDTH) {
-            canvas[y][x] = 'A' + (i % 26); // 用字母代表不同的人
-        }
-    }
-
-    // 绘制关系线
-    for (int i = 0; i < n; i++) {
-        for (auto& edge : adjList[i]) {
-            int j = edge.getTo();
-            if (i < j) { // 避免重复绘制
-                int x1 = positions[i].first;
-                int y1 = positions[i].second;
-                int x2 = positions[j].first;
-                int y2 = positions[j].second;
-
-                // 简单的Bresenham直线算法
-                int dx = abs(x2 - x1);
-                int dy = abs(y2 - y1);
-                int sx = (x1 < x2) ? 1 : -1;
-                int sy = (y1 < y2) ? 1 : -1;
-                int err = dx - dy;
-
-                while (true) {
-                    if (y1 >= 0 && y1 < CANVAS_HEIGHT && x1 >= 0 && x1 < CANVAS_WIDTH) {
-                        if (canvas[y1][x1] == ' ') {
-                            // 根据亲密度使用不同字符
-                            int weight = edge.getWeight();
-                            if (weight >= 80) canvas[y1][x1] = '=';
-                            else if (weight >= 60) canvas[y1][x1] = '-';
-                            else if (weight >= 40) canvas[y1][x1] = '.';
-                            else canvas[y1][x1] = '·';
-                        }
-                    }
-
-                    if (x1 == x2 && y1 == y2) break;
-
-                    int e2 = 2 * err;
-                    if (e2 > -dy) {
-                        err -= dy;
-                        x1 += sx;
-                    }
-                    if (e2 < dx) {
-                        err += dx;
-                        y1 += sy;
-                    }
-                }
-            }
-        }
-    }
-
-    // 打印画布
-    cout << "\n";
-    for (int y = 0; y < CANVAS_HEIGHT; y++) {
-        for (int x = 0; x < CANVAS_WIDTH; x++) {
-            cout << canvas[y][x];
-        }
-        cout << "\n";
-    }
-
-    // 显示图例
-    cout << "\n" << LINE_THIN << "\n";
-    cout << "图例说明:\n";
-    cout << "  A, B, C... : 联系人（字母代表）\n";
-    cout << "  =========  : 高亲密度关系 (80-100)\n";
-    cout << "  ---------  : 中亲密度关系 (60-79)\n";
-    cout << "  ........   : 低亲密度关系 (40-59)\n";
-    cout << "  ·········  : 微弱关系 (1-39)\n";
-
-    // 显示人员对应关系
-    cout << "\n人员对应关系:\n";
-    for (int i = 0; i < min(n, 26); i++) {
-        cout << "  " << char('A' + i) << " : " << vertList[i].getName();
-        if ((i + 1) % 3 == 0) cout << "\n";
-        else if (i < n - 1) cout << " | ";
-    }
-    if (n > 26) cout << "\n  (仅显示前26人)";
-    cout << "\n" << LINE_THIN << "\n";
-}
-
 void SocialNetwork::exportToHTML() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
@@ -1614,7 +1507,7 @@ void SocialNetwork::exportToHTML() {
         file << (i > 0 ? "," : "") << "\n{"
             << "id: " << i
             << ", name: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
-            << ", symbolSize: " << adjList[i].size()
+            << ", symbolSize: " << (adjList[i].size() * 3) + 12 
             << "}";
     }
 
@@ -1633,8 +1526,8 @@ void SocialNetwork::exportToHTML() {
                 file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
                     << ", sourceName: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
                     << ", targetName: '" << vertList[j].getName() << "'" // 直接使用UTF-8名字
-                    << ", weight: " << weight  // 关键：把亲密度存入边的自定义属性，用于悬浮展示
-                    << ", lineStyle: {width: " << weight / 30.0 + 0.5 << "}}";
+                    << ", weight: " << weight  // 把亲密度存入边的自定义属性，用于悬浮展示
+                    << ", lineStyle: {width: " << weight / 20.0 + 0.5 << "}}";
                 addedEdges.insert({ i, j });
                 firstEdge = false;
             }
@@ -1654,7 +1547,7 @@ void SocialNetwork::exportToHTML() {
                         return `<div style="padding:5px;">
                                   <b style="color:#409EFF;">User Information</b><br/>
                                   Username: ${params.data.name}<br/>
-                                  Friends: ${friendCount} 
+                                  Friends: ${(friendCount - 12) / 3} 
                                 </div>`;
                     }
                     else if (params.dataType === 'edge') {
@@ -1689,12 +1582,12 @@ void SocialNetwork::exportToHTML() {
                 },
                 lineStyle: {
                     color: 'source',
-                    curveness: 0.2,
+                    curveness: 0,
                     opacity: 0.7
                 },
                 emphasis: {
                     focus: 'adjacency',
-                    lineStyle: { width: 8 },
+                    lineStyle: { width: 5 },
                     blur: {
                         itemStyle: {
                             opacity: 0.1
