@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <list>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "Edge.h"
@@ -40,16 +40,15 @@ public:
 	int findIndex(string name);
 
     // 美化显示函数
-    void displayAllBeautiful();
-    void displayTop10Beautiful();
-    void displaySortFriendsBeautiful();
     void displayBottleneckBeautiful();
-    void displayGraphASCII();
     void exportToHTML();
+
+    // 性能测试
+    void testPerformance();
 private:
 	vector<Person> vertList;
 	vector<list<Edge>> adjList;
-	map<string, int> nameToIndex;
+    unordered_map<string, int> nameToIndex;
 
 	// 美化部分
     // ASCII装饰字符
@@ -101,3 +100,4 @@ private:
     string centerText(const string& text, int width);
 
 };
+

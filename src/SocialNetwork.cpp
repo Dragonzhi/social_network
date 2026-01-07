@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <chrono>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -16,6 +17,30 @@
 #include <fcntl.h>
 #endif
 using json = nlohmann::json;
+
+
+
+// 在 SocialNetwork.cpp 中添加测试函数
+void SocialNetwork::testPerformance() {
+    cout << "=== 哈希映射性能测试 ===\n";
+
+    // 测试查找性能
+    int testCount = 10000;
+    auto start = chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < testCount; i++) {
+        // 随机查找测试
+        findIndex("测试用户");
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+
+    cout << testCount << " 次查找耗时: "
+        << duration.count() << " 微秒\n";
+    cout << "平均每次查找: "
+        << duration.count() / (double)testCount << " 微秒\n";
+}
 
 // 在类中添加一个辅助函数
 static std::wstring utf8ToWide(const std::string& utf8) {
@@ -863,136 +888,6 @@ void SocialNetwork::loadFromFile() {
 
 // 显示所有联系人关系
 void SocialNetwork::displayAll() {
-    displayAllBeautiful();
-}
-
-// 按亲密程度排序好友
-void SocialNetwork::sortFriends() {
-    displaySortFriendsBeautiful();
-}
-//路径亲密度下界最大值
-int SocialNetwork::getBottleneckPath(string startName, string endName) {
-    int start = findIndex(startName);
-    int end = findIndex(endName);
-
-    if (start == -1 || end == -1) return -1; // Person not found
-    if (start == end) return 0; // Same person
-
-    int personCount = vertList.size();
-    vector<int> maxBottleNeck(personCount, 0);
-    vector<bool> visited(personCount, false); // Keep track of visited nodes
-    priority_queue<pair<int, int>> pq;
-
-    maxBottleNeck[start] = INT_MAX; // Initialize start with "infinite" capacity
-    pq.push({ INT_MAX, start });
-
-    while (!pq.empty()) {
-        auto current = pq.top();
-        int u = current.second;
-        pq.pop();
-
-        if (visited[u]) continue; // If already visited, skip.
-        visited[u] = true;
-
-        if (u == end) break; // Found the best path to the end node.
-
-        for (auto& e : adjList[u]) {
-            int v = e.getTo();
-            int weight = e.getWeight();
-
-            if (!visited[v]) { // Only consider unvisited neighbors
-                int newBottleneck = min(maxBottleNeck[u], weight);
-                if (newBottleneck > maxBottleNeck[v]) {
-                    maxBottleNeck[v] = newBottleneck;
-                    pq.push({ newBottleneck, v });
-                }
-            }
-        }
-    }
-
-    // If we finish the loop and maxBottleNeck[end] is still 0, there is no path.
-    // Return -1 for "no path" (consistent with "person not found" error)
-    return (maxBottleNeck[end] == 0) ? -1 : maxBottleNeck[end];
-}
-	
-void SocialNetwork::displayTop10() {
-    displayTop10Beautiful();
-}
-int SocialNetwork::findIndex(string name) {
-	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
-	return nameToIndex[name];
-}
-
-
-
-// =============== 辅助函数实现 ===============
-
-string SocialNetwork::createBoxedText(const string& text, int width) {
-    string result;
-    string border(width, '=');
-    result = border + "\n";
-    result += centerText(text, width) + "\n";
-    result += border + "\n";
-    return result;
-}
-
-string SocialNetwork::createSectionHeader(const string& title) {
-    string result;
-    string border(60, '=');
-    result = "\n" + border + "\n";
-
-    // 计算居中位置
-    int padding = (60 - title.length()) / 2;
-    result += string(padding, ' ') + title + "\n";
-    result += border + "\n";
-
-    return result;
-}
-
-string SocialNetwork::createProgressBar(float percentage, int length) {
-    string bar = "[";
-    int filled = (int)(percentage * length / 100);
-
-    for (int i = 0; i < length; i++) {
-        if (i < filled) {
-            if (percentage >= 80) bar += BAR_FULL;
-            else if (percentage >= 60) bar += BAR_MID;
-            else if (percentage >= 40) bar += BAR_LOW;
-            else bar += BAR_LOW;
-        }
-        else {
-            bar += BAR_EMPTY;
-        }
-    }
-    bar += "] " + to_string((int)percentage) + "%";
-    return bar;
-}
-
-string SocialNetwork::createSmallProgressBar(float percentage, int length) {
-    string bar = "[";
-    int filled = (int)(percentage * length / 100);
-
-    for (int i = 0; i < length; i++) {
-        if (i < filled) bar += BAR_FULL;
-        else bar += BAR_EMPTY;
-    }
-    bar += "]";
-    return bar;
-}
-
-string SocialNetwork::centerText(const string& text, int width) {
-    if (text.length() >= width) return text;
-
-    int leftPadding = (width - text.length()) / 2;
-    int rightPadding = width - text.length() - leftPadding;
-
-    return string(leftPadding, ' ') + text + string(rightPadding, ' ');
-}
-
-// =============== 美化显示函数实现 ===============
-
-// 美化显示所有联系人关系
-void SocialNetwork::displayAllBeautiful() {
     if (vertList.empty()) {
         cout << createSectionHeader("社交网络状态");
         cout << "\n" << ERROR_ICON << " 社交网络为空！暂时还没有任何联系人\n";
@@ -1078,8 +973,8 @@ void SocialNetwork::displayAllBeautiful() {
     cout << "\n" << LINE_THIN << "\n";
 }
 
-// 美化显示排序好友
-void SocialNetwork::displaySortFriendsBeautiful() {
+// 按亲密程度排序好友
+void SocialNetwork::sortFriends() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
@@ -1204,8 +1099,52 @@ void SocialNetwork::displaySortFriendsBeautiful() {
     cout << "\n" << LINE_THIN << "\n";
 }
 
-// 美化显示社交大牛Top10
-void SocialNetwork::displayTop10Beautiful() {
+//路径亲密度下界最大值
+int SocialNetwork::getBottleneckPath(string startName, string endName) {
+    int start = findIndex(startName);
+    int end = findIndex(endName);
+
+    if (start == -1 || end == -1) return -1; // Person not found
+    if (start == end) return 0; // Same person
+
+    int personCount = vertList.size();
+    vector<int> maxBottleNeck(personCount, 0);
+    vector<bool> visited(personCount, false); // Keep track of visited nodes
+    priority_queue<pair<int, int>> pq;
+
+    maxBottleNeck[start] = INT_MAX; // Initialize start with "infinite" capacity
+    pq.push({ INT_MAX, start });
+
+    while (!pq.empty()) {
+        auto current = pq.top();
+        int u = current.second;
+        pq.pop();
+
+        if (visited[u]) continue; // If already visited, skip.
+        visited[u] = true;
+
+        if (u == end) break; // Found the best path to the end node.
+
+        for (auto& e : adjList[u]) {
+            int v = e.getTo();
+            int weight = e.getWeight();
+
+            if (!visited[v]) { // Only consider unvisited neighbors
+                int newBottleneck = min(maxBottleNeck[u], weight);
+                if (newBottleneck > maxBottleNeck[v]) {
+                    maxBottleNeck[v] = newBottleneck;
+                    pq.push({ newBottleneck, v });
+                }
+            }
+        }
+    }
+
+    // If we finish the loop and maxBottleNeck[end] is still 0, there is no path.
+    // Return -1 for "no path" (consistent with "person not found" error)
+    return (maxBottleNeck[end] == 0) ? -1 : maxBottleNeck[end];
+}
+	
+void SocialNetwork::displayTop10() {
     int personCount = vertList.size();
     if (personCount <= 0) {
         cout << ERROR_ICON << " 社交网络为空！\n";
@@ -1286,21 +1225,79 @@ void SocialNetwork::displayTop10Beautiful() {
     }
 
     cout << TABLE_CROSS << string(70, TABLE_HORIZ[0]) << TABLE_CROSS << "\n";
-
-    // 统计信息
-    //float avgFriends = 0;
-    //for (auto& p : friendCounts) avgFriends += p.second;
-    //avgFriends /= personCount;
-
-    //cout << "\n" << STATS_ICON << " 网络统计:";
-    //cout << "\n   总人数: " << personCount;
-    //cout << "\n   人均好友数: " << fixed << setprecision(1) << avgFriends;
-    //cout << "\n   社交达人标准: " << (personCount >= 10 ? friendCounts[0].second : 0) << "+ 好友";
-    //cout << "\n   前" << displayCount << "名占总好友数: "
-    //    << fixed << setprecision(1)
-    //    << (friendCounts[0].second * displayCount * 100.0 / (avgFriends * personCount)) << "%";
-    //cout << "\n" << LINE_THIN << "\n";
 }
+int SocialNetwork::findIndex(string name) {
+	if (nameToIndex.find(name) == nameToIndex.end()) return -1;		// 未找到名字对应的人的ID，返回-1
+	return nameToIndex[name];
+}
+
+
+
+// =============== 辅助函数实现 ===============
+
+string SocialNetwork::createBoxedText(const string& text, int width) {
+    string result;
+    string border(width, '=');
+    result = border + "\n";
+    result += centerText(text, width) + "\n";
+    result += border + "\n";
+    return result;
+}
+
+string SocialNetwork::createSectionHeader(const string& title) {
+    string result;
+    string border(60, '=');
+    result = "\n" + border + "\n";
+
+    // 计算居中位置
+    int padding = (60 - title.length()) / 2;
+    result += string(padding, ' ') + title + "\n";
+    result += border + "\n";
+
+    return result;
+}
+
+string SocialNetwork::createProgressBar(float percentage, int length) {
+    string bar = "[";
+    int filled = (int)(percentage * length / 100);
+
+    for (int i = 0; i < length; i++) {
+        if (i < filled) {
+            if (percentage >= 80) bar += BAR_FULL;
+            else if (percentage >= 60) bar += BAR_MID;
+            else if (percentage >= 40) bar += BAR_LOW;
+            else bar += BAR_LOW;
+        }
+        else {
+            bar += BAR_EMPTY;
+        }
+    }
+    bar += "] " + to_string((int)percentage) + "%";
+    return bar;
+}
+
+string SocialNetwork::createSmallProgressBar(float percentage, int length) {
+    string bar = "[";
+    int filled = (int)(percentage * length / 100);
+
+    for (int i = 0; i < length; i++) {
+        if (i < filled) bar += BAR_FULL;
+        else bar += BAR_EMPTY;
+    }
+    bar += "]";
+    return bar;
+}
+
+string SocialNetwork::centerText(const string& text, int width) {
+    if (text.length() >= width) return text;
+
+    int leftPadding = (width - text.length()) / 2;
+    int rightPadding = width - text.length() - leftPadding;
+
+    return string(leftPadding, ' ') + text + string(rightPadding, ' ');
+}
+
+// =============== 美化显示函数实现 ===============
 
 // 美化显示亲密度查询
 void SocialNetwork::displayBottleneckBeautiful() {

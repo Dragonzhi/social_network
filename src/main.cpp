@@ -180,6 +180,12 @@ int main() {
             waitForUser();
             break;
 
+        case 114:
+            showOperationTitle("性能测试");
+            network.testPerformance();
+            waitForUser();
+            break;
+
         case 0:
             system("cls");
             cout << "\n================================================================================" << endl;
