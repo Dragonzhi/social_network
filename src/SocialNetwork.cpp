@@ -1572,9 +1572,9 @@ void SocialNetwork::exportToHTML() {
                 },
                 force: {
                     repulsion: )" << repulsion << R"(,
-                    gravity: 0.1,
+                    gravity: 0.05,
                     edgeLength: )" << edgeLength << R"(,
-                    layoutAnimation: true
+                    layoutAnimation: false
                 },
                 lineStyle: {
                     color: 'source',
