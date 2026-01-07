@@ -186,6 +186,12 @@ int main() {
             waitForUser();
             break;
 
+        case 514:
+            showOperationTitle("瓶颈路径算法测试");
+            network.testBottleneckAlgorithm();
+            waitForUser();
+            break;
+
         case 0:
             system("cls");
             cout << "\n================================================================================" << endl;

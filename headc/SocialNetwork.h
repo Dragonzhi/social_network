@@ -45,6 +45,7 @@ public:
 
     // 性能测试
     void testPerformance();
+    void testBottleneckAlgorithm();
 private:
 	vector<Person> vertList;
 	vector<list<Edge>> adjList;

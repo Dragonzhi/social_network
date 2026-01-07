@@ -18,30 +18,6 @@
 #endif
 using json = nlohmann::json;
 
-
-
-// 在 SocialNetwork.cpp 中添加测试函数
-void SocialNetwork::testPerformance() {
-    cout << "=== 哈希映射性能测试 ===\n";
-
-    // 测试查找性能
-    int testCount = 10000;
-    auto start = chrono::high_resolution_clock::now();
-
-    for (int i = 0; i < testCount; i++) {
-        // 随机查找测试
-        findIndex("测试用户");
-    }
-
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-
-    cout << testCount << " 次查找耗时: "
-        << duration.count() << " 微秒\n";
-    cout << "平均每次查找: "
-        << duration.count() / (double)testCount << " 微秒\n";
-}
-
 // 在类中添加一个辅助函数
 static std::wstring utf8ToWide(const std::string& utf8) {
 #ifdef _WIN32
@@ -980,13 +956,30 @@ void SocialNetwork::sortFriends() {
     _setmode(_fileno(stdout), _O_U16TEXT);
 
     std::wstring wname;
-    bool ascending;
 
     std::wcout << L"\n  请输入要排序的联系人姓名: ";
     std::getline(std::wcin, wname);
-    std::wcout << L"  排序顺序 (0=降序, 1=升序): ";
-    std::wcin >> ascending;
-    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // 清除换行符
+    bool ascending;
+    bool validInput = false;
+
+    while (!validInput) {
+        std::wcout << L"  排序顺序 (0=降序, 1=升序): ";
+
+        // 检查输入是否成功
+        if (std::wcin >> ascending) {
+            if (ascending == 0 || ascending == 1) {
+                validInput = true;
+            }
+            else {
+                std::wcout << L"  错误：请输入0或1！\n";
+            }
+        }
+        else {
+            std::wcout << L"  错误：输入无效，请输入0或1！\n";
+            std::wcin.clear();  // 清除错误状态
+        }
+        std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
 
     std::string name = wideToUtf8(wname);
     ltrim(name); rtrim(name);
@@ -1108,11 +1101,11 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
     if (start == end) return 0; // Same person
 
     int personCount = vertList.size();
-    vector<int> maxBottleNeck(personCount, 0);
-    vector<bool> visited(personCount, false); // Keep track of visited nodes
-    priority_queue<pair<int, int>> pq;
+    vector<int> maxBottleNeck(personCount, 0);  // 存储到每个节点的最大瓶颈值
+    vector<bool> visited(personCount, false);   // 标记是否已访问
+    priority_queue<pair<int, int>> pq;          // 大顶堆，(瓶颈值, 节点索引)
 
-    maxBottleNeck[start] = INT_MAX; // Initialize start with "infinite" capacity
+    maxBottleNeck[start] = INT_MAX; // 起点到自身的最小亲密度是"无限大"
     pq.push({ INT_MAX, start });
 
     while (!pq.empty()) {
@@ -1123,13 +1116,13 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
         if (visited[u]) continue; // If already visited, skip.
         visited[u] = true;
 
-        if (u == end) break; // Found the best path to the end node.
+        if (u == end) break; // 找到了通往终点节点的最佳路径。
 
         for (auto& e : adjList[u]) {
             int v = e.getTo();
             int weight = e.getWeight();
 
-            if (!visited[v]) { // Only consider unvisited neighbors
+            if (!visited[v]) { // 只考虑未访问过的相邻节点
                 int newBottleneck = min(maxBottleNeck[u], weight);
                 if (newBottleneck > maxBottleNeck[v]) {
                     maxBottleNeck[v] = newBottleneck;
@@ -1139,8 +1132,8 @@ int SocialNetwork::getBottleneckPath(string startName, string endName) {
         }
     }
 
-    // If we finish the loop and maxBottleNeck[end] is still 0, there is no path.
-    // Return -1 for "no path" (consistent with "person not found" error)
+    // 如果我们完成循环而 maxBottleNeck[end] 仍然为 0，则表示不存在路径。
+    // 返回 -1 表示“不存在路径”（与“未找到人员”错误保持一致）
     return (maxBottleNeck[end] == 0) ? -1 : maxBottleNeck[end];
 }
 	
@@ -1637,4 +1630,240 @@ void SocialNetwork::exportToHTML() {
     string command = "xdg-open \"" + filename + "\"";
 #endif
     system(command.c_str());
+}
+
+void SocialNetwork::testPerformance() {
+    cout << "=== 哈希映射性能测试 ===\n";
+
+    // 测试查找性能
+    int testCount = 10000;
+    auto start = chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < testCount; i++) {
+        // 随机查找测试
+        findIndex("测试用户");
+    }
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
+
+    cout << testCount << " 次查找耗时: "
+        << duration.count() << " 微秒\n";
+    cout << "平均每次查找: "
+        << duration.count() / (double)testCount << " 微秒\n";
+}
+// 在 SocialNetwork.cpp 中的 testPerformance() 函数之后添加
+
+void SocialNetwork::testBottleneckAlgorithm() {
+    cout << "=== 瓶颈路径算法性能测试 ===\n";
+
+    // 测试1: 基本功能测试
+    cout << "\n1. 基本功能测试:\n";
+    cout << LINE_THIN << endl;
+
+    // 创建测试图
+    // 图结构:
+    // A(0) --5-- B(1) --1-- C(2)
+    //   \                /
+    //    \--3-- D(3) --2--/
+
+    // 清空现有数据
+    vertList.clear();
+    adjList.clear();
+    nameToIndex.clear();
+
+    // 添加测试人员
+    vector<string> testNames;
+    testNames.push_back("A");
+    testNames.push_back("B");
+    testNames.push_back("C");
+    testNames.push_back("D");
+    testNames.push_back("E");
+    testNames.push_back("F");
+
+    for (size_t i = 0; i < testNames.size(); i++) {
+        Person p;
+        p.setName(testNames[i]);
+        vertList.push_back(p);
+        adjList.push_back(list<Edge>());
+        nameToIndex[testNames[i]] = static_cast<int>(vertList.size()) - 1;
+    }
+
+    // 添加测试关系
+    // A-B:5, B-C:1, A-D:3, D-C:2
+    vector<pair<pair<int, int>, int>> testEdges;
+    testEdges.push_back(make_pair(make_pair(0, 1), 5));  // A-B
+    testEdges.push_back(make_pair(make_pair(1, 2), 1));  // B-C
+    testEdges.push_back(make_pair(make_pair(0, 3), 3));  // A-D
+    testEdges.push_back(make_pair(make_pair(3, 2), 2));  // D-C
+
+    for (size_t k = 0; k < testEdges.size(); k++) {
+        int i = testEdges[k].first.first;
+        int j = testEdges[k].first.second;
+        int w = testEdges[k].second;
+
+        Edge e1, e2;
+        e1.setTo(j); e1.setWeight(w);
+        e2.setTo(i); e2.setWeight(w);
+        adjList[i].push_back(e1);
+        adjList[j].push_back(e2);
+    }
+
+    // 测试用例
+    vector<pair<pair<string, string>, pair<int, string>>> testCases;
+    testCases.push_back(make_pair(make_pair("A", "C"), make_pair(2, "路径 A-D-C 的瓶颈值 = min(3,2)=2")));
+    testCases.push_back(make_pair(make_pair("A", "B"), make_pair(5, "直接连接 A-B")));
+    testCases.push_back(make_pair(make_pair("B", "D"), make_pair(3, "路径 B-A-D 的瓶颈值 = min(5,3)=3")));
+    testCases.push_back(make_pair(make_pair("A", "E"), make_pair(-1, "E 不可达")));
+    testCases.push_back(make_pair(make_pair("A", "A"), make_pair(0, "同一人")));
+
+    int passed = 0;
+    for (size_t i = 0; i < testCases.size(); i++) {
+        string start = testCases[i].first.first;
+        string end = testCases[i].first.second;
+        int expected = testCases[i].second.first;
+        string description = testCases[i].second.second;
+
+        int result = getBottleneckPath(start, end);
+        bool success = (result == expected);
+
+        cout << "测试 " << start << " -> " << end << ": ";
+        if (success) {
+            cout << SUCCESS_ICON << " 通过 (结果: " << result << ", 预期: " << expected << ")\n";
+            passed++;
+        }
+        else {
+            cout << ERROR_ICON << " 失败 (结果: " << result << ", 预期: " << expected << ")\n";
+        }
+        cout << "   说明: " << description << "\n" << LINE_DASH << "\n";
+    }
+
+    cout << "\n基本功能测试: " << passed << "/" << testCases.size() << " 通过\n";
+
+    // 测试2: 性能测试
+    cout << "\n2. 性能测试:\n";
+    cout << LINE_THIN << endl;
+
+    // 创建大规模测试图
+    int N = 1000;  // 节点数
+    cout << "创建 " << N << " 个节点的测试图...\n";
+
+    // 清空数据
+    vertList.clear();
+    adjList.clear();
+    nameToIndex.clear();
+
+    // 添加节点
+    for (int i = 0; i < N; i++) {
+        Person p;
+        p.setName("Person_" + to_string(i));
+        vertList.push_back(p);
+        adjList.push_back(list<Edge>());
+        nameToIndex["Person_" + to_string(i)] = i;
+    }
+
+    // 添加随机边（每个节点约3-5个连接）
+    srand(static_cast<unsigned int>(time(0)));
+    int totalEdges = 0;
+    for (int i = 0; i < N; i++) {
+        int edgeCount = 3 + rand() % 3;
+        for (int j = 0; j < edgeCount; j++) {
+            int target = rand() % N;
+            if (target == i) continue;
+
+            int weight = 10 + rand() % 91;  // 10-100
+
+            // 检查边是否已存在
+            bool exists = false;
+            for (auto& edge : adjList[i]) {
+                if (edge.getTo() == target) {
+                    exists = true;
+                    break;
+                }
+            }
+
+            if (!exists) {
+                Edge e1, e2;
+                e1.setTo(target); e1.setWeight(weight);
+                e2.setTo(i); e2.setWeight(weight);
+                adjList[i].push_back(e1);
+                adjList[target].push_back(e2);
+                totalEdges++;
+            }
+        }
+    }
+
+    cout << "创建完成: " << N << " 节点, " << totalEdges << " 条边\n";
+
+    // 性能测试
+    int testPairs = 100;
+    cout << "测试 " << testPairs << " 对随机节点...\n";
+
+    auto startTime = chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < testPairs; i++) {
+        int startIdx = rand() % N;
+        int endIdx = rand() % N;
+
+        string startName = "Person_" + to_string(startIdx);
+        string endName = "Person_" + to_string(endIdx);
+
+        getBottleneckPath(startName, endName);
+    }
+
+    auto endTime = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(endTime - startTime);
+
+    cout << "完成 " << testPairs << " 次查询，耗时: "
+        << duration.count() << " 毫秒\n";
+    cout << "平均每次查询: "
+        << duration.count() / static_cast<double>(testPairs) << " 毫秒\n";
+
+    // 测试3: 算法正确性验证
+    cout << "\n3. 算法正确性验证:\n";
+    cout << LINE_THIN << endl;
+
+    // 验证几个特定路径
+    cout << "验证算法正确性:\n";
+
+    // 创建一个简单链状图验证
+    vertList.clear();
+    adjList.clear();
+    nameToIndex.clear();
+
+    // 创建链: 0--10--1--20--2--30--3
+    for (int i = 0; i < 4; i++) {
+        Person p;
+        p.setName("Node" + to_string(i));
+        vertList.push_back(p);
+        adjList.push_back(list<Edge>());
+        nameToIndex["Node" + to_string(i)] = i;
+    }
+
+    // 添加链状连接
+    vector<int> weights;
+    weights.push_back(10);
+    weights.push_back(20);
+    weights.push_back(30);
+
+    for (int i = 0; i < 3; i++) {
+        Edge e1, e2;
+        e1.setTo(i + 1); e1.setWeight(weights[i]);
+        e2.setTo(i); e2.setWeight(weights[i]);
+        adjList[i].push_back(e1);
+        adjList[i + 1].push_back(e2);
+    }
+
+    // 验证链状图的瓶颈值
+    cout << "链状图测试 (0--10--1--20--2--30--3):\n";
+    cout << "  0->1: 预期=10, 实际=" << getBottleneckPath("Node0", "Node1")
+        << " " << (getBottleneckPath("Node0", "Node1") == 10 ? SUCCESS_ICON : ERROR_ICON) << "\n";
+    cout << "  0->2: 预期=10, 实际=" << getBottleneckPath("Node0", "Node2")
+        << " " << (getBottleneckPath("Node0", "Node2") == 10 ? SUCCESS_ICON : ERROR_ICON) << "\n";
+    cout << "  0->3: 预期=10, 实际=" << getBottleneckPath("Node0", "Node3")
+        << " " << (getBottleneckPath("Node0", "Node3") == 10 ? SUCCESS_ICON : ERROR_ICON) << "\n";
+    cout << "  1->3: 预期=20, 实际=" << getBottleneckPath("Node1", "Node3")
+        << " " << (getBottleneckPath("Node1", "Node3") == 20 ? SUCCESS_ICON : ERROR_ICON) << "\n";
+
+    cout << "\n=== 测试完成 ===\n";
 }
