@@ -1470,32 +1470,48 @@ void SocialNetwork::exportToHTML() {
         }
     </style>
     <script>
-        // 方案三核心：多CDN源列表（优先级从高到低）
+        // 多CDN源列表（优先级从高到低）
         const echartsCdnList = [
             'https://unpkg.com/echarts@5.4.3/dist/echarts.min.js',
             'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
             'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'
         ];
 
-        // 递归加载ECharts CDN
+
+        // 递归加载ECharts CDN（带超时机制）
         function loadEcharts(cdnList) {
             if (cdnList.length === 0) {
                 alert('所有ECharts CDN加载失败！请手动下载并引入：\nhttps://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js');
                 return false;
             }
+    
             const currentCdn = cdnList[0];
             const script = document.createElement('script');
             script.src = currentCdn;
             script.defer = true;
 
+            let loaded = false;
+            const timeoutId = setTimeout(() => {
+                if (!loaded) {
+                    console.warn(`ECharts CDN加载超时（1秒）：${currentCdn}，尝试下一个源`);
+                    script.onload = script.onerror = null; // 清除事件处理器
+                    document.head.removeChild(script); // 移除失败的script标签
+                    loadEcharts(cdnList.slice(1)); // 尝试下一个源
+                }
+            }, 1000); // 1秒超时
+
             // CDN加载成功
             script.onload = function() {
+                loaded = true;
+                clearTimeout(timeoutId);
                 console.log(`ECharts加载成功（来源：${currentCdn}）`);
                 initECharts(); // 加载成功后初始化图表
             };
 
             // 当前CDN失败，尝试下一个
             script.onerror = function() {
+                loaded = true;
+                clearTimeout(timeoutId);
                 console.warn(`ECharts CDN加载失败：${currentCdn}，尝试下一个源`);
                 loadEcharts(cdnList.slice(1));
             };
