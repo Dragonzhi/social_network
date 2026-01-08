@@ -19,16 +19,16 @@
 using json = nlohmann::json;
 
 // 在类中添加一个辅助函数
-static std::wstring utf8ToWide(const std::string& utf8) {
+static wstring utf8ToWide(const string& utf8) {
 #ifdef _WIN32
     int wlen = MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), NULL, 0);
     if (wlen <= 0) return L"";
-    std::wstring ws(wlen, L'\0');
+    wstring ws(wlen, L'\0');
     MultiByteToWideChar(CP_UTF8, 0, utf8.c_str(), (int)utf8.size(), &ws[0], wlen);
     return ws;
 #else
     // 在非Windows平台上，简单转换（假设系统使用UTF-8）
-    return std::wstring(utf8.begin(), utf8.end());
+    return wstring(utf8.begin(), utf8.end());
 #endif
 }
 
@@ -43,78 +43,78 @@ SocialNetwork::~SocialNetwork()
 }
 
 // 替换全角空格 U+3000 -> ASCII space
-static void replaceFullWidthSpaces(std::string& s) {
-    const std::string fullWidth = "\xE3\x80\x80";
+static void replaceFullWidthSpaces(string& s) {
+    const string fullWidth = "\xE3\x80\x80";
     size_t pos = 0;
-    while ((pos = s.find(fullWidth, pos)) != std::string::npos) {
+    while ((pos = s.find(fullWidth, pos)) != string::npos) {
         s.replace(pos, fullWidth.size(), " ");
         pos += 1;
     }
 }
 
-static void ltrim(std::string& s) {
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) { return !std::isspace(ch); }));
+static void ltrim(string& s) {
+    s.erase(s.begin(), find_if(s.begin(), s.end(), [](unsigned char ch) { return !isspace(ch); }));
 }
-static void rtrim(std::string& s) {
-    s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !std::isspace(ch); }).base(), s.end());
+static void rtrim(string& s) {
+    s.erase(find_if(s.rbegin(), s.rend(), [](unsigned char ch) { return !isspace(ch); }).base(), s.end());
 }
 
 #ifdef _WIN32
-// 将 UTF-16 wide string 转成 UTF-8 std::string
-static std::string wideToUtf8(const std::wstring& ws) {
+// 将 UTF-16 wide string 转成 UTF-8 string
+static string wideToUtf8(const wstring& ws) {
     if (ws.empty()) return {};
     int len = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), NULL, 0, NULL, NULL);
     if (len <= 0) return {};
-    std::string out(len, '\0');
+    string out(len, '\0');
     WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), (int)ws.size(), &out[0], len, NULL, NULL);
     return out;
 }
 #endif
 
 // 调试：打印字节十六进制
-static void debug_print_hex(const std::string& s, const char* label = nullptr) {
+static void debug_print_hex(const string& s, const char* label = nullptr) {
 #ifdef DEBUG
-    if (label) std::cout << label;
-    std::cout << "DEBUG: raw bytes (len=" << s.size() << "): ";
-    std::cout << std::hex << std::setfill('0');
+    if (label) cout << label;
+    cout << "DEBUG: raw bytes (len=" << s.size() << "): ";
+    cout << hex << setfill('0');
     for (unsigned char c : s) {
-        std::cout << std::setw(2) << (int)c << " ";
+        cout << setw(2) << (int)c << " ";
     }
-    std::cout << std::dec << "\n";
+    cout << dec << "\n";
 #endif
 }
 
 void SocialNetwork::addPersons() {
 #ifdef _WIN32
-    // 切换 stdin/stdout 到 UTF-16 模式，使得 std::wcin/std::wcout 能正确读取/写入控制台（Windows 控制台）
+    // 切换 stdin/stdout 到 UTF-16 模式，使得 wcin/wcout 能正确读取/写入控制台（Windows 控制台）
     // 注意：若输入被重定向（例如文件或管道），_setmode 可能不适用。通常对交互式控制台有效。
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring winput;
-    std::wcout << L"请输入要添加的联系人名称，多个名称用空格分隔：\n";
-    std::getline(std::wcin, winput);
+    wstring winput;
+    wcout << L"请输入要添加的联系人名称，多个名称用空格分隔：\n";
+    getline(wcin, winput);
 
     if (winput.empty()) {
-        std::wcout << L"输入不能为空！\n";
+        wcout << L"输入不能为空！\n";
         // 可将模式恢复为默认（可选）
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
-    // 将宽字符串转换为 UTF-8 std::string，后续逻辑以 UTF-8 字符串处理
-    std::string input = wideToUtf8(winput);
+    // 将宽字符串转换为 UTF-8 string，后续逻辑以 UTF-8 字符串处理
+    string input = wideToUtf8(winput);
 
-    // 可选：恢复到窄模式（如果你的程序中后续大量使用 std::cout，建议恢复）
+    // 可选：恢复到窄模式（如果你的程序中后续大量使用 cout，建议恢复）
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string input;
-    std::cout << "请输入要添加的联系人名称，多个名称用空格分隔：\n";
-    std::getline(std::cin, input);
+    string input;
+    cout << "请输入要添加的联系人名称，多个名称用空格分隔：\n";
+    getline(cin, input);
     if (input.empty()) {
-        std::cout << "输入不能为空！\n";
+        cout << "输入不能为空！\n";
         return;
     }
 #endif
@@ -130,14 +130,14 @@ void SocialNetwork::addPersons() {
     rtrim(input);
 
     if (input.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 
     // 按 ASCII 空白分割
-    std::stringstream ss(input);
-    std::string name;
-    std::vector<std::string> names;
+    stringstream ss(input);
+    string name;
+    vector<string> names;
     int addedCount = 0;
     int existCount = 0;
 
@@ -147,38 +147,38 @@ void SocialNetwork::addPersons() {
     }
 
     if (names.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 
-    std::cout << "\n正在添加以下联系人：\n";
+    cout << "\n正在添加以下联系人：\n";
     for (const auto& n : names) {
-        std::cout << n << " ";
+        cout << n << " ";
     }
-    std::cout << "\n\n";
+    cout << "\n\n";
 
     for (const auto& n : names) {
         if (n.empty()) continue;
 
         if (findIndex(n) != -1) {
-            std::cout << "联系人 " << n << " 已存在，跳过添加。\n";
+            cout << "联系人 " << n << " 已存在，跳过添加。\n";
             existCount++;
             continue;
         }
 
         Person p;
-        p.setName(n); // setName 接受 UTF-8 std::string
+        p.setName(n); // setName 接受 UTF-8 string
         vertList.push_back(p);
-        adjList.push_back(std::list<Edge>());
+        adjList.push_back(list<Edge>());
         nameToIndex[n] = static_cast<int>(vertList.size()) - 1;
         addedCount++;
-        std::cout << "联系人 " << n << " 添加成功！\n";
+        cout << "联系人 " << n << " 添加成功！\n";
     }
 
-    std::cout << "\n批量添加完成：\n";
-    std::cout << "成功添加 " << addedCount << " 个联系人。\n";
+    cout << "\n批量添加完成：\n";
+    cout << "成功添加 " << addedCount << " 个联系人。\n";
     if (existCount > 0) {
-        std::cout << "跳过 " << existCount << " 个已存在的联系人。\n";
+        cout << "跳过 " << existCount << " 个已存在的联系人。\n";
     }
 }
 // 删除联系人
@@ -188,19 +188,19 @@ void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring winput;
-    std::wcout << L"请输入要删除的联系人姓名: ";
-    std::getline(std::wcin, winput);
+    wstring winput;
+    wcout << L"请输入要删除的联系人姓名: ";
+    getline(wcin, winput);
 
     if (winput.empty()) {
-        std::wcout << L"输入不能为空！\n";
+        wcout << L"输入不能为空！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
-    // 将宽字符串转换为 UTF-8 std::string
-    std::string name = wideToUtf8(winput);
+    // 将宽字符串转换为 UTF-8 string
+    string name = wideToUtf8(winput);
 
     // 归一化：把全角空格替换为普通空格
     replaceFullWidthSpaces(name);
@@ -210,7 +210,7 @@ void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控
     rtrim(name);
 
     if (name.empty()) {
-        std::wcout << L"未检测到有效姓名！\n";
+        wcout << L"未检测到有效姓名！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -218,8 +218,8 @@ void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控
 
     int index = findIndex(name);
     if (index == -1) {
-        std::wstring wname = utf8ToWide(name);
-        std::wcout << L"联系人 " << wname << L" 不存在！\n";
+        wstring wname = utf8ToWide(name);
+        wcout << L"联系人 " << wname << L" 不存在！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -254,17 +254,17 @@ void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控
         }
     }
 
-    std::wstring wname = utf8ToWide(name);
-    std::wcout << L"联系人 " << wname << L" 删除成功！\n";
+    wstring wname = utf8ToWide(name);
+    wcout << L"联系人 " << wname << L" 删除成功！\n";
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string name;
-    std::cout << "请输入要删除的联系人姓名: ";
-    std::getline(std::cin, name);
+    string name;
+    cout << "请输入要删除的联系人姓名: ";
+    getline(cin, name);
 
     if (name.empty()) {
-        std::cout << "输入不能为空！\n";
+        cout << "输入不能为空！\n";
         return;
     }
 
@@ -276,7 +276,7 @@ void SocialNetwork::deletePerson() {  // 注意：移除了参数，改为从控
     rtrim(name);
 
     if (name.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 
@@ -326,27 +326,27 @@ void SocialNetwork::addEdge() {  // 移除参数
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring wname1, wname2;
+    wstring wname1, wname2;
     int weight;
 
-    std::wcout << L"请输入第一个人名: ";
-    std::getline(std::wcin, wname1);
-    std::wcout << L"请输入第二个人名: ";
-    std::getline(std::wcin, wname2);
-    std::wcout << L"请输入亲密度 (整数): ";
-    std::wcin >> weight;
-    std::wcin.ignore(); // 清除换行符
+    wcout << L"请输入第一个人名: ";
+    getline(wcin, wname1);
+    wcout << L"请输入第二个人名: ";
+    getline(wcin, wname2);
+    wcout << L"请输入亲密度 (整数): ";
+    wcin >> weight;
+    wcin.ignore(); // 清除换行符
 
     if (wname1.empty() || wname2.empty()) {
-        std::wcout << L"输入不能为空！\n";
+        wcout << L"输入不能为空！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
-    // 将宽字符串转换为 UTF-8 std::string
-    std::string name1 = wideToUtf8(wname1);
-    std::string name2 = wideToUtf8(wname2);
+    // 将宽字符串转换为 UTF-8 string
+    string name1 = wideToUtf8(wname1);
+    string name2 = wideToUtf8(wname2);
 
     // 归一化：把全角空格替换为普通空格
     replaceFullWidthSpaces(name1);
@@ -357,7 +357,7 @@ void SocialNetwork::addEdge() {  // 移除参数
     ltrim(name2); rtrim(name2);
 
     if (name1.empty() || name2.empty()) {
-        std::wcout << L"未检测到有效姓名！\n";
+        wcout << L"未检测到有效姓名！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -367,14 +367,14 @@ void SocialNetwork::addEdge() {  // 移除参数
     int index2 = findIndex(name2);
 
     if (index1 == -1 || index2 == -1) {
-        std::wcout << L"输入的人员不存在！\n";
+        wcout << L"输入的人员不存在！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
     if (index1 == index2) {
-        std::wcout << L"不能与自己建立关系！\n";
+        wcout << L"不能与自己建立关系！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -384,7 +384,7 @@ void SocialNetwork::addEdge() {  // 移除参数
     auto& friends1 = adjList[index1];
     for (auto& edge : friends1) {
         if (edge.getTo() == index2) {
-            std::wcout << wname1 << L" 和 " << wname2 << L" 的关系已存在，亲密度为: "
+            wcout << wname1 << L" 和 " << wname2 << L" 的关系已存在，亲密度为: "
                 << edge.getWeight() << L"\n";
             _setmode(_fileno(stdin), _O_TEXT);
             _setmode(_fileno(stdout), _O_TEXT);
@@ -402,23 +402,23 @@ void SocialNetwork::addEdge() {  // 移除参数
     adjList[index1].push_back(edge1);
     adjList[index2].push_back(edge2);
 
-    std::wcout << L"已建立 " << wname1 << L" 和 " << wname2 << L" 的关系，亲密度: " << weight << L"\n";
+    wcout << L"已建立 " << wname1 << L" 和 " << wname2 << L" 的关系，亲密度: " << weight << L"\n";
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string name1, name2;
+    string name1, name2;
     int weight;
 
-    std::cout << "请输入第一个人名: ";
-    std::getline(std::cin, name1);
-    std::cout << "请输入第二个人名: ";
-    std::getline(std::cin, name2);
-    std::cout << "请输入亲密度 (整数): ";
-    std::cin >> weight;
-    std::cin.ignore(); // 清除换行符
+    cout << "请输入第一个人名: ";
+    getline(cin, name1);
+    cout << "请输入第二个人名: ";
+    getline(cin, name2);
+    cout << "请输入亲密度 (整数): ";
+    cin >> weight;
+    cin.ignore(); // 清除换行符
 
     if (name1.empty() || name2.empty()) {
-        std::cout << "输入不能为空！\n";
+        cout << "输入不能为空！\n";
         return;
     }
 
@@ -431,7 +431,7 @@ void SocialNetwork::addEdge() {  // 移除参数
     ltrim(name2); rtrim(name2);
 
     if (name1.empty() || name2.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 
@@ -479,23 +479,23 @@ void SocialNetwork::deleteEdge() {  // 移除参数
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring wname1, wname2;
+    wstring wname1, wname2;
 
-    std::wcout << L"请输入第一个人名: ";
-    std::getline(std::wcin, wname1);
-    std::wcout << L"请输入第二个人名: ";
-    std::getline(std::wcin, wname2);
+    wcout << L"请输入第一个人名: ";
+    getline(wcin, wname1);
+    wcout << L"请输入第二个人名: ";
+    getline(wcin, wname2);
 
     if (wname1.empty() || wname2.empty()) {
-        std::wcout << L"输入不能为空！\n";
+        wcout << L"输入不能为空！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
     }
 
-    // 将宽字符串转换为 UTF-8 std::string
-    std::string name1 = wideToUtf8(wname1);
-    std::string name2 = wideToUtf8(wname2);
+    // 将宽字符串转换为 UTF-8 string
+    string name1 = wideToUtf8(wname1);
+    string name2 = wideToUtf8(wname2);
 
     // 归一化：把全角空格替换为普通空格
     replaceFullWidthSpaces(name1);
@@ -506,7 +506,7 @@ void SocialNetwork::deleteEdge() {  // 移除参数
     ltrim(name2); rtrim(name2);
 
     if (name1.empty() || name2.empty()) {
-        std::wcout << L"未检测到有效姓名！\n";
+        wcout << L"未检测到有效姓名！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -516,7 +516,7 @@ void SocialNetwork::deleteEdge() {  // 移除参数
     int index2 = findIndex(name2);
 
     if (index1 == -1 || index2 == -1) {
-        std::wcout << L"输入的人员不存在！\n";
+        wcout << L"输入的人员不存在！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -549,23 +549,23 @@ void SocialNetwork::deleteEdge() {  // 移除参数
     }
 
     if (found) {
-        std::wcout << L"已删除 " << wname1 << L" 和 " << wname2 << L" 的关系\n";
+        wcout << L"已删除 " << wname1 << L" 和 " << wname2 << L" 的关系\n";
     }
     else {
-        std::wcout << wname1 << L" 和 " << wname2 << L" 之间没有关系\n";
+        wcout << wname1 << L" 和 " << wname2 << L" 之间没有关系\n";
     }
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string name1, name2;
+    string name1, name2;
 
-    std::cout << "请输入第一个人名: ";
-    std::getline(std::cin, name1);
-    std::cout << "请输入第二个人名: ";
-    std::getline(std::cin, name2);
+    cout << "请输入第一个人名: ";
+    getline(cin, name1);
+    cout << "请输入第二个人名: ";
+    getline(cin, name2);
 
     if (name1.empty() || name2.empty()) {
-        std::cout << "输入不能为空！\n";
+        cout << "输入不能为空！\n";
         return;
     }
 
@@ -578,7 +578,7 @@ void SocialNetwork::deleteEdge() {  // 移除参数
     ltrim(name2); rtrim(name2);
 
     if (name1.empty() || name2.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 
@@ -631,22 +631,31 @@ void SocialNetwork::saveToFile() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
-    std::wstring wfilename;
-    std::wcout << L"\n  请输入保存文件名 (例如: network.json): ";
-    std::wcin >> wfilename;
-    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::string filename = wideToUtf8(wfilename);
+    wstring wfilename;
+    wcout << L"\n  请输入保存文件名 (例如: network.json): ";
+    wcin >> wfilename;
+    wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+    string filename = wideToUtf8(wfilename);
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string filename;
-    std::cout << "\n  请输入保存文件名 (例如: network.json): ";
-    std::cin >> filename;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    string filename;
+    cout << "\n  请输入保存文件名 (例如: network.json): ";
+    cin >> filename;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 #endif
     if (filename.empty()) {
         cout << "文件名不能为空！\n";
         return;
+    }
+
+    // 检查是否以.json（不区分大小写）
+    string lowerFilename = filename;
+    transform(lowerFilename.begin(), lowerFilename.end(), lowerFilename.begin(), ::tolower);
+
+    if (lowerFilename.size() < 5 ||
+        (lowerFilename.substr(lowerFilename.size() - 5) != ".json")) {
+        filename += ".json";
     }
 
     // 创建 JSON 对象
@@ -695,7 +704,7 @@ void SocialNetwork::saveToFile() {
     // 4. 写入文件
     try {
         // 以二进制模式并带BOM的方式写入UTF-8，确保兼容性
-        std::ofstream file(filename, std::ios::out | std::ios::binary); 
+        ofstream file(filename, ios::out | ios::binary); 
         if (!file.is_open()) {
             cout << "无法打开文件 " << filename << " 进行写入！\n";
             return;
@@ -713,7 +722,7 @@ void SocialNetwork::saveToFile() {
         cout << "保存了 " << vertList.size() << " 个联系人和 " << edges.size() << " 条关系\n";
         cout << "保存时间: " << time_str << endl;
     }
-    catch (const std::exception& e) {
+    catch (const exception& e) {
         cout << "保存文件时发生错误: " << e.what() << endl;
     }
 }
@@ -722,24 +731,31 @@ void SocialNetwork::loadFromFile() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
-    std::wstring wfilename;
-    std::wcout << L"\n  请输入加载文件名 (例如: network.json): ";
-    std::wcin >> wfilename;
-    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::string filename = wideToUtf8(wfilename);
+    wstring wfilename;
+    wcout << L"\n  请输入加载文件名 (例如: network.json): ";
+    wcin >> wfilename;
+    wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+    string filename = wideToUtf8(wfilename);
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string filename;
-    std::cout << "\n  请输入加载文件名 (例如: network.json): ";
-    std::cin >> filename;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    string filename;
+    cout << "\n  请输入加载文件名 (例如: network.json): ";
+    cin >> filename;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 #endif
     if (filename.empty()) {
         cout << "文件名不能为空！\n";
         return;
     }
+    // 检查是否以.json（不区分大小写）
+    string lowerFilename = filename;
+    transform(lowerFilename.begin(), lowerFilename.end(), lowerFilename.begin(), ::tolower);
 
+    if (lowerFilename.size() < 5 ||
+        (lowerFilename.substr(lowerFilename.size() - 5) != ".json")) {
+        filename += ".json";
+    }
     // 清空现有数据
     vertList.clear();
     adjList.clear();
@@ -747,20 +763,20 @@ void SocialNetwork::loadFromFile() {
 
     try {
         // 1. 打开文件并检查
-        std::ifstream file(filename, std::ios::binary); // 以二进制模式读取
+        ifstream file(filename, ios::binary); // 以二进制模式读取
         if (!file.is_open()) {
             cout << "无法打开文件 " << filename << "！\n";
             return;
         }
 
         // 2. 检查文件是否为空
-        file.seekg(0, std::ios::end);
+        file.seekg(0, ios::end);
         if (file.tellg() == 0) {
             cout << "文件为空！\n";
             file.close();
             return;
         }
-        file.seekg(0, std::ios::beg);
+        file.seekg(0, ios::beg);
 
         // 3. 解析JSON (nlohmann::json handles BOM and UTF-8 automatically)
         json data;
@@ -856,7 +872,7 @@ void SocialNetwork::loadFromFile() {
         cout << "JSON 解析错误: " << e.what() << endl;
         cout << "请确保文件是有效的 JSON 格式，且为 UTF-8 编码！\n";
     }
-    catch (const std::exception& e) {
+    catch (const exception& e) {
         cout << "加载文件时发生未知错误: " << e.what() << endl;
         cout << "请确保文件存在且格式正确！\n";
     }
@@ -955,38 +971,38 @@ void SocialNetwork::sortFriends() {
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring wname;
+    wstring wname;
 
-    std::wcout << L"\n  请输入要排序的联系人姓名: ";
-    std::getline(std::wcin, wname);
+    wcout << L"\n  请输入要排序的联系人姓名: ";
+    getline(wcin, wname);
     bool ascending;
     bool validInput = false;
 
     while (!validInput) {
-        std::wcout << L"  排序顺序 (0=降序, 1=升序): ";
+        wcout << L"  排序顺序 (0=降序, 1=升序): ";
 
         // 检查输入是否成功
-        if (std::wcin >> ascending) {
+        if (wcin >> ascending) {
             if (ascending == 0 || ascending == 1) {
                 validInput = true;
             }
             else {
-                std::wcout << L"  错误：请输入0或1！\n";
+                wcout << L"  错误：请输入0或1！\n";
             }
         }
         else {
-            std::wcout << L"  错误：输入无效，请输入0或1！\n";
-            std::wcin.clear();  // 清除错误状态
+            wcout << L"  错误：输入无效，请输入0或1！\n";
+            wcin.clear();  // 清除错误状态
         }
-        std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        wcin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
 
-    std::string name = wideToUtf8(wname);
+    string name = wideToUtf8(wname);
     ltrim(name); rtrim(name);
     replaceFullWidthSpaces(name);
 
     if (name.empty()) {
-        std::wcout << L"未检测到有效姓名！\n";
+        wcout << L"未检测到有效姓名！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -995,17 +1011,17 @@ void SocialNetwork::sortFriends() {
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string name;
+    string name;
     bool ascending;
-    std::cout << "\n  请输入要排序的联系人姓名: ";
-    std::getline(std::cin, name);
-    std::cout << "  排序顺序 (0=降序, 1=升序): ";
-    std::cin >> ascending;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    cout << "\n  请输入要排序的联系人姓名: ";
+    getline(cin, name);
+    cout << "  排序顺序 (0=降序, 1=升序): ";
+    cin >> ascending;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     ltrim(name); rtrim(name);
     replaceFullWidthSpaces(name);
     if (name.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 #endif
@@ -1298,21 +1314,21 @@ void SocialNetwork::displayBottleneckBeautiful() {
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
 
-    std::wstring wname1, wname2;
-    std::wcout << L"\n  请输入第一个人姓名: ";
-    std::getline(std::wcin, wname1);
-    std::wcout << L"  请输入第二个人姓名: ";
-    std::getline(std::wcin, wname2);
+    wstring wname1, wname2;
+    wcout << L"\n  请输入第一个人姓名: ";
+    getline(wcin, wname1);
+    wcout << L"  请输入第二个人姓名: ";
+    getline(wcin, wname2);
 
-    std::string startName = wideToUtf8(wname1);
-    std::string endName = wideToUtf8(wname2);
+    string startName = wideToUtf8(wname1);
+    string endName = wideToUtf8(wname2);
     ltrim(startName); rtrim(startName);
     ltrim(endName); rtrim(endName);
     replaceFullWidthSpaces(startName);
     replaceFullWidthSpaces(endName);
 
     if (startName.empty() || endName.empty()) {
-        std::wcout << L"未检测到有效姓名！\n";
+        wcout << L"未检测到有效姓名！\n";
         _setmode(_fileno(stdin), _O_TEXT);
         _setmode(_fileno(stdout), _O_TEXT);
         return;
@@ -1320,17 +1336,17 @@ void SocialNetwork::displayBottleneckBeautiful() {
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string startName, endName;
-    std::cout << "\n  请输入第一个人姓名: ";
-    std::getline(std::cin, startName);
-    std::cout << "  请输入第二个人姓名: ";
-    std::getline(std::cin, endName);
+    string startName, endName;
+    cout << "\n  请输入第一个人姓名: ";
+    getline(cin, startName);
+    cout << "  请输入第二个人姓名: ";
+    getline(cin, endName);
     ltrim(startName); rtrim(startName);
     ltrim(endName); rtrim(endName);
     replaceFullWidthSpaces(startName);
     replaceFullWidthSpaces(endName);
     if (startName.empty() || endName.empty()) {
-        std::cout << "未检测到有效姓名！\n";
+        cout << "未检测到有效姓名！\n";
         return;
     }
 #endif
@@ -1397,19 +1413,29 @@ void SocialNetwork::exportToHTML() {
 #ifdef _WIN32
     _setmode(_fileno(stdin), _O_U16TEXT);
     _setmode(_fileno(stdout), _O_U16TEXT);
-    std::wstring wfilename;
-    std::wcout << L"\n  请输入HTML文件名 (例如: network.html): ";
-    std::wcin >> wfilename;
-    std::wcin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::string filename = wideToUtf8(wfilename);
+    wstring wfilename;
+    wcout << L"\n  请输入HTML文件名 (例如: network.html): ";
+    wcin >> wfilename;
+    wcin.ignore(numeric_limits<streamsize>::max(), '\n');
+    string filename = wideToUtf8(wfilename);
     _setmode(_fileno(stdin), _O_TEXT);
     _setmode(_fileno(stdout), _O_TEXT);
 #else
-    std::string filename;
-    std::cout << "\n  请输入HTML文件名 (例如: network.html): ";
-    std::cin >> filename;
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    string filename;
+    cout << "\n  请输入HTML文件名 (例如: network.html): ";
+    cin >> filename;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 #endif
+
+    // 检查是否以.html或.htm结尾（不区分大小写）
+    string lowerFilename = filename;
+    transform(lowerFilename.begin(), lowerFilename.end(), lowerFilename.begin(), ::tolower);
+
+    if (lowerFilename.size() < 5 ||
+        (lowerFilename.substr(lowerFilename.size() - 5) != ".html" &&
+            lowerFilename.substr(lowerFilename.size() - 4) != ".htm")) {
+        filename += ".html";
+    }
 
     // 二进制写入+UTF8 BOM头 彻底解决中文乱码
     ofstream file(filename, ios::out | ios::binary);
