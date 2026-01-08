@@ -1464,12 +1464,16 @@ void SocialNetwork::exportToHTML() {
                  background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         #network { width: 100%; height: 800px; background: white; 
                   border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     <script>
         // 方案三核心：多CDN源列表（优先级从高到低）
         const echartsCdnList = [
-            'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
             'https://unpkg.com/echarts@5.4.3/dist/echarts.min.js',
+            'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
             'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'
         ];
 
@@ -1522,6 +1526,12 @@ void SocialNetwork::exportToHTML() {
 
         function doInit() {
         var myChart = echarts.init(document.getElementById('network'));
+
+        var loadingElement = document.getElementById('loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+
         var nodesData = [)";
 
     // 遍历生成节点数据（保留原有逻辑）
@@ -1555,7 +1565,7 @@ void SocialNetwork::exportToHTML() {
             }
         }
     }
-
+    
     // 保留原有tooltip差异化显示逻辑
     file << R"(];
 
@@ -1640,7 +1650,13 @@ void SocialNetwork::exportToHTML() {
             <h1>社交网络关系图</h1>
             <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
         </div>
-        <div id="network"></div>
+        <div id="network">
+                <div id="loading" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+                    <div style="font-size: 24px; color: #409EFF; margin-bottom: 20px;">正在加载中...</div>
+                    <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #409EFF; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div style="margin-top: 20px; color: #666; font-size: 14px;">加载图表数据，请稍候...</div>
+            </div>
+        </div>
     </div>
 </body>
 </html>)";
