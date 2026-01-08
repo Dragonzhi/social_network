@@ -1,0 +1,959 @@
+{
+  "persons": [
+    {
+      "name": "曹彬",
+      "id": 1,
+      "gender": "male",
+      "age": 78
+    },
+    {
+      "name": "黄旭57",
+      "id": 2,
+      "gender": "male",
+      "age": 54
+    },
+    {
+      "name": "江雅帅",
+      "id": 3,
+      "gender": "female",
+      "age": 41
+    },
+    {
+      "name": "卢阳泉",
+      "id": 4,
+      "gender": "male",
+      "age": 64
+    },
+    {
+      "name": "高皓旭",
+      "id": 5,
+      "gender": "male",
+      "age": 56
+    },
+    {
+      "name": "林艳云",
+      "id": 6,
+      "gender": "female",
+      "age": 78
+    },
+    {
+      "name": "廖鹏",
+      "id": 7,
+      "gender": "male",
+      "age": 21
+    },
+    {
+      "name": "姜怡明",
+      "id": 8,
+      "gender": "female",
+      "age": 61
+    },
+    {
+      "name": "陈强静",
+      "id": 9,
+      "gender": "female",
+      "age": 54
+    },
+    {
+      "name": "郝慧芳",
+      "id": 10,
+      "gender": "female",
+      "age": 28
+    },
+    {
+      "name": "石强76",
+      "id": 11,
+      "gender": "male",
+      "age": 48
+    },
+    {
+      "name": "任瑶威",
+      "id": 12,
+      "gender": "female",
+      "age": 59
+    },
+    {
+      "name": "郭婷",
+      "id": 13,
+      "gender": "female",
+      "age": 27
+    },
+    {
+      "name": "朱瑞淑",
+      "id": 14,
+      "gender": "female",
+      "age": 19
+    },
+    {
+      "name": "毛涛",
+      "id": 15,
+      "gender": "male",
+      "age": 65
+    },
+    {
+      "name": "田林淑",
+      "id": 16,
+      "gender": "female",
+      "age": 62
+    },
+    {
+      "name": "卢婷淑",
+      "id": 17,
+      "gender": "female",
+      "age": 66
+    },
+    {
+      "name": "傅毅超",
+      "id": 18,
+      "gender": "male",
+      "age": 19
+    },
+    {
+      "name": "夏珍琪",
+      "id": 19,
+      "gender": "female",
+      "age": 38
+    },
+    {
+      "name": "刘华",
+      "id": 20,
+      "gender": "male",
+      "age": 65
+    },
+    {
+      "name": "袁梅倩",
+      "id": 21,
+      "gender": "female",
+      "age": 18
+    },
+    {
+      "name": "任静珍",
+      "id": 22,
+      "gender": "female",
+      "age": 18
+    },
+    {
+      "name": "朱璐明",
+      "id": 23,
+      "gender": "female",
+      "age": 19
+    },
+    {
+      "name": "史璐亮",
+      "id": 24,
+      "gender": "female",
+      "age": 58
+    },
+    {
+      "name": "许彬淑38",
+      "id": 25,
+      "gender": "female",
+      "age": 26
+    },
+    {
+      "name": "石皓铭",
+      "id": 26,
+      "gender": "male",
+      "age": 48
+    },
+    {
+      "name": "于毅宏",
+      "id": 27,
+      "gender": "male",
+      "age": 59
+    },
+    {
+      "name": "吕鹏",
+      "id": 28,
+      "gender": "male",
+      "age": 22
+    },
+    {
+      "name": "刘刚俊",
+      "id": 29,
+      "gender": "male",
+      "age": 70
+    },
+    {
+      "name": "贾翔丹",
+      "id": 30,
+      "gender": "female",
+      "age": 61
+    },
+    {
+      "name": "曾静萍",
+      "id": 31,
+      "gender": "female",
+      "age": 63
+    },
+    {
+      "name": "韩慧",
+      "id": 32,
+      "gender": "female",
+      "age": 34
+    },
+    {
+      "name": "魏琳",
+      "id": 33,
+      "gender": "female",
+      "age": 42
+    },
+    {
+      "name": "崔建悦",
+      "id": 34,
+      "gender": "female",
+      "age": 39
+    },
+    {
+      "name": "许雯",
+      "id": 35,
+      "gender": "female",
+      "age": 43
+    },
+    {
+      "name": "郭怡",
+      "id": 36,
+      "gender": "female",
+      "age": 24
+    },
+    {
+      "name": "姜明29",
+      "id": 37,
+      "gender": "male",
+      "age": 80
+    },
+    {
+      "name": "韩琪",
+      "id": 38,
+      "gender": "female",
+      "age": 70
+    },
+    {
+      "name": "余建",
+      "id": 39,
+      "gender": "male",
+      "age": 37
+    },
+    {
+      "name": "吕娜",
+      "id": 40,
+      "gender": "female",
+      "age": 37
+    },
+    {
+      "name": "于威",
+      "id": 41,
+      "gender": "male",
+      "age": 66
+    },
+    {
+      "name": "郭宇",
+      "id": 42,
+      "gender": "male",
+      "age": 46
+    },
+    {
+      "name": "薛旭",
+      "id": 43,
+      "gender": "male",
+      "age": 53
+    },
+    {
+      "name": "唐雪84",
+      "id": 44,
+      "gender": "female",
+      "age": 41
+    },
+    {
+      "name": "何敏8",
+      "id": 45,
+      "gender": "female",
+      "age": 59
+    },
+    {
+      "name": "苏旭莹",
+      "id": 46,
+      "gender": "female",
+      "age": 47
+    }
+  ],
+  "edges": [
+    {
+      "from": "曹彬",
+      "to": "黄旭57",
+      "weight": 16
+    },
+    {
+      "from": "曹彬",
+      "to": "江雅帅",
+      "weight": 8
+    },
+    {
+      "from": "黄旭57",
+      "to": "江雅帅",
+      "weight": 81
+    },
+    {
+      "from": "卢阳泉",
+      "to": "曹彬",
+      "weight": 11
+    },
+    {
+      "from": "卢阳泉",
+      "to": "江雅帅",
+      "weight": 22
+    },
+    {
+      "from": "卢阳泉",
+      "to": "黄旭57",
+      "weight": 64
+    },
+    {
+      "from": "高皓旭",
+      "to": "江雅帅",
+      "weight": 16
+    },
+    {
+      "from": "高皓旭",
+      "to": "黄旭57",
+      "weight": 43
+    },
+    {
+      "from": "高皓旭",
+      "to": "曹彬",
+      "weight": 56
+    },
+    {
+      "from": "林艳云",
+      "to": "江雅帅",
+      "weight": 32
+    },
+    {
+      "from": "林艳云",
+      "to": "高皓旭",
+      "weight": 61
+    },
+    {
+      "from": "林艳云",
+      "to": "曹彬",
+      "weight": 35
+    },
+    {
+      "from": "廖鹏",
+      "to": "曹彬",
+      "weight": 21
+    },
+    {
+      "from": "廖鹏",
+      "to": "江雅帅",
+      "weight": 69
+    },
+    {
+      "from": "廖鹏",
+      "to": "林艳云",
+      "weight": 49
+    },
+    {
+      "from": "姜怡明",
+      "to": "曹彬",
+      "weight": 10
+    },
+    {
+      "from": "姜怡明",
+      "to": "江雅帅",
+      "weight": 32
+    },
+    {
+      "from": "姜怡明",
+      "to": "黄旭57",
+      "weight": 29
+    },
+    {
+      "from": "陈强静",
+      "to": "江雅帅",
+      "weight": 83
+    },
+    {
+      "from": "陈强静",
+      "to": "林艳云",
+      "weight": 64
+    },
+    {
+      "from": "陈强静",
+      "to": "廖鹏",
+      "weight": 85
+    },
+    {
+      "from": "郝慧芳",
+      "to": "卢阳泉",
+      "weight": 94
+    },
+    {
+      "from": "郝慧芳",
+      "to": "黄旭57",
+      "weight": 84
+    },
+    {
+      "from": "郝慧芳",
+      "to": "廖鹏",
+      "weight": 14
+    },
+    {
+      "from": "石强76",
+      "to": "廖鹏",
+      "weight": 38
+    },
+    {
+      "from": "石强76",
+      "to": "陈强静",
+      "weight": 47
+    },
+    {
+      "from": "石强76",
+      "to": "江雅帅",
+      "weight": 91
+    },
+    {
+      "from": "任瑶威",
+      "to": "廖鹏",
+      "weight": 91
+    },
+    {
+      "from": "任瑶威",
+      "to": "林艳云",
+      "weight": 6
+    },
+    {
+      "from": "任瑶威",
+      "to": "江雅帅",
+      "weight": 87
+    },
+    {
+      "from": "郭婷",
+      "to": "曹彬",
+      "weight": 70
+    },
+    {
+      "from": "郭婷",
+      "to": "石强76",
+      "weight": 68
+    },
+    {
+      "from": "郭婷",
+      "to": "江雅帅",
+      "weight": 24
+    },
+    {
+      "from": "朱瑞淑",
+      "to": "曹彬",
+      "weight": 97
+    },
+    {
+      "from": "朱瑞淑",
+      "to": "郝慧芳",
+      "weight": 45
+    },
+    {
+      "from": "朱瑞淑",
+      "to": "姜怡明",
+      "weight": 3
+    },
+    {
+      "from": "毛涛",
+      "to": "曹彬",
+      "weight": 45
+    },
+    {
+      "from": "毛涛",
+      "to": "郝慧芳",
+      "weight": 70
+    },
+    {
+      "from": "毛涛",
+      "to": "郭婷",
+      "weight": 57
+    },
+    {
+      "from": "田林淑",
+      "to": "黄旭57",
+      "weight": 82
+    },
+    {
+      "from": "田林淑",
+      "to": "卢阳泉",
+      "weight": 2
+    },
+    {
+      "from": "田林淑",
+      "to": "廖鹏",
+      "weight": 19
+    },
+    {
+      "from": "卢婷淑",
+      "to": "黄旭57",
+      "weight": 84
+    },
+    {
+      "from": "卢婷淑",
+      "to": "廖鹏",
+      "weight": 34
+    },
+    {
+      "from": "卢婷淑",
+      "to": "林艳云",
+      "weight": 52
+    },
+    {
+      "from": "傅毅超",
+      "to": "朱瑞淑",
+      "weight": 65
+    },
+    {
+      "from": "傅毅超",
+      "to": "曹彬",
+      "weight": 58
+    },
+    {
+      "from": "傅毅超",
+      "to": "江雅帅",
+      "weight": 67
+    },
+    {
+      "from": "夏珍琪",
+      "to": "廖鹏",
+      "weight": 61
+    },
+    {
+      "from": "夏珍琪",
+      "to": "黄旭57",
+      "weight": 46
+    },
+    {
+      "from": "夏珍琪",
+      "to": "江雅帅",
+      "weight": 93
+    },
+    {
+      "from": "刘华",
+      "to": "林艳云",
+      "weight": 4
+    },
+    {
+      "from": "刘华",
+      "to": "江雅帅",
+      "weight": 56
+    },
+    {
+      "from": "刘华",
+      "to": "黄旭57",
+      "weight": 48
+    },
+    {
+      "from": "袁梅倩",
+      "to": "夏珍琪",
+      "weight": 75
+    },
+    {
+      "from": "袁梅倩",
+      "to": "田林淑",
+      "weight": 28
+    },
+    {
+      "from": "袁梅倩",
+      "to": "石强76",
+      "weight": 28
+    },
+    {
+      "from": "任静珍",
+      "to": "傅毅超",
+      "weight": 31
+    },
+    {
+      "from": "任静珍",
+      "to": "高皓旭",
+      "weight": 17
+    },
+    {
+      "from": "任静珍",
+      "to": "郭婷",
+      "weight": 19
+    },
+    {
+      "from": "朱璐明",
+      "to": "田林淑",
+      "weight": 47
+    },
+    {
+      "from": "朱璐明",
+      "to": "江雅帅",
+      "weight": 6
+    },
+    {
+      "from": "朱璐明",
+      "to": "任瑶威",
+      "weight": 25
+    },
+    {
+      "from": "史璐亮",
+      "to": "廖鹏",
+      "weight": 28
+    },
+    {
+      "from": "史璐亮",
+      "to": "曹彬",
+      "weight": 66
+    },
+    {
+      "from": "史璐亮",
+      "to": "江雅帅",
+      "weight": 15
+    },
+    {
+      "from": "许彬淑38",
+      "to": "朱瑞淑",
+      "weight": 10
+    },
+    {
+      "from": "许彬淑38",
+      "to": "廖鹏",
+      "weight": 58
+    },
+    {
+      "from": "许彬淑38",
+      "to": "卢阳泉",
+      "weight": 90
+    },
+    {
+      "from": "石皓铭",
+      "to": "卢阳泉",
+      "weight": 47
+    },
+    {
+      "from": "石皓铭",
+      "to": "陈强静",
+      "weight": 43
+    },
+    {
+      "from": "石皓铭",
+      "to": "朱璐明",
+      "weight": 89
+    },
+    {
+      "from": "于毅宏",
+      "to": "廖鹏",
+      "weight": 69
+    },
+    {
+      "from": "于毅宏",
+      "to": "任瑶威",
+      "weight": 5
+    },
+    {
+      "from": "于毅宏",
+      "to": "石强76",
+      "weight": 15
+    },
+    {
+      "from": "吕鹏",
+      "to": "田林淑",
+      "weight": 96
+    },
+    {
+      "from": "吕鹏",
+      "to": "江雅帅",
+      "weight": 18
+    },
+    {
+      "from": "吕鹏",
+      "to": "廖鹏",
+      "weight": 71
+    },
+    {
+      "from": "刘刚俊",
+      "to": "江雅帅",
+      "weight": 53
+    },
+    {
+      "from": "刘刚俊",
+      "to": "卢阳泉",
+      "weight": 72
+    },
+    {
+      "from": "刘刚俊",
+      "to": "于毅宏",
+      "weight": 7
+    },
+    {
+      "from": "贾翔丹",
+      "to": "傅毅超",
+      "weight": 34
+    },
+    {
+      "from": "贾翔丹",
+      "to": "高皓旭",
+      "weight": 18
+    },
+    {
+      "from": "贾翔丹",
+      "to": "朱瑞淑",
+      "weight": 10
+    },
+    {
+      "from": "曾静萍",
+      "to": "于毅宏",
+      "weight": 47
+    },
+    {
+      "from": "曾静萍",
+      "to": "傅毅超",
+      "weight": 29
+    },
+    {
+      "from": "曾静萍",
+      "to": "石强76",
+      "weight": 17
+    },
+    {
+      "from": "韩慧",
+      "to": "刘刚俊",
+      "weight": 48
+    },
+    {
+      "from": "韩慧",
+      "to": "田林淑",
+      "weight": 1
+    },
+    {
+      "from": "韩慧",
+      "to": "黄旭57",
+      "weight": 4
+    },
+    {
+      "from": "魏琳",
+      "to": "高皓旭",
+      "weight": 70
+    },
+    {
+      "from": "魏琳",
+      "to": "陈强静",
+      "weight": 35
+    },
+    {
+      "from": "魏琳",
+      "to": "黄旭57",
+      "weight": 79
+    },
+    {
+      "from": "崔建悦",
+      "to": "廖鹏",
+      "weight": 14
+    },
+    {
+      "from": "崔建悦",
+      "to": "史璐亮",
+      "weight": 75
+    },
+    {
+      "from": "崔建悦",
+      "to": "高皓旭",
+      "weight": 51
+    },
+    {
+      "from": "许雯",
+      "to": "崔建悦",
+      "weight": 81
+    },
+    {
+      "from": "许雯",
+      "to": "刘华",
+      "weight": 62
+    },
+    {
+      "from": "许雯",
+      "to": "卢阳泉",
+      "weight": 12
+    },
+    {
+      "from": "郭怡",
+      "to": "曾静萍",
+      "weight": 41
+    },
+    {
+      "from": "郭怡",
+      "to": "许彬淑38",
+      "weight": 38
+    },
+    {
+      "from": "郭怡",
+      "to": "高皓旭",
+      "weight": 56
+    },
+    {
+      "from": "姜明29",
+      "to": "朱璐明",
+      "weight": 63
+    },
+    {
+      "from": "姜明29",
+      "to": "曹彬",
+      "weight": 81
+    },
+    {
+      "from": "姜明29",
+      "to": "江雅帅",
+      "weight": 84
+    },
+    {
+      "from": "韩琪",
+      "to": "任静珍",
+      "weight": 23
+    },
+    {
+      "from": "韩琪",
+      "to": "刘华",
+      "weight": 76
+    },
+    {
+      "from": "韩琪",
+      "to": "吕鹏",
+      "weight": 40
+    },
+    {
+      "from": "余建",
+      "to": "夏珍琪",
+      "weight": 25
+    },
+    {
+      "from": "余建",
+      "to": "石强76",
+      "weight": 8
+    },
+    {
+      "from": "余建",
+      "to": "袁梅倩",
+      "weight": 45
+    },
+    {
+      "from": "吕娜",
+      "to": "朱瑞淑",
+      "weight": 10
+    },
+    {
+      "from": "吕娜",
+      "to": "廖鹏",
+      "weight": 30
+    },
+    {
+      "from": "吕娜",
+      "to": "余建",
+      "weight": 16
+    },
+    {
+      "from": "于威",
+      "to": "刘华",
+      "weight": 35
+    },
+    {
+      "from": "于威",
+      "to": "卢阳泉",
+      "weight": 16
+    },
+    {
+      "from": "于威",
+      "to": "袁梅倩",
+      "weight": 52
+    },
+    {
+      "from": "郭宇",
+      "to": "姜明29",
+      "weight": 93
+    },
+    {
+      "from": "郭宇",
+      "to": "曹彬",
+      "weight": 14
+    },
+    {
+      "from": "郭宇",
+      "to": "于毅宏",
+      "weight": 86
+    },
+    {
+      "from": "薛旭",
+      "to": "江雅帅",
+      "weight": 89
+    },
+    {
+      "from": "薛旭",
+      "to": "卢阳泉",
+      "weight": 61
+    },
+    {
+      "from": "薛旭",
+      "to": "朱璐明",
+      "weight": 22
+    },
+    {
+      "from": "唐雪84",
+      "to": "曹彬",
+      "weight": 14
+    },
+    {
+      "from": "唐雪84",
+      "to": "田林淑",
+      "weight": 82
+    },
+    {
+      "from": "唐雪84",
+      "to": "江雅帅",
+      "weight": 53
+    },
+    {
+      "from": "何敏8",
+      "to": "陈强静",
+      "weight": 56
+    },
+    {
+      "from": "何敏8",
+      "to": "石强76",
+      "weight": 99
+    },
+    {
+      "from": "何敏8",
+      "to": "黄旭57",
+      "weight": 96
+    },
+    {
+      "from": "苏旭莹",
+      "to": "廖鹏",
+      "weight": 22
+    },
+    {
+      "from": "苏旭莹",
+      "to": "郭宇",
+      "weight": 21
+    },
+    {
+      "from": "苏旭莹",
+      "to": "石强76",
+      "weight": 18
+    }
+  ],
+  "metadata": {
+    "person_count": 46,
+    "edge_count": 132,
+    "density": 0.12753623188405797,
+    "isolated_count": 0,
+    "isolated_percentage": 0.0,
+    "save_time": "2026-01-08 08:11:07",
+    "version": "3.0",
+    "generator": "EnhancedNetworkGenerator",
+    "network_type": "scale_free",
+    "name_language": "chinese",
+    "parameters": {
+      "person_count": 46,
+      "weight_range": "1-100",
+      "m": 3
+    }
+  }
+}

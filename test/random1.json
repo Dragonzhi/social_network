@@ -1,0 +1,464 @@
+{
+  "persons": [
+    {
+      "name": "卢杰",
+      "id": 1,
+      "gender": "male",
+      "age": 52
+    },
+    {
+      "name": "唐琳涛76",
+      "id": 2,
+      "gender": "female",
+      "age": 37
+    },
+    {
+      "name": "高华瑞",
+      "id": 3,
+      "gender": "male",
+      "age": 75
+    },
+    {
+      "name": "郭皓刚",
+      "id": 4,
+      "gender": "male",
+      "age": 71
+    },
+    {
+      "name": "萧龙坤",
+      "id": 5,
+      "gender": "male",
+      "age": 73
+    },
+    {
+      "name": "吕勇诚",
+      "id": 6,
+      "gender": "male",
+      "age": 63
+    },
+    {
+      "name": "黄梅军",
+      "id": 7,
+      "gender": "female",
+      "age": 76
+    },
+    {
+      "name": "戴燕鹏7",
+      "id": 8,
+      "gender": "female",
+      "age": 70
+    },
+    {
+      "name": "方诚林",
+      "id": 9,
+      "gender": "male",
+      "age": 40
+    },
+    {
+      "name": "孔敏洁43",
+      "id": 10,
+      "gender": "female",
+      "age": 41
+    },
+    {
+      "name": "袁坤29",
+      "id": 11,
+      "gender": "male",
+      "age": 51
+    },
+    {
+      "name": "王珍丹",
+      "id": 12,
+      "gender": "female",
+      "age": 80
+    },
+    {
+      "name": "郝毅",
+      "id": 13,
+      "gender": "male",
+      "age": 77
+    },
+    {
+      "name": "苏凡晨",
+      "id": 14,
+      "gender": "male",
+      "age": 32
+    },
+    {
+      "name": "阎凯飞",
+      "id": 15,
+      "gender": "male",
+      "age": 51
+    },
+    {
+      "name": "罗英明30",
+      "id": 16,
+      "gender": "female",
+      "age": 77
+    },
+    {
+      "name": "丁欣",
+      "id": 17,
+      "gender": "female",
+      "age": 45
+    },
+    {
+      "name": "郑亮",
+      "id": 18,
+      "gender": "male",
+      "age": 21
+    },
+    {
+      "name": "韩旭",
+      "id": 19,
+      "gender": "male",
+      "age": 19
+    },
+    {
+      "name": "曹政雯",
+      "id": 20,
+      "gender": "female",
+      "age": 26
+    },
+    {
+      "name": "魏瑶雯",
+      "id": 21,
+      "gender": "female",
+      "age": 18
+    },
+    {
+      "name": "石宇艳",
+      "id": 22,
+      "gender": "female",
+      "age": 33
+    },
+    {
+      "name": "丁军毅",
+      "id": 23,
+      "gender": "male",
+      "age": 64
+    },
+    {
+      "name": "邱雪",
+      "id": 24,
+      "gender": "female",
+      "age": 78
+    },
+    {
+      "name": "曹旭37",
+      "id": 25,
+      "gender": "male",
+      "age": 70
+    },
+    {
+      "name": "钟龙政",
+      "id": 26,
+      "gender": "male",
+      "age": 67
+    },
+    {
+      "name": "陆悦",
+      "id": 27,
+      "gender": "female",
+      "age": 20
+    },
+    {
+      "name": "石辉20",
+      "id": 28,
+      "gender": "male",
+      "age": 65
+    },
+    {
+      "name": "贾雯英",
+      "id": 29,
+      "gender": "female",
+      "age": 23
+    },
+    {
+      "name": "蒋慧",
+      "id": 30,
+      "gender": "female",
+      "age": 77
+    },
+    {
+      "name": "杨宁玲",
+      "id": 31,
+      "gender": "female",
+      "age": 47
+    },
+    {
+      "name": "姜婷",
+      "id": 32,
+      "gender": "female",
+      "age": 57
+    },
+    {
+      "name": "董颖",
+      "id": 33,
+      "gender": "female",
+      "age": 19
+    },
+    {
+      "name": "郭鹏毅",
+      "id": 34,
+      "gender": "male",
+      "age": 41
+    },
+    {
+      "name": "赵娜",
+      "id": 35,
+      "gender": "female",
+      "age": 63
+    },
+    {
+      "name": "陆平",
+      "id": 36,
+      "gender": "male",
+      "age": 22
+    },
+    {
+      "name": "史悦威",
+      "id": 37,
+      "gender": "female",
+      "age": 60
+    },
+    {
+      "name": "曾蕾",
+      "id": 38,
+      "gender": "female",
+      "age": 51
+    },
+    {
+      "name": "吕英强14",
+      "id": 39,
+      "gender": "female",
+      "age": 47
+    }
+  ],
+  "edges": [
+    {
+      "from": "卢杰",
+      "to": "丁欣",
+      "weight": 73
+    },
+    {
+      "from": "唐琳涛76",
+      "to": "孔敏洁43",
+      "weight": 26
+    },
+    {
+      "from": "唐琳涛76",
+      "to": "郑亮",
+      "weight": 47
+    },
+    {
+      "from": "高华瑞",
+      "to": "阎凯飞",
+      "weight": 87
+    },
+    {
+      "from": "吕勇诚",
+      "to": "罗英明30",
+      "weight": 65
+    },
+    {
+      "from": "黄梅军",
+      "to": "郝毅",
+      "weight": 80
+    },
+    {
+      "from": "戴燕鹏7",
+      "to": "方诚林",
+      "weight": 80
+    },
+    {
+      "from": "方诚林",
+      "to": "丁欣",
+      "weight": 3
+    },
+    {
+      "from": "孔敏洁43",
+      "to": "袁坤29",
+      "weight": 25
+    },
+    {
+      "from": "孔敏洁43",
+      "to": "郝毅",
+      "weight": 27
+    },
+    {
+      "from": "孔敏洁43",
+      "to": "丁欣",
+      "weight": 24
+    },
+    {
+      "from": "王珍丹",
+      "to": "丁欣",
+      "weight": 89
+    },
+    {
+      "from": "王珍丹",
+      "to": "郑亮",
+      "weight": 2
+    },
+    {
+      "from": "苏凡晨",
+      "to": "郑亮",
+      "weight": 30
+    },
+    {
+      "from": "阎凯飞",
+      "to": "罗英明30",
+      "weight": 98
+    },
+    {
+      "from": "阎凯飞",
+      "to": "韩旭",
+      "weight": 55
+    },
+    {
+      "from": "罗英明30",
+      "to": "郑亮",
+      "weight": 73
+    },
+    {
+      "from": "曹政雯",
+      "to": "史悦威",
+      "weight": 9
+    },
+    {
+      "from": "魏瑶雯",
+      "to": "丁军毅",
+      "weight": 53
+    },
+    {
+      "from": "魏瑶雯",
+      "to": "蒋慧",
+      "weight": 15
+    },
+    {
+      "from": "魏瑶雯",
+      "to": "曾蕾",
+      "weight": 8
+    },
+    {
+      "from": "石宇艳",
+      "to": "钟龙政",
+      "weight": 69
+    },
+    {
+      "from": "石宇艳",
+      "to": "姜婷",
+      "weight": 37
+    },
+    {
+      "from": "石宇艳",
+      "to": "赵娜",
+      "weight": 9
+    },
+    {
+      "from": "丁军毅",
+      "to": "曹旭37",
+      "weight": 83
+    },
+    {
+      "from": "曹旭37",
+      "to": "石辉20",
+      "weight": 49
+    },
+    {
+      "from": "曹旭37",
+      "to": "姜婷",
+      "weight": 24
+    },
+    {
+      "from": "曹旭37",
+      "to": "赵娜",
+      "weight": 93
+    },
+    {
+      "from": "钟龙政",
+      "to": "杨宁玲",
+      "weight": 84
+    },
+    {
+      "from": "陆悦",
+      "to": "赵娜",
+      "weight": 77
+    },
+    {
+      "from": "陆悦",
+      "to": "吕英强14",
+      "weight": 63
+    },
+    {
+      "from": "石辉20",
+      "to": "贾雯英",
+      "weight": 81
+    },
+    {
+      "from": "石辉20",
+      "to": "赵娜",
+      "weight": 1
+    },
+    {
+      "from": "贾雯英",
+      "to": "姜婷",
+      "weight": 4
+    },
+    {
+      "from": "杨宁玲",
+      "to": "曾蕾",
+      "weight": 28
+    },
+    {
+      "from": "姜婷",
+      "to": "陆平",
+      "weight": 30
+    },
+    {
+      "from": "姜婷",
+      "to": "曾蕾",
+      "weight": 72
+    },
+    {
+      "from": "董颖",
+      "to": "赵娜",
+      "weight": 69
+    },
+    {
+      "from": "董颖",
+      "to": "曾蕾",
+      "weight": 69
+    },
+    {
+      "from": "陆平",
+      "to": "吕英强14",
+      "weight": 43
+    },
+    {
+      "from": "曾蕾",
+      "to": "吕英强14",
+      "weight": 32
+    }
+  ],
+  "metadata": {
+    "person_count": 39,
+    "edge_count": 41,
+    "density": 0.0553306342780027,
+    "isolated_count": 4,
+    "isolated_percentage": 10.256410256410255,
+    "save_time": "2026-01-08 08:10:01",
+    "version": "3.0",
+    "generator": "EnhancedNetworkGenerator",
+    "network_type": "community",
+    "name_language": "chinese",
+    "parameters": {
+      "person_count": 39,
+      "weight_range": "1-100",
+      "num_communities": 2,
+      "intra_prob": 0.10781457963418842,
+      "inter_prob": 0.029349260604515974
+    }
+  }
+}
