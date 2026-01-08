@@ -12,14 +12,44 @@ jobs:
     steps:
     - name: 拉取代码
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: 配置 MSBuild
       uses: microsoft/setup-msbuild@v2
 
     - name: 编译项目（Release 模式）
       run: |
-        # 替换为你的解决方案文件实际路径（如 ./SocialNetwork.sln）
         msbuild ./SocialNetwork.sln /p:Configuration=Release /p:Platform=x64 /p:OutDir=./bin/Release /p:PlatformToolset=v143
+
+    - name: 生成 Changelog
+      uses: requarks/changelog-action@v1
+      with:
+        token: ${{ github.token }}
+        tag: ${{ github.ref_name }}
+        writeToFile: true
+        outputFile: CHANGELOG.md
+        template: |
+          {{#if commits}}
+          
+          {{#each commits}}
+          {{#if (contains "feat" subject)}}
+          - {{subject}} ({{hash}})
+          {{/if}}
+          {{/each}}
+
+          {{#each commits}}
+          {{#if (contains "fix" subject)}}
+          - {{subject}} ({{hash}})
+          {{/if}}
+          {{/each}}
+
+          {{#each commits}}
+          {{#unless (or (contains "feat" subject) (contains "fix" subject))}}
+          - {{subject}} ({{hash}})
+          {{/unless}}
+          {{/each}}
+          {{/if}}
 
     - name: 上传 EXE 到 Artifacts（临时存储）
       uses: actions/upload-artifact@v4
@@ -32,4 +62,13 @@ jobs:
       with:
         files: ./bin/Release/*.exe  # 上传编译好的 EXE
         name: Release ${{ github.ref_name }}  # Release 名称为标签名（如 v1.0.0）
-        body: 自动构建的版本 ${{ github.ref_name }}
+        body: |
+          自动构建的版本 ${{ github.ref_name }}
+          
+          ${{ steps.changelog.outputs.changelog }}
+
+          - **构建时间:** ${{ fromJson('{}').now || '当前时间' }}
+          - **提交版本:** ${{ github.sha }}
+          - **工作流程:** [${{ github.workflow }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        draft: false
+        prerelease: false
