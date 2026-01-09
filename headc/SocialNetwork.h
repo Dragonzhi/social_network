@@ -46,10 +46,17 @@ public:
     // 性能测试
     void testPerformance();
     void testBottleneckAlgorithm();
+    void runComprehensivePerformanceTest();
 private:
 	vector<Person> vertList;
 	vector<list<Edge>> adjList;
     unordered_map<string, int> nameToIndex;
+
+    // 性能测试辅助函数
+    void sortFriends_noninteractive(int userIndex, bool ascending);
+    void exportToHTML_noninteractive(const string& filename);
+    void generateRandomNetwork(int numPersons, int avgEdges);
+    size_t getSpaceUsage();
 
 	// 美化部分
     // ASCII装饰字符

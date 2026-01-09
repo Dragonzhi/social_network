@@ -43,12 +43,13 @@ void showASCIIMenu() {
     cout << "  [5]  显示所有联系人关系   [6]  按亲密程度排序好友" << endl;
     cout << "  [7]  查询两人亲密度       [8]  显示社交达人(Top10)" << endl;
     cout << "  [9]  保存到文件          [10]  从文件加载" << endl;
-    cout << "  [11] 导出HTML可视化       [0]  退出系统" << endl;
+    cout << "  [11] 导出HTML可视化       [12]  综合性能测试" << endl;
+    cout << "  [0]  退出系统" << endl;
 
     cout << thinLine << endl;
     cout << "  提示: 输入数字选择对应功能，按Enter键确认" << endl;
     cout << dashLine << endl;
-    cout << "  请选择操作 (0-11): ";
+    cout << "  请选择操作 (0-12): ";
 }
 
 // 显示操作标题
@@ -179,16 +180,12 @@ int main() {
             network.exportToHTML();
             waitForUser();
             break;
-
-        case 114:
-            showOperationTitle("性能测试");
+        
+        case 12:
+            showOperationTitle("综合性能测试");
             network.testPerformance();
-            waitForUser();
-            break;
-
-        case 514:
-            showOperationTitle("瓶颈路径算法测试");
             network.testBottleneckAlgorithm();
+            network.runComprehensivePerformanceTest();
             waitForUser();
             break;
 
@@ -207,7 +204,7 @@ int main() {
             return 0;
 
         default:
-            showErrorMsg("无效的选择，请输入 0-11 之间的数字！");
+            showErrorMsg("无效的选择，请输入 0-12 之间的数字！");
             waitForUser();
         }
     }

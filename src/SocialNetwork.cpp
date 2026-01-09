@@ -1924,4 +1924,877 @@ void SocialNetwork::testBottleneckAlgorithm() {
         << " " << (getBottleneckPath("Node1", "Node3") == 20 ? SUCCESS_ICON : ERROR_ICON) << "\n";
 
     cout << "\n=== 测试完成 ===\n";
-}
+
+    }
+
+    
+
+    // =================== 性能测试模块 ===================
+
+    
+
+    // 生成随机网络用于测试
+
+    void SocialNetwork::generateRandomNetwork(int numPersons, int avgEdges) {
+
+        // 清空现有数据
+
+        vertList.clear();
+
+        adjList.clear();
+
+        nameToIndex.clear();
+
+        vertList.reserve(numPersons);
+
+        adjList.reserve(numPersons);
+
+    
+
+        // 添加节点
+
+        for (int i = 0; i < numPersons; i++) {
+
+            string name = "User" + to_string(i);
+
+            Person p;
+
+            p.setName(name);
+
+            vertList.push_back(p);
+
+            adjList.push_back(list<Edge>());
+
+            nameToIndex[name] = i;
+
+        }
+
+    
+
+        // 添加随机边
+
+        srand(static_cast<unsigned int>(time(0)));
+
+        for (int i = 0; i < numPersons; i++) {
+
+            int edgeCount = rand() % (avgEdges * 2); // 0 to 2*avg
+
+            for (int j = 0; j < edgeCount; j++) {
+
+                int target = rand() % numPersons;
+
+                if (target == i) continue;
+
+    
+
+                // 检查边是否已存在
+
+                bool exists = false;
+
+                for (auto& edge : adjList[i]) {
+
+                    if (edge.getTo() == target) {
+
+                        exists = true;
+
+                        break;
+
+                    }
+
+                }
+
+    
+
+                if (!exists) {
+
+                    int weight = 1 + rand() % 100; // 1-100
+
+                    Edge e1, e2;
+
+                    e1.setTo(target); e1.setWeight(weight);
+
+                    e2.setTo(i); e2.setWeight(weight);
+
+                    adjList[i].push_back(e1);
+
+                    adjList[target].push_back(e2);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    
+
+    // 计算当前网络数据结构的大致内存占用（单位：字节）
+
+    size_t SocialNetwork::getSpaceUsage() {
+
+        size_t totalSize = 0;
+
+    
+
+        // 1. vertList (vector<Person>)
+
+        totalSize += vertList.capacity() * sizeof(Person);
+
+        for (const auto& p : vertList) {
+
+            totalSize += p.getName().capacity(); // string 内部的容量
+
+        }
+
+    
+
+        // 2. adjList (vector<list<Edge>>)
+
+        totalSize += adjList.capacity() * sizeof(list<Edge>);
+
+        for (const auto& l : adjList) {
+
+            // 每个 list 节点除了数据外还有指针开销
+
+            totalSize += l.size() * (sizeof(Edge) + 2 * sizeof(void*)); 
+
+        }
+
+    
+
+        // 3. nameToIndex (unordered_map<string, int>)
+
+        // 这是一个粗略的估计
+
+        totalSize += nameToIndex.bucket_count() * (sizeof(void*) + sizeof(size_t)); // 指向链表的指针和size
+
+        for (const auto& pair : nameToIndex) {
+
+            totalSize += sizeof(int); // value
+
+            totalSize += pair.first.capacity(); // key
+
+            totalSize += 3 * sizeof(void*); // 每个节点的额外开销（近似）
+
+        }
+
+    
+
+        return totalSize;
+
+    }
+
+    
+
+    // 非交互式的好友排序
+
+    void SocialNetwork::sortFriends_noninteractive(int userIndex, bool ascending) {
+
+        if (userIndex < 0 || userIndex >= vertList.size()) return;
+
+    
+
+        vector<FriendInfo> friend_infos;
+
+        friend_infos.reserve(adjList[userIndex].size());
+
+        for (auto& e : adjList[userIndex]) {
+
+            friend_infos.push_back(FriendInfo(vertList[e.getTo()].getName(), e.getWeight(), e.getTo()));
+
+        }
+
+    
+
+        if (friend_infos.empty()) return;
+
+    
+
+        if (ascending) {
+
+            sort(friend_infos.begin(), friend_infos.end(),
+
+                [](const FriendInfo& a, const FriendInfo& b) {
+
+                    return a.weight < b.weight;
+
+                });
+
+        }
+
+        else {
+
+            sort(friend_infos.begin(), friend_infos.end(),
+
+                [](const FriendInfo& a, const FriendInfo& b) {
+
+                    return a.weight > b.weight;
+
+                });
+
+        }
+
+    }
+
+    
+
+    // 非交互式的HTML导出
+
+    void SocialNetwork::exportToHTML_noninteractive(const string& filename) {
+
+        if (filename.empty()) {
+
+            cout << "错误：HTML导出文件名不能为空！" << endl;
+
+            return;
+
+        }
+
+    
+
+        ofstream file(filename, ios::out | ios::binary);
+
+        if (!file.is_open()) {
+
+            cout << "错误：无法打开文件 " << filename << " 进行写入！" << endl;
+
+            return;
+
+        }
+
+        const unsigned char utf8Bom[3] = { 0xEF, 0xBB, 0xBF };
+
+        file.write((const char*)utf8Bom, sizeof(utf8Bom));
+
+    
+
+        int nodeCount = vertList.size();
+
+        long long repulsion = (long long)nodeCount * 50 * (1 + (double)nodeCount / 200.0);
+
+        int edgeLength = nodeCount * 3 + 100;
+
+    
+
+        file << R"(<!DOCTYPE html>
+
+    <html>
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <title>SocialNetwork</title>
+
+        <style>
+
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+
+            body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; }
+
+            .container { max-width: 1200px; margin: 0 auto; }
+
+            .header { text-align: center; margin-bottom: 20px; padding: 20px; 
+
+                     background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+            #network { width: 100%; height: 800px; background: white; 
+
+                      border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+            @keyframes spin {
+
+                0% { transform: rotate(0deg); }
+
+                100% { transform: rotate(360deg); }
+
+            }
+
+        </style>
+
+        <script>
+
+            // 多CDN源列表（优先级从高到低）
+
+            const echartsCdnList = [
+
+                'https://unpkg.com/echarts@5.4.3/dist/echarts.min.js',
+
+                'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
+
+                'https://cdn.bootcdn.net/ajax/libs/echarts/5.4.3/echarts.min.js'
+
+            ];
+
+    
+
+    
+
+            // 递归加载ECharts CDN（带超时机制）
+
+            function loadEcharts(cdnList) {
+
+                if (cdnList.length === 0) {
+
+                    alert('所有ECharts CDN加载失败！请手动下载并引入：\nhttps://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js');
+
+                    return false;
+
+                }
+
+        
+
+                const currentCdn = cdnList[0];
+
+                const script = document.createElement('script');
+
+                script.src = currentCdn;
+
+                script.defer = true;
+
+    
+
+                let loaded = false;
+
+                const timeoutId = setTimeout(() => {
+
+                    if (!loaded) {
+
+                        console.warn(`ECharts CDN加载超时（1秒）：${currentCdn}，尝试下一个源`);
+
+                        script.onload = script.onerror = null; // 清除事件处理器
+
+                        document.head.removeChild(script); // 移除失败的script标签
+
+                        loadEcharts(cdnList.slice(1)); // 尝试下一个源
+
+                    }
+
+                }, 1000); // 1秒超时
+
+    
+
+                // CDN加载成功
+
+                script.onload = function() {
+
+                    loaded = true;
+
+                    clearTimeout(timeoutId);
+
+                    console.log(`ECharts加载成功（来源：${currentCdn}）`);
+
+                    initECharts(); // 加载成功后初始化图表
+
+                };
+
+    
+
+                // 当前CDN失败，尝试下一个
+
+                script.onerror = function() {
+
+                    loaded = true;
+
+                    clearTimeout(timeoutId);
+
+                    console.warn(`ECharts CDN加载失败：${currentCdn}，尝试下一个源`);
+
+                    loadEcharts(cdnList.slice(1));
+
+                };
+
+    
+
+                document.head.appendChild(script);
+
+                return true;
+
+            }
+
+    
+
+            // 原有初始化逻辑适配
+
+            function initECharts() {
+
+                if (typeof echarts === 'undefined') {
+
+                    let retryCount = 0;
+
+                    const retryTimer = setInterval(() => {
+
+                        if (typeof echarts !== 'undefined' || retryCount >= 5) {
+
+                            clearInterval(retryTimer);
+
+                            if (typeof echarts !== 'undefined') {
+
+                                doInit();
+
+                            } else {
+
+                                alert('ECharts加载超时，请检查网络！');
+
+                            }
+
+                        }
+
+                        retryCount++;
+
+                    }, 100);
+
+                } else {
+
+                    doInit();
+
+                }
+
+            }
+
+    
+
+            function doInit() {
+
+            var myChart = echarts.init(document.getElementById('network'));
+
+    
+
+            var loadingElement = document.getElementById('loading');
+
+            if (loadingElement) {
+
+                loadingElement.style.display = 'none';
+
+            }
+
+    
+
+            var nodesData = [)";
+
+    
+
+        // 遍历生成节点数据（保留原有逻辑）
+
+        for (int i = 0; i < vertList.size(); i++) {
+
+            file << (i > 0 ? "," : "") << "\n{"
+
+                << "id: " << i
+
+                << ", name: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
+
+                << ", symbolSize: " << (adjList[i].size() * 3) + 12
+
+                << "}";
+
+        }
+
+    
+
+        file << R"(];
+
+        
+
+            var linksData = [)";
+
+    
+
+        // 遍历生成边数据（保留原有逻辑，绑定亲密度）
+
+        set<pair<int, int>> addedEdges;
+
+        bool firstEdge = true;
+
+        for (int i = 0; i < vertList.size(); i++) {
+
+            for (auto& edge : adjList[i]) {
+
+                int j = edge.getTo();
+
+                int weight = edge.getWeight();
+
+                if (i < j && addedEdges.find({ i, j }) == addedEdges.end()) {
+
+                    file << (firstEdge ? "\n" : ",\n") << "{source: " << i << ", target: " << j
+
+                        << ", sourceName: '" << vertList[i].getName() << "'" // 直接使用UTF-8名字
+
+                        << ", targetName: '" << vertList[j].getName() << "'" // 直接使用UTF-8名字
+
+                        << ", weight: " << weight  // 把亲密度存入边的自定义属性
+
+                        << ", lineStyle: {width: " << weight / 20.0 + 0.5 << "}}";
+
+                    addedEdges.insert({ i, j });
+
+                    firstEdge = false;
+
+                }
+
+            }
+
+        }
+
+        
+
+        // 保留原有tooltip差异化显示逻辑
+
+        file << R"(];
+
+    
+
+            var option = {
+
+                tooltip: {
+
+                    trigger: 'item',
+
+                    triggerOn: 'mousemove', 
+
+                    formatter: function(params) {
+
+                        if (params.dataType === 'node') {
+
+                            const friendCount = params.data.symbolSize;
+
+                            return `<div style="padding:5px;">
+
+                                      <b style="color:#409EFF;">User Information</b><br/>
+
+                                      Username: ${params.data.name}<br/>
+
+                                      Friends: ${(friendCount - 12) / 3} 
+
+                                    </div>`;
+
+                        }
+
+                        else if (params.dataType === 'edge') {
+
+                            const fromName = nodesData[params.data.source].name;
+
+                            const toName = nodesData[params.data.target].name;
+
+                            const intimacy = params.data.weight;
+
+                            return `<div style="padding:5px;">
+
+                                      <b style="color:#E6A23C;">Friendship</b><br/>
+
+                                      ${fromName} <-> ${toName}<br/>
+
+                                      Intimacy Weight: ${intimacy}
+
+                                    </div>`;
+
+                        }
+
+                    }
+
+                },
+
+                series: [{
+
+                    type: 'graph',
+
+                    layout: 'force',
+
+                    data: nodesData,
+
+                    links: linksData,
+
+                    roam: true, 
+
+                    label: {
+
+                        show: true,
+
+                        position: 'right',
+
+                        fontSize: 12,
+
+                        color: '#333'
+
+                    },
+
+                    force: {
+
+                        repulsion: )" << repulsion << R"(,
+
+                        gravity: 0.05,
+
+                        edgeLength: )" << edgeLength << R"(,
+
+                        layoutAnimation: false
+
+                    },
+
+                    lineStyle: {
+
+                        color: 'source',
+
+                        curveness: 0,
+
+                        opacity: 0.7
+
+                    },
+
+                    emphasis: {
+
+                        focus: 'adjacency',
+
+                        lineStyle: { width: 5 }
+
+                    },
+
+                    blur: {
+
+                        itemStyle: {
+
+                            opacity: 0.1
+
+                        },
+
+                        lineStyle: {
+
+                            opacity: 0.1
+
+                        }
+
+                    }
+
+                }]
+
+            };
+
+    
+
+            myChart.setOption(option);
+
+            window.addEventListener('resize', function() {
+
+                myChart.resize();
+
+            });
+
+            }
+
+    
+
+            // 页面加载完成后启动多CDN加载流程
+
+            window.addEventListener('DOMContentLoaded', function() {
+
+                loadEcharts(echartsCdnList);
+
+            });
+
+        </script>
+
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <div class="header">
+
+                <h1>社交网络关系图</h1>
+
+                <p>People: )" << vertList.size() << R"( | Time: )" << __DATE__ << R"(</p>
+
+            </div>
+
+            <div id="network">
+
+                    <div id="loading" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;">
+
+                        <div style="font-size: 24px; color: #409EFF; margin-bottom: 20px;">正在加载中...</div>
+
+                        <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #409EFF; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+
+                        <div style="margin-top: 20px; color: #666; font-size: 14px;">加载图表数据，请稍候...</div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </body>
+
+    </html>)";
+
+    
+
+        file.close();
+
+    }
+
+    
+
+    
+
+    // 主性能测试函数
+
+    void SocialNetwork::runComprehensivePerformanceTest() {
+
+        cout << createSectionHeader("综合性能测试");
+
+        
+
+        // 禁用 Windows 控制台的 QuickEdit 模式，防止点击冻结程序
+
+        #ifdef _WIN32
+
+        HANDLE hInput = GetStdHandle(STD_INPUT_HANDLE);
+
+        DWORD prev_mode;
+
+        GetConsoleMode(hInput, &prev_mode);
+
+        SetConsoleMode(hInput, prev_mode & ~ENABLE_QUICK_EDIT_MODE);
+
+        #endif
+
+    
+
+        vector<int> testSizes = { 50, 100, 200, 500, 1000 };
+
+        const int avgEdges = 5;
+
+        const int intimacyTestRuns = 100;
+
+        const int sortTestRuns = 100;
+
+    
+
+        cout << left << setw(12) << "数据量(人)"
+
+            << setw(24) << "亲密度计算(avg us)"
+
+            << setw(20) << "排序(avg us)"
+
+            << setw(20) << "导出HTML(ms)"
+
+            << setw(20) << "空间占用(KB)" << endl;
+
+        cout << string(96, '-') << endl;
+
+    
+
+        for (int size : testSizes) {
+
+            cout << "正在测试 " << size << " 人规模..." << flush;
+
+            // 1. 生成网络
+
+            generateRandomNetwork(size, avgEdges);
+
+            if (vertList.empty()) {
+
+                cout << "\r生成 " << size << " 规模网络失败，跳过。" << endl;
+
+                continue;
+
+            }
+
+    
+
+            // 2. 测试亲密度计算 (getBottleneckPath)
+
+            auto start_time = chrono::high_resolution_clock::now();
+
+            for (int i = 0; i < intimacyTestRuns; ++i) {
+
+                int p1 = rand() % size;
+
+                int p2 = rand() % size;
+
+                getBottleneckPath(vertList[p1].getName(), vertList[p2].getName());
+
+            }
+
+            auto end_time = chrono::high_resolution_clock::now();
+
+            auto intimacy_duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+
+            double avg_intimacy_us = (double)intimacy_duration / intimacyTestRuns;
+
+    
+
+            // 3. 测试排序 (sortFriends_noninteractive)
+
+            start_time = chrono::high_resolution_clock::now();
+
+            for (int i = 0; i < sortTestRuns; ++i) {
+
+                int p1 = rand() % size;
+
+                sortFriends_noninteractive(p1, false); // 降序
+
+            }
+
+            end_time = chrono::high_resolution_clock::now();
+
+            auto sort_duration = chrono::duration_cast<chrono::microseconds>(end_time - start_time).count();
+
+            double avg_sort_us = (double)sort_duration / sortTestRuns;
+
+    
+
+            // 4. 测试HTML导出
+
+            string html_filename = "perf_test_" + to_string(size) + ".html";
+
+            start_time = chrono::high_resolution_clock::now();
+
+            exportToHTML_noninteractive(html_filename);
+
+            end_time = chrono::high_resolution_clock::now();
+
+            auto html_duration_ms = chrono::duration_cast<chrono::milliseconds>(end_time - start_time).count();
+
+    
+
+            // 5. 测量空间占用
+
+            size_t space_bytes = getSpaceUsage();
+
+            double space_kb = (double)space_bytes / 1024.0;
+
+            
+
+            cout << "\r"; // 回到行首
+
+            cout << left << setw(12) << size
+
+                << setw(24) << fixed << setprecision(2) << avg_intimacy_us
+
+                << setw(20) << fixed << setprecision(2) << avg_sort_us
+
+                << setw(20) << html_duration_ms
+
+                << setw(20) << fixed << setprecision(2) << space_kb << endl;
+
+        }
+
+        cout << string(96, '-') << endl;
+
+        cout << "测试完成. HTML文件已生成在程序目录中。" << endl;
+
+    
+
+        // 恢复控制台模式
+
+        #ifdef _WIN32
+
+        SetConsoleMode(hInput, prev_mode);
+
+        #endif
+
+    }
+
+    
