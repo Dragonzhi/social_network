@@ -32,12 +32,12 @@
     *   **亲密度查询**: 查询任意两人之间的关系紧密程度。
     *   **“社交达人”排行**: 找出网络中连接数最多的前10位成员。
 *   **数据持久化**: 支持将整个社交网络的数据保存到文件（JSON格式），也支持从文件中重新加载，方便数据备份和迁移。
-*   **可视化导出**: 可一键将当前的网络结构导出为 `SocialNetwork_YYYYMMDD_HHMMSS.html` 文件。此文件可在浏览器中打开，以交互式图表的形式直观地展示您的社交网络。
+*   **可视化导出**: 可一键将当前的网络结构导出为 `自定义文件名.html` 文件。此文件可在浏览器中打开，以交互式图表的形式直观地展示您的社交网络。
 *   **性能测试**: 内置了全面的性能测试功能（通过隐藏菜单 `114514` 访问），用于分析不同场景下算法的效率。
 
 ## 如何构建
 
-本项目使用 Visual Studio 进行开发，推荐使用 Visual Studio 2019 或更高版本。
+本项目使用 Visual Studio 进行开发，推荐使用 Visual Studio 2026 或更高版本。
 
 1.  **克隆仓库**:
     ```bash
@@ -57,13 +57,5 @@
 
 ## 可视化功能说明
 
--   当您在主菜单选择 `[11]` 导出HTML可视化后，程序会在其所在目录下创建一个名为 `SocialNetwork_YYYYMMDD_HHMMSS.html` 的文件。
+-   当您在主菜单选择 `[11]` 输入文件名导出HTML可视化后，程序会在其所在目录下创建一个名为 `文件名.html` 的文件。
 -   在浏览器中打开此 `html` 文件即可看到您的社交网络图。
--   **重要提示**: 为了使图表能正常显示，请确保 `echarts.min.js` 文件存在。您需要手动创建一个名为 `js` 的文件夹，并将其放置在与 `SocialNetwork.exe` 相同的目录下，然后将 `echarts.min.js` 放入 `js` 文件夹。最终目录结构应如下所示：
-    ```
-    .
-    ├── SocialNetwork.exe
-    └── js/
-        └── echarts.min.js
-    ```
-    如果根目录的 `js` 文件夹中没有 `echarts.min.js`，您可以从 [ECharts 官网](https://echarts.apache.org/zh/download.html) 或 [CDN](https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js) 下载。
