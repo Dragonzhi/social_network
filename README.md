@@ -1,5 +1,69 @@
-# social_network
+# 简易社交关系网系统 (Simple Social Network System)
 
-若无法打开html图表，请下载[echarts.min.js](https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js)并放置于exe文件的同目录js文件夹下（需自行创建文件夹）
+这是一个使用 C++ 开发的、基于控制台的交互式社交网络管理和分析工具。它允许用户轻松地管理联系人及其关系，并提供了多种关系分析功能，最终还能将整个社交网络导出为可交互的 HTML 可视化图表。
 
-[![](https://mermaid.ink/img/pako:eNqVV2tv00gU_SuW9wOplHbtpknaSLByH-kbCgnllf3gNkPrrRNHjsu2VEhFS2n6TLVACbuUdlF4LFIJWiRaEgh_xuMk_2LHM87YjWO06_Thxzn3njt3PGeyws4qScBG2DlVzMwz8cFEmkGHcCvB1t5uwXIe7pXg5tsE-zPT2XmB6Uf3Ye4AvtmC2_sxZVYS5YtA-1VRF-D7F3p1C-FIgH4MH0Bwo1CtFctCbGB01Dhab7wsUMwAxgyaqY43YHWt9vitkTsxtjeG0hpQ4ZdVlIaCBzF4CIHr3_6Ea6_00wqsvqvtlihiCCOiZ1PW88_hzhOKiWLMsBll9wTm90nKevURithY3TC2_qbQYQwdWUFQ_NgolODea-P5hvEk91OCvUdQ5O8IwjIo79Mj9NDXOHhhPPkAj592JFgcZJRqajx-Vi-V9G9_GfdLEcYKjFk07yimjHmMCoWNkfFopwJLtFKPI_0kAinPx3XyfEeL_HFC5C3OBJV7zjipwM2j-v3HtY8VvYyuz3ZwAuMnzeH88BtKkyZzoUtMJqeAmlXSWV8HBU-Swtok7rYSX7QTw9xR41nRM_FFjL90q9mc-uv7hFH74wElwTeP4N4O5VzCnCmX2CSQgQaIXh_h2KKnPEUHLNGXW0cLrn1E-VsVX8bgK1SxflrUT9-1aIX5Tb38Dyw9hOXXPr6T5zhbyRUcINZurIeSc8BSzvsZctLtZ2goO0jMs5weq5x4aw_alxPH4KvfL4eir2L0tMfQt5Vva5721By0NF9ztAD_MzZW0Vtgq2lbwjXMve4WJWUzsrgsyLJj8l73FBGyRNxwiNjeoGNv7P5urqKvvsL8VquCG5h4057FrtlA2Mb-Z_gl7-POw511dPkjf77xbAed2PJu4kiC4Comq6haVJVAOpm1htjPOIPaIQTBs8SwVaLQ76jx8FW99JKW2VqaQAxAGPiPM0QgZiAMuiqYA1q_omkySIPZhSlRm__OVBGISwhD5qpXeWS8eA5zRWP_mK53whBdqesnJVh94Ovkm6u0EG1ZpiMMhdkZrABwb1s_XUV1-DjKH6b85gJPUS4-WaR9F2z2CGUbuT24eRix39_zpBY7SNTZKmH4zNWIZxt7m6lsPzpXK1b1ctEo7BqFQ19cyfBch6uVxJGEMa83BdMc74ow5imhrylh3JagfzuAxwWY-2Dsr-uVT67044QxQWcSwaHO-xqVQv19sSnnF7SAO1QQcxLc7pQV74C4EpVk4KOhHDxvn-K5pnyHU-mVXSsKMsqvX13yiVUJl_6vfGJXgtuvZEVMRlUl5VmAt2fxTYsXHK4FS1_genkkPjkB86X6m4doZ-cqgriXYNuXCfcqZF5LyQ45xLgEt3OBpQxaneKKGattId5uRRth21VjdRWVQd48OwTxKeEq3c-ar9LBIQWciQrXPumVfXP_Zu2SCHnatS6QvZS13auXrA2kRWqmtnyL9aO9tZRkI5q6CPxsCqgp0bxkV0xcgtXmQQok2Ag6nRGz6MzvuD8tqpI4I4OsCVixJLMZVUqJ6vKAIisqYf5wGx8W2YGJgyXNiQvgw43rV9QkUJ3IXnw4kADZ9IQ4A-R-cXZhTlUW08lm8h7z44CijaomtSrkzI8DdFtJa1ExJcnLBJFIJNgBJSXNMjExnWUmY-YNP4Nvz4vywowiqklyb3ZRzUp3QEuwmHTXGkg-mFlyPJSlNHBK6cOHAzDjqih5OwTQMJkAZB3oB7UxI6ZvKkqq2UmEn5tvXixmkqIGBiURfY-iCERgIyvsEhvhg-EuPtTLc3w4xHcHea7bzy6zEbTDC_Z0dQdCoV4u0Bfu5XqC9_zsXZykp4vrCwfDAfTLh_lQgEcZkY2bTVpMa2ykmwuE_Kgpkqaok-Q7HP4qd-9f-xuSjg?type=png)](https://mermaid-live.nodejs.cn/edit#pako:eNqVV2tv00gU_SuW9wOplHbtpknaSLByH-kbCgnllf3gNkPrrRNHjsu2VEhFS2n6TLVACbuUdlF4LFIJWiRaEgh_xuMk_2LHM87YjWO06_Thxzn3njt3PGeyws4qScBG2DlVzMwz8cFEmkGHcCvB1t5uwXIe7pXg5tsE-zPT2XmB6Uf3Ye4AvtmC2_sxZVYS5YtA-1VRF-D7F3p1C-FIgH4MH0Bwo1CtFctCbGB01Dhab7wsUMwAxgyaqY43YHWt9vitkTsxtjeG0hpQ4ZdVlIaCBzF4CIHr3_6Ea6_00wqsvqvtlihiCCOiZ1PW88_hzhOKiWLMsBll9wTm90nKevURithY3TC2_qbQYQwdWUFQ_NgolODea-P5hvEk91OCvUdQ5O8IwjIo79Mj9NDXOHhhPPkAj592JFgcZJRqajx-Vi-V9G9_GfdLEcYKjFk07yimjHmMCoWNkfFopwJLtFKPI_0kAinPx3XyfEeL_HFC5C3OBJV7zjipwM2j-v3HtY8VvYyuz3ZwAuMnzeH88BtKkyZzoUtMJqeAmlXSWV8HBU-Swtok7rYSX7QTw9xR41nRM_FFjL90q9mc-uv7hFH74wElwTeP4N4O5VzCnCmX2CSQgQaIXh_h2KKnPEUHLNGXW0cLrn1E-VsVX8bgK1SxflrUT9-1aIX5Tb38Dyw9hOXXPr6T5zhbyRUcINZurIeSc8BSzvsZctLtZ2goO0jMs5weq5x4aw_alxPH4KvfL4eir2L0tMfQt5Vva5721By0NF9ztAD_MzZW0Vtgq2lbwjXMve4WJWUzsrgsyLJj8l73FBGyRNxwiNjeoGNv7P5urqKvvsL8VquCG5h4057FrtlA2Mb-Z_gl7-POw511dPkjf77xbAed2PJu4kiC4Comq6haVJVAOpm1htjPOIPaIQTBs8SwVaLQ76jx8FW99JKW2VqaQAxAGPiPM0QgZiAMuiqYA1q_omkySIPZhSlRm__OVBGISwhD5qpXeWS8eA5zRWP_mK53whBdqesnJVh94Ovkm6u0EG1ZpiMMhdkZrABwb1s_XUV1-DjKH6b85gJPUS4-WaR9F2z2CGUbuT24eRix39_zpBY7SNTZKmH4zNWIZxt7m6lsPzpXK1b1ctEo7BqFQ19cyfBch6uVxJGEMa83BdMc74ow5imhrylh3JagfzuAxwWY-2Dsr-uVT67044QxQWcSwaHO-xqVQv19sSnnF7SAO1QQcxLc7pQV74C4EpVk4KOhHDxvn-K5pnyHU-mVXSsKMsqvX13yiVUJl_6vfGJXgtuvZEVMRlUl5VmAt2fxTYsXHK4FS1_genkkPjkB86X6m4doZ-cqgriXYNuXCfcqZF5LyQ45xLgEt3OBpQxaneKKGattId5uRRth21VjdRWVQd48OwTxKeEq3c-ar9LBIQWciQrXPumVfXP_Zu2SCHnatS6QvZS13auXrA2kRWqmtnyL9aO9tZRkI5q6CPxsCqgp0bxkV0xcgtXmQQok2Ag6nRGz6MzvuD8tqpI4I4OsCVixJLMZVUqJ6vKAIisqYf5wGx8W2YGJgyXNiQvgw43rV9QkUJ3IXnw4kADZ9IQ4A-R-cXZhTlUW08lm8h7z44CijaomtSrkzI8DdFtJa1ExJcnLBJFIJNgBJSXNMjExnWUmY-YNP4Nvz4vywowiqklyb3ZRzUp3QEuwmHTXGkg-mFlyPJSlNHBK6cOHAzDjqih5OwTQMJkAZB3oB7UxI6ZvKkqq2UmEn5tvXixmkqIGBiURfY-iCERgIyvsEhvhg-EuPtTLc3w4xHcHea7bzy6zEbTDC_Z0dQdCoV4u0Bfu5XqC9_zsXZykp4vrCwfDAfTLh_lQgEcZkY2bTVpMa2ykmwuE_Kgpkqaok-Q7HP4qd-9f-xuSjg)
+## 概览
+
+系统通过一个清晰的菜单驱动界面与用户交互，无需复杂的命令即可操作。
+
+```
+================================================================================
+                           主菜单
+--------------------------------------------------------------------------------
+  [1]  添加联系人           [2]  删除联系人
+  [3]  添加关系(亲密度)     [4]  删除关系
+  [5]  显示所有联系人关系   [6]  按亲密程度排序好友
+  [7]  查询两人亲密度       [8]  显示社交达人(Top10)
+  [9]  保存到文件          [10]  从文件加载
+  [11] 导出HTML可视化       [0]  退出系统
+--------------------------------------------------------------------------------
+  提示: 输入数字选择对应功能，按Enter键确认
+................................................................................
+  请选择操作 (0-11):
+```
+
+## 主要功能
+
+*   **联系人管理**: 自由添加或删除社交网络中的联系人。
+*   **关系管理**: 建立或移除联系人之间的关系，并可指定关系的“亲密度”。
+*   **关系分析**:
+    *   **全局网络展示**: 显示当前系统内所有的联系人及其关系。
+    *   **好友排序**: 根据亲密度对特定用户的好友进行列表排序。
+    *   **亲密度查询**: 查询任意两人之间的关系紧密程度。
+    *   **“社交达人”排行**: 找出网络中连接数最多的前10位成员。
+*   **数据持久化**: 支持将整个社交网络的数据保存到文件（JSON格式），也支持从文件中重新加载，方便数据备份和迁移。
+*   **可视化导出**: 可一键将当前的网络结构导出为 `SocialNetwork_YYYYMMDD_HHMMSS.html` 文件。此文件可在浏览器中打开，以交互式图表的形式直观地展示您的社交网络。
+*   **性能测试**: 内置了全面的性能测试功能（通过隐藏菜单 `114514` 访问），用于分析不同场景下算法的效率。
+
+## 如何构建
+
+本项目使用 Visual Studio 进行开发，推荐使用 Visual Studio 2019 或更高版本。
+
+1.  **克隆仓库**:
+    ```bash
+    git clone https://github.com/your-username/social_network.git
+    cd social_network
+    ```
+2.  **打开解决方案**: 使用 Visual Studio 打开项目根目录下的 `SocialNetwork.sln` 文件。
+3.  **选择配置**: 在工具栏上选择 `Debug` 或 `Release` 配置。
+4.  **生成项目**: 点击顶部菜单的“生成(Build)” -> “生成解决方案(Build Solution)”，或按 `F7` 快捷键。
+5.  **找到可执行文件**: 编译成功后，可在 `x64\Debug` 或 `x64\Release` 目录下找到 `SocialNetwork.exe`。
+
+## 如何运行
+
+1.  打开文件资源管理器或终端，进入 `x64\Debug` 或 `x64\Release` 目录。
+2.  直接双击运行 `SocialNetwork.exe`，或在终端中执行它。
+3.  根据程序显示的菜单提示，输入数字并按回车键来选择和执行相应的功能。
+
+## 可视化功能说明
+
+-   当您在主菜单选择 `[11]` 导出HTML可视化后，程序会在其所在目录下创建一个名为 `SocialNetwork_YYYYMMDD_HHMMSS.html` 的文件。
+-   在浏览器中打开此 `html` 文件即可看到您的社交网络图。
+-   **重要提示**: 为了使图表能正常显示，请确保 `echarts.min.js` 文件存在。您需要手动创建一个名为 `js` 的文件夹，并将其放置在与 `SocialNetwork.exe` 相同的目录下，然后将 `echarts.min.js` 放入 `js` 文件夹。最终目录结构应如下所示：
+    ```
+    .
+    ├── SocialNetwork.exe
+    └── js/
+        └── echarts.min.js
+    ```
+    如果根目录的 `js` 文件夹中没有 `echarts.min.js`，您可以从 [ECharts 官网](https://echarts.apache.org/zh/download.html) 或 [CDN](https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js) 下载。
